@@ -219,6 +219,103 @@ def remove_project(input_dir: Path, project_id: str) -> None:
     write_index(input_dir, index)
 
 
+def _resolve_project_dir(input_dir: Path, project_id: str) -> Path:
+    """Locate a project directory by id via projects.index.json (fallback: id == dir name)."""
+    index = ensure_index(input_dir)
+    entry = next(
+        (p for p in index.get("projects", []) if p.get("id") == project_id),
+        None,
+    )
+    project_path = (entry or {}).get("path") or project_id
+    project_dir = (input_dir / project_path).resolve()
+    input_resolved = input_dir.resolve()
+    if not str(project_dir).startswith(str(input_resolved)):
+        raise ValueError("project path escapes input dir")
+    if not project_dir.exists():
+        raise ValueError(f"project directory not found: {project_dir}")
+    return project_dir
+
+
+def _locate_project_meta(project_dir: Path) -> Path:
+    for name in ("site.meta.json", "portfolio.meta.json"):
+        candidate = project_dir / name
+        if candidate.exists():
+            return candidate
+    return project_dir / "site.meta.json"
+
+
+def remove_project_screen(
+    input_dir: Path, project_id: str, relative_path: str, delete_file: bool = False
+) -> dict[str, Any]:
+    """Remove a screen from a project's site.meta.json items[] (optionally delete file)."""
+    if not relative_path:
+        raise ValueError("relative_path required")
+
+    project_dir = _resolve_project_dir(input_dir, project_id)
+    meta_path = _locate_project_meta(project_dir)
+    meta = read_json(meta_path) if meta_path.exists() else {}
+    items = meta.get("items")
+    if not isinstance(items, list):
+        raise ValueError("project has no items[] to remove from")
+
+    original_count = len(items)
+    meta["items"] = [
+        entry for entry in items
+        if not (isinstance(entry, dict) and str(entry.get("file", "")).replace("\\", "/") == relative_path)
+    ]
+    if len(meta["items"]) == original_count:
+        raise ValueError(f"no items[] entry matched file='{relative_path}'")
+
+    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    if delete_file:
+        target = (project_dir / relative_path).resolve()
+        if str(target).startswith(str(project_dir)) and target.exists():
+            target.unlink()
+
+    return {"ok": True, "project_id": project_id, "removed": relative_path}
+
+
+def add_project_screen(
+    input_dir: Path,
+    project_id: str,
+    upload: dict[str, Any],
+    title: str = "",
+    section: str = "",
+    hover_title: str = "",
+    hover_description: str = "",
+) -> dict[str, Any]:
+    """Save an uploaded image and append a new entry to a project's items[]."""
+    raw: bytes = upload.get("data") or b""
+    if not raw:
+        raise ValueError("uploaded file is empty")
+
+    project_dir = _resolve_project_dir(input_dir, project_id)
+    upload_filename = Path(upload.get("filename", "screen")).name or "screen.png"
+    if Path(upload_filename).suffix.lower() not in IMAGE_EXTENSIONS:
+        raise ValueError(f"unsupported image type: {Path(upload_filename).suffix}")
+
+    target = unique_path(project_dir / upload_filename)
+    target.write_bytes(raw)
+
+    meta_path = _locate_project_meta(project_dir)
+    meta = read_json(meta_path) if meta_path.exists() else {}
+    items = meta.get("items") if isinstance(meta.get("items"), list) else []
+
+    new_entry = {
+        "file": target.name,
+        "title": title.strip() or title_from_stem(target.stem),
+        "section": section.strip(),
+        "hover_title": hover_title.strip(),
+        "hover_description": hover_description.strip(),
+    }
+    items.append(new_entry)
+    meta["items"] = items
+    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    return {"ok": True, "project_id": project_id, "item": new_entry, "file": target.name}
+
+
 def replace_project_image(
     input_dir: Path,
     project_id: str,
@@ -316,6 +413,8 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
                 "/api/add-project": self._handle_add,
                 "/api/remove-project": self._handle_remove,
                 "/api/replace-image": self._handle_replace_image,
+                "/api/add-screen": self._handle_add_screen,
+                "/api/remove-screen": self._handle_remove_screen,
                 "/api/rebuild": self._handle_rebuild,
             }
             fn = handlers.get(clean_path)
@@ -417,6 +516,65 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
                 result = replace_project_image(input_dir, project_id, file_rel, upload)
                 self._rebuild()
                 self.send_json({"ok": True, **result})
+            except Exception as exc:  # noqa: BLE001
+                self.send_json({"error": str(exc)}, 500)
+
+        def _handle_add_screen(self) -> None:
+            content_type = self.headers.get("Content-Type", "")
+            body = self.read_body()
+
+            if "multipart/form-data" not in content_type:
+                self.send_json({"error": "expected multipart/form-data"}, 400)
+                return
+
+            fields, files = parse_multipart(content_type, body)
+            project_id = fields.get("project_id", "").strip()
+
+            if not project_id:
+                self.send_json({"error": "project_id required"}, 400)
+                return
+            if not files:
+                self.send_json({"error": "no image uploaded"}, 400)
+                return
+
+            try:
+                result = add_project_screen(
+                    input_dir,
+                    project_id,
+                    files[0],
+                    title=fields.get("title", ""),
+                    section=fields.get("section", ""),
+                    hover_title=fields.get("hover_title", ""),
+                    hover_description=fields.get("hover_description", ""),
+                )
+                self._rebuild()
+                self.send_json(result)
+            except Exception as exc:  # noqa: BLE001
+                self.send_json({"error": str(exc)}, 500)
+
+        def _handle_remove_screen(self) -> None:
+            body = self.read_body()
+            try:
+                data = json.loads(body)
+            except Exception:
+                self.send_json({"error": "Invalid JSON"}, 400)
+                return
+
+            project_id = str(data.get("project_id", "")).strip()
+            relative_path = str(data.get("relative_path", "") or data.get("file", "")).strip()
+            delete_file = bool(data.get("delete_file", False))
+
+            if not project_id:
+                self.send_json({"error": "project_id required"}, 400)
+                return
+            if not relative_path:
+                self.send_json({"error": "relative_path required"}, 400)
+                return
+
+            try:
+                result = remove_project_screen(input_dir, project_id, relative_path, delete_file)
+                self._rebuild()
+                self.send_json(result)
             except Exception as exc:  # noqa: BLE001
                 self.send_json({"error": str(exc)}, 500)
 

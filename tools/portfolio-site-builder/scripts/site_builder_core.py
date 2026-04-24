@@ -899,8 +899,59 @@ body {
   transition: opacity 0.2s;
 }
 
-.project-card:hover .manage-delete-btn {
+.project-card:hover .manage-delete-btn,
+.screen-card:hover .manage-delete-btn {
   opacity: 1;
+}
+
+.screen-card {
+  position: relative;
+}
+
+/* ── Add-screen tile ──────────────────────────────────────── */
+
+.screen-add-tile {
+  border: 2px dashed rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.screen-add-tile:hover {
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.screen-add-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-soft);
+  text-align: center;
+  padding: 20px;
+}
+
+.screen-add-plus {
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.screen-add-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.screen-add-hint {
+  font-size: 12px;
 }
 
 /* ── Replace-image control ───────────────────────────────── */
@@ -1939,8 +1990,10 @@ function renderScreens(project, projectIndex) {
           const desc  = screen.hover_description || screen.summary || "";
           const states = Array.isArray(screen.states) ? screen.states : [];
           const notes  = Array.isArray(screen.notes)  ? screen.notes  : [];
+          const canManage = state.editMode && state.manageMode;
           return `
           <article class="panel screen-card">
+            ${canManage ? `<button type="button" class="manage-delete-btn screen-delete-btn" data-remove-screen="${escapeHtml(screen.relative_path || "")}" title="删除此界面">✕</button>` : ""}
             <div class="screen-image">
               <img src="${screen.src}" alt="${escapeHtml(screen.title)}"
                    data-image-path="projects.${projectIndex}.screens.${screenIndex}.src" />
@@ -1954,6 +2007,14 @@ function renderScreens(project, projectIndex) {
             </div>
           </article>`;
         }).join("")}
+        ${state.editMode && state.manageMode ? `
+          <article class="panel screen-card screen-add-tile" id="screen-add-tile" data-project-slot="${escapeHtml(project.id)}">
+            <div class="screen-add-inner">
+              <span class="screen-add-plus">+</span>
+              <span class="screen-add-label">添加界面</span>
+              <span class="screen-add-hint">点击上传图片并填写描述</span>
+            </div>
+          </article>` : ""}
       </div>
     </section>
   `;
@@ -2759,6 +2820,144 @@ function bindManageInteractions() {
       e.stopPropagation();
       handleRemoveProject(btn.dataset.removeProject);
     });
+  });
+
+  // Remove buttons on screen cards
+  document.querySelectorAll("[data-remove-screen]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleRemoveScreen(btn.dataset.removeScreen);
+    });
+  });
+
+  // Add screen tile
+  document.getElementById("screen-add-tile")?.addEventListener("click", () => {
+    const projectId = document.getElementById("screen-add-tile")?.dataset.projectSlot || state.currentProjectId;
+    if (!projectId) return;
+    if (!document.getElementById("add-screen-overlay")) {
+      document.body.insertAdjacentHTML("beforeend", renderAddScreenPanel(projectId));
+      bindAddScreenPanel(projectId);
+    }
+  });
+}
+
+async function handleRemoveScreen(relativePath) {
+  if (!relativePath) return;
+  if (!state.currentProjectId) {
+    alert("找不到当前项目 id");
+    return;
+  }
+  if (!confirm(`确认删除界面"${relativePath}"？\\n只从项目配置中移除, 源文件保留在磁盘上。`)) return;
+  try {
+    const res = await fetch("/api/remove-screen", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ project_id: state.currentProjectId, relative_path: relativePath }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || "Failed");
+    await reloadSiteData();
+    render();
+    bustAllImages();
+  } catch (err) {
+    alert("删除失败: " + err.message);
+  }
+}
+
+function renderAddScreenPanel(projectId) {
+  return `
+    <div class="manage-overlay" id="add-screen-overlay">
+      <div class="manage-panel">
+        <div class="manage-panel-head">
+          <h2>添加新界面</h2>
+          <button type="button" id="add-screen-close">✕</button>
+        </div>
+        <form id="add-screen-form" class="manage-form" enctype="multipart/form-data">
+          <input type="hidden" name="project_id" value="${escapeHtml(projectId)}" />
+          <label class="manage-field">
+            <span class="manage-label">界面图片 <em>*</em></span>
+            <label class="manage-upload-zone" id="add-screen-upload-zone">
+              <input type="file" name="image" accept="image/*" required id="add-screen-file-input" hidden />
+              <span class="manage-upload-icon">⬆</span>
+              <span>点击选择图片, 或拖拽至此处</span>
+            </label>
+            <div class="manage-preview" id="add-screen-preview"></div>
+          </label>
+          <label class="manage-field">
+            <span class="manage-label">标题</span>
+            <input type="text" name="title" placeholder="例: 主界面 · 初始状态" />
+          </label>
+          <label class="manage-field">
+            <span class="manage-label">分类 (section)</span>
+            <input type="text" name="section" placeholder="例: 核心流程 / 反馈" />
+          </label>
+          <label class="manage-field">
+            <span class="manage-label">悬停标题 (hover title)</span>
+            <input type="text" name="hover_title" placeholder="鼠标移入时显示的标题" />
+          </label>
+          <label class="manage-field">
+            <span class="manage-label">悬停描述 (hover description)</span>
+            <textarea name="hover_description" rows="3" placeholder="悬停时显示的详细说明"></textarea>
+          </label>
+          <div class="manage-form-actions">
+            <button type="submit" class="primary">确认添加</button>
+            <button type="button" id="add-screen-cancel">取消</button>
+          </div>
+          <div id="add-screen-status" class="manage-status"></div>
+        </form>
+      </div>
+    </div>
+  `;
+}
+
+function bindAddScreenPanel(projectId) {
+  const overlay = document.getElementById("add-screen-overlay");
+  if (!overlay) return;
+
+  const close = () => overlay.remove();
+  overlay.querySelector("#add-screen-close").addEventListener("click", close);
+  overlay.querySelector("#add-screen-cancel").addEventListener("click", close);
+
+  const fileInput = overlay.querySelector("#add-screen-file-input");
+  const preview = overlay.querySelector("#add-screen-preview");
+  fileInput.addEventListener("change", () => {
+    preview.innerHTML = "";
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = document.createElement("img");
+      img.src = String(reader.result || "");
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const form = overlay.querySelector("#add-screen-form");
+  const status = overlay.querySelector("#add-screen-status");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!fileInput.files?.length) {
+      status.textContent = "请选择图片";
+      return;
+    }
+    const submitBtn = form.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    status.textContent = "上传中…";
+    try {
+      const fd = new FormData(form);
+      const res = await fetch("/api/add-screen", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed");
+      await reloadSiteData();
+      close();
+      render();
+      bustAllImages();
+    } catch (err) {
+      status.textContent = "添加失败: " + err.message;
+      submitBtn.disabled = false;
+    }
   });
 }
 
