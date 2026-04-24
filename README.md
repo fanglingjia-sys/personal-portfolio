@@ -52,11 +52,24 @@ Personal/
 2. 在 `projects.index.json` 的 `projects` 数组追加一条记录
 3. 重启编辑服务器
 
-## 部署到 GitHub Pages
+## 部署到 GitHub Pages (当前未开启)
 
-> 每次 push 自动重新生成静态站并发布 — 通过 GitHub Actions 实现。
+作品集未完善前,workflow 只允许手动触发,**不会自动发布**,仓库保持 Private 即可完全私有。
 
-配置方式见 `.github/workflows/deploy.yml`。
+### 准备好公开时
+
+1. 仓库 **Settings → Pages** → Build and deployment → Source 选 **GitHub Actions**
+2. 编辑 `.github/workflows/deploy.yml`,把 `on:` 块改回:
+   ```yaml
+   on:
+     push:
+       branches: [main]
+     workflow_dispatch:
+   ```
+3. 仓库 **Settings → General** → 底部 Change visibility 改为 **Public** (Pages 在 Public 仓库上是免费的,Private 需要付费 Pro 账号)
+4. push 后自动部署,访问 `https://<你的用户名>.github.io/personal-portfolio/`
+
+需要在未公开前手动触发一次构建看效果,也可以去 Actions 标签页点 **Run workflow**。
 
 ## 命令行 (不用 bat 的情况下)
 
