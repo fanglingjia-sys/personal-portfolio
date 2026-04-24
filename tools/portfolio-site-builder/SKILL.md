@@ -54,8 +54,62 @@ If the user does not care about details, use these defaults:
    - single screens with hover descriptions
    - optional prototype module
 5. Prefer updating metadata fields such as `title`, `description`, `labels`, `hero_image`, `interaction_doc.file`, and `items[].file` when the user asks to customize text or images.
-5. Only pass `--enable-prototype` when the user explicitly asks for a playable / demo-style / interactive prototype.
-6. If requested, start the local preview server.
+6. Only pass `--enable-prototype` when the user explicitly asks for a playable / demo-style / interactive prototype.
+7. If requested, start the local preview server.
+
+## Creating a New Project — MUST Read Interaction Document First
+
+When generating `site.meta.json` for a **new** project (either first-time setup or when the user adds a new project folder), you MUST follow this protocol to produce accurate `flow` and `prototype` structures instead of empty placeholders:
+
+### Step 1 — Read the interaction document image
+
+Use the `Read` tool directly on the project's interaction document file (any file matching `交互文档.*`, `flow.*`, `overview.*`, `*-doc.*`, etc.). Claude can see the image via multimodal input.
+
+```
+Read("<project_dir>/交互文档.jpg")
+```
+
+### Step 2 — Extract flow structure from the image
+
+From the interaction document image, identify:
+
+- **Nodes**: every distinct screen/state shown in the flowchart, with its label text and the matching screen filename (e.g. "主界面" → `1.png` if that's the screen shown under that label in the doc)
+- **Position**: approximate `col` (horizontal) and `row` (vertical) grid position of each node in the diagram — match the visual layout of the document
+- **Edges**: every arrow connecting two nodes, with its label (e.g. "点击开始", "挑战失败", "返回"). If an arrow represents a return/back transition, mark it with `"type": "back"`
+
+Write these as `flow.nodes` and `flow.edges` in the `site.meta.json`.
+
+### Step 3 — Enrich each screen's `items[]` entry
+
+Read each individual screen image (1.png, 2.png, …) and fill in:
+
+- `title` — a concise state name ("战前准备 · 初始", not generic "界面 01")
+- `hover_title` — the interactive headline shown on hover
+- `hover_description` — what the player sees and can do on this screen, referencing concrete UI elements visible in the image
+- `states` — 1–3 short state labels ("初始", "已选将")
+- `notes` — 1–3 contextual observations (mechanics, edge cases)
+
+### Step 4 — Leave `prototype.scenes: []` empty
+
+If `flow` is populated, the generator auto-builds prototype scenes with navigation hotspots from the edges. Do **not** hand-author prototype scenes unless the user explicitly wants different scenes than the flow implies.
+
+```json
+{
+  "flow": { ... },
+  "prototype": {
+    "intro": "<one-sentence demo intro>",
+    "scenes": []
+  }
+}
+```
+
+### Step 5 — Ask for corrections if unsure
+
+If any screen's meaning is ambiguous, or an arrow's label is unclear, **ask the user to clarify** before committing to the meta.json. Prefer explicit confirmation over silent guessing on anything that shapes the flow graph.
+
+### Fallback — manual annotations
+
+If the interaction document is hard to read (hand-drawn, low contrast, ambiguous arrows), the user can provide an explicit `interaction_doc.annotations` array in the meta, listing each node's `label`, `screen_id`, `col`, `row`, and `from`. Use that as authoritative input instead of re-parsing the image.
 
 ## Commands
 
