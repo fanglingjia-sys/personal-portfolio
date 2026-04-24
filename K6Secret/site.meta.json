@@ -5,7 +5,13 @@
   "owner": "Fangling Jia",
   "role": "UX / UI Designer",
   "bio": "K6 秘境活动的界面与交互流程整理。",
-  "all_tags": ["活动UI", "秘境副本", "战斗流程", "装备购买", "保险箱"],
+  "all_tags": [
+    "活动UI",
+    "秘境副本",
+    "战斗流程",
+    "装备购买",
+    "保险箱"
+  ],
   "interaction_doc": {
     "file": "交互文档.jpg",
     "title": "KVK6 秘境玩法 · 交互总览",
@@ -15,30 +21,110 @@
       "秘境战斗是唯一的玩法场景, 其余均为准备与结算界面",
       "战斗结束后可回到战前准备继续挑战下一层"
     ],
-    "states": ["准备", "战斗", "结算"]
+    "states": [
+      "准备",
+      "战斗",
+      "结算"
+    ]
   },
   "hero": "1.png",
   "flow": {
     "title": "秘境玩法 · 交互流程图",
     "description": "主枢纽「战前准备」连接三条准备支线(英雄 / 装备 / 保险箱), 全部就绪后点「开始挑战」进入副本战斗, 战斗结束回到准备界面。",
     "nodes": [
-      { "id": "prep",          "label": "战前准备\n初始",    "screen_id": "1", "col": 0, "row": 1 },
-      { "id": "hero_select",   "label": "英雄选择",          "screen_id": "2", "col": 1, "row": 0 },
-      { "id": "prep_selected", "label": "战前准备\n已选将",  "screen_id": "3", "col": 2, "row": 1 },
-      { "id": "equip_buy",     "label": "精密应急包\n购买装备", "screen_id": "5", "col": 3, "row": 0 },
-      { "id": "safe_upgrade",  "label": "保险箱升级",        "screen_id": "7", "col": 1, "row": 2 },
-      { "id": "prep_ready",    "label": "战前准备\n就绪",    "screen_id": "4", "col": 4, "row": 1 },
-      { "id": "battle",        "label": "秘境战斗",          "screen_id": "6", "col": 5, "row": 1 }
+      {
+        "id": "prep",
+        "label": "战前准备\n初始",
+        "screen_id": "1",
+        "col": 0,
+        "row": 1
+      },
+      {
+        "id": "hero_select",
+        "label": "英雄选择",
+        "screen_id": "2",
+        "col": 1,
+        "row": 0
+      },
+      {
+        "id": "prep_selected",
+        "label": "战前准备\n已选将",
+        "screen_id": "3",
+        "col": 2,
+        "row": 1
+      },
+      {
+        "id": "equip_buy",
+        "label": "精密应急包\n购买装备",
+        "screen_id": "5",
+        "col": 3,
+        "row": 0
+      },
+      {
+        "id": "safe_upgrade",
+        "label": "保险箱升级",
+        "screen_id": "7",
+        "col": 1,
+        "row": 2
+      },
+      {
+        "id": "prep_ready",
+        "label": "战前准备\n就绪",
+        "screen_id": "4",
+        "col": 4,
+        "row": 1
+      },
+      {
+        "id": "battle",
+        "label": "秘境战斗",
+        "screen_id": "6",
+        "col": 5,
+        "row": 1
+      }
     ],
     "edges": [
-      { "from": "prep",          "to": "hero_select",   "label": "点击英雄位" },
-      { "from": "hero_select",   "to": "prep_selected", "label": "选定主将 / 副将" },
-      { "from": "prep_selected", "to": "equip_buy",     "label": "点击装备位" },
-      { "from": "equip_buy",     "to": "prep_ready",    "label": "确认购买" },
-      { "from": "prep",          "to": "safe_upgrade",  "label": "点击保险箱" },
-      { "from": "safe_upgrade",  "to": "prep",          "label": "升级后返回", "type": "back" },
-      { "from": "prep_ready",    "to": "battle",        "label": "开始挑战" },
-      { "from": "battle",        "to": "prep",          "label": "战斗完成",   "type": "back" }
+      {
+        "from": "prep",
+        "to": "hero_select",
+        "label": "点击英雄位"
+      },
+      {
+        "from": "hero_select",
+        "to": "prep_selected",
+        "label": "选定主将 / 副将"
+      },
+      {
+        "from": "prep_selected",
+        "to": "equip_buy",
+        "label": "点击装备位"
+      },
+      {
+        "from": "equip_buy",
+        "to": "prep_ready",
+        "label": "确认购买"
+      },
+      {
+        "from": "prep",
+        "to": "safe_upgrade",
+        "label": "点击保险箱"
+      },
+      {
+        "from": "safe_upgrade",
+        "to": "prep",
+        "label": "升级后返回",
+        "type": "back"
+      },
+      {
+        "from": "prep_ready",
+        "to": "battle",
+        "label": "开始挑战"
+      },
+      {
+        "from": "battle",
+        "to": "prep",
+        "label": "战斗完成",
+        "type": "back"
+      }
     ]
   },
   "items": [
@@ -49,7 +135,11 @@
       "section": "核心枢纽",
       "hover_title": "战前准备主界面",
       "hover_description": "秘境玩法的主枢纽。包含英雄卡位、装备槽、背包资源、保险箱、战斗增益、开始挑战按钮。从这里可以进入英雄选择、装备购买、保险箱升级三条准备支线。",
-      "states": ["初始", "未选将", "未购装"],
+      "states": [
+        "初始",
+        "未选将",
+        "未购装"
+      ],
       "notes": [
         "顶部横向背包显示本次可携带资源",
         "左侧 1 级保险箱表示当前默认保护额度",
@@ -63,7 +153,10 @@
       "section": "准备支线 · 英雄",
       "hover_title": "英雄列表 + 推荐",
       "hover_description": "从左侧英雄列表中选择主将和副将。系统会推荐满星或高等级英雄, 等级区间 Lv.42 ~ Lv.51。点击确定返回战前准备。",
-      "states": ["推荐", "已选"],
+      "states": [
+        "推荐",
+        "已选"
+      ],
       "notes": [
         "星级和等级决定战力",
         "主将、副将分别独立选择"
@@ -76,7 +169,10 @@
       "section": "核心枢纽",
       "hover_title": "选将后状态",
       "hover_description": "英雄选完后回到准备界面, 此时装备槽仍为空。下一步需要进入「精密应急包」购买战斗增益装备。",
-      "states": ["已选将", "未购装"]
+      "states": [
+        "已选将",
+        "未购装"
+      ]
     },
     {
       "file": "4.png",
@@ -85,7 +181,10 @@
       "section": "核心枢纽",
       "hover_title": "全部就绪",
       "hover_description": "英雄、装备、保险箱全部就绪后, 点「开始挑战」正式进入秘境战斗。",
-      "states": ["就绪", "可挑战"]
+      "states": [
+        "就绪",
+        "可挑战"
+      ]
     },
     {
       "file": "5.png",
@@ -94,7 +193,10 @@
       "section": "准备支线 · 装备",
       "hover_title": "装备选择 / 购买",
       "hover_description": "购买战斗增益装备 — 精密应急包(射击防御 +19% 共 3 条)。左侧可切换其他装备类型, 消耗 x10 资源点确认购买。",
-      "states": ["可购买", "已购买"]
+      "states": [
+        "可购买",
+        "已购买"
+      ]
     },
     {
       "file": "6.png",
@@ -103,24 +205,14 @@
       "section": "副本战斗",
       "hover_title": "秘境战斗场景",
       "hover_description": "实际副本战斗。地图为沙漠地形, 玩家控制小队与敌人战斗(1 vs 15 显示兵力对比)。右上角小地图, 右侧悬赏榜, 底部技能 / 道具栏(含背包 16s 冷却), 左上角退出按钮。",
-      "states": ["战斗中", "计时中"],
+      "states": [
+        "战斗中",
+        "计时中"
+      ],
       "notes": [
         "悬赏榜显示当前可挑战的目标单位",
         "右侧英雄栏显示阵亡数 2/2",
         "底部可使用战斗增益道具"
-      ]
-    },
-    {
-      "file": "7.png",
-      "id": "7",
-      "title": "保险箱升级",
-      "section": "准备支线 · 保险箱",
-      "hover_title": "保险箱等级切换 / 升级",
-      "hover_description": "左侧切换 I/II/III 级保险箱查看保护额度。保险箱内物资战斗失败不会掉落。当前选中 III 级, 需消耗 $9.9 购买升级。",
-      "states": ["I 级", "II 级", "III 级"],
-      "notes": [
-        "保险箱等级越高可保护物资越多",
-        "物资不因死亡掉落 — 核心保护机制"
       ]
     }
   ],
