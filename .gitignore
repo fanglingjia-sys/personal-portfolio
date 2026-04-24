@@ -1,0 +1,16 @@
+# Generated site output — rebuild locally via 启动编辑.bat
+_portfolio_site/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temp
+*.log
+*.tmp

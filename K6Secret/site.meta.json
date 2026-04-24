@@ -1,0 +1,79 @@
+{
+  "title": "K6 Secret",
+  "subtitle": "活动界面 · 交互文档",
+  "description": "K6 Secret 项目的界面与交互流程整理。请按需修改此 site.meta.json 中的描述、hover 文案与标题。",
+  "owner": "Fangling Jia",
+  "role": "UX Designer",
+  "bio": "K6 Secret 项目的 UI/UX 与交互文档整理。",
+  "all_tags": ["活动UI", "交互文档", "K6"],
+  "interaction_doc": {
+    "file": "交互文档.jpg",
+    "title": "K6 Secret · 交互文档",
+    "summary": "总览交互流程与页面关系,具体以交互稿为准。"
+  },
+  "hero": "1.png",
+  "items": [
+    {
+      "file": "1.png",
+      "title": "界面 01",
+      "section": "核心流程",
+      "hover_title": "界面 01",
+      "hover_description": "待补充描述 — 请在 site.meta.json 中编辑此条目的 hover_description。"
+    },
+    {
+      "file": "2.png",
+      "title": "界面 02",
+      "section": "核心流程",
+      "hover_title": "界面 02",
+      "hover_description": "待补充描述。"
+    },
+    {
+      "file": "3.png",
+      "title": "界面 03",
+      "section": "核心流程",
+      "hover_title": "界面 03",
+      "hover_description": "待补充描述。"
+    },
+    {
+      "file": "4.png",
+      "title": "界面 04",
+      "section": "核心流程",
+      "hover_title": "界面 04",
+      "hover_description": "待补充描述。"
+    },
+    {
+      "file": "5.png",
+      "title": "界面 05",
+      "section": "反馈 / 结果",
+      "hover_title": "界面 05",
+      "hover_description": "待补充描述。"
+    },
+    {
+      "file": "6.png",
+      "title": "界面 06",
+      "section": "反馈 / 结果",
+      "hover_title": "界面 06",
+      "hover_description": "待补充描述。"
+    },
+    {
+      "file": "7.png",
+      "title": "界面 07",
+      "section": "反馈 / 结果",
+      "hover_title": "界面 07",
+      "hover_description": "待补充描述。"
+    }
+  ],
+  "prototype": {
+    "intro": "K6 Secret 可演示流程 — 请按需替换为实际热点与步骤说明。",
+    "scenes": [
+      {
+        "id": "k6-main",
+        "file": "1.png",
+        "title": "主流程演示",
+        "summary": "演示主界面进入后的关键流程。",
+        "steps": ["进入主界面", "触发核心操作", "查看反馈"],
+        "hotspots": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,3460 @@
+#!/usr/bin/env python3
+"""Core generator for portfolio and prototype hub sites."""
+
+from __future__ import annotations
+
+import argparse
+import functools
+import http.server
+import json
+import re
+import shutil
+import socketserver
+import sys
+import webbrowser
+from pathlib import Path
+from typing import Any
+
+
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+IGNORE_DIR_NAMES = {"_portfolio_site", "__pycache__"}
+DEFAULT_LABELS = {
+    "home_eyebrow": "Project Hub",
+    "home_section_kicker": "Projects",
+    "home_section_title": "项目总览",
+    "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+    "back_to_home": "返回项目总览",
+    "project_detail_eyebrow": "Project Detail",
+    "interaction_doc_kicker": "Document",
+    "interaction_doc_title": "交互文档",
+    "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+    "interaction_doc_empty": "当前项目还没有配置交互文档。",
+    "screens_kicker": "Screens",
+    "screens_title": "单独界面",
+    "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+    "screens_empty": "当前项目还没有配置界面列表。",
+    "prototype_kicker": "Prototype",
+    "prototype_title": "动态交互原型",
+    "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+    "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+    "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+    "hotspot_title": "热点说明",
+    "scene_list_title": "流程场景",
+    "steps_title": "步骤说明",
+    "doc_notes_title": "关键说明",
+    "doc_states_title": "流程节点",
+    "screen_states_title": "状态说明",
+    "screen_notes_title": "备注",
+    "screen_refs_title": "文档引用",
+    "stat_project_count": "项目数量",
+    "stat_screen_count": "界面数量",
+    "stat_prototype": "原型模块",
+    "stat_detail_screens": "界面数量",
+    "stat_detail_doc": "交互文档",
+    "stat_detail_scenes": "原型场景",
+}
+
+
+HTML_TEMPLATE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Hub</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <div class="loading">Loading site...</div>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
+"""
+
+
+CSS_TEMPLATE = """* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0b1020;
+  --bg-soft: rgba(255, 255, 255, 0.04);
+  --panel: rgba(15, 23, 42, 0.88);
+  --panel-border: rgba(148, 163, 184, 0.16);
+  --text: #e5eefc;
+  --text-soft: #94a3b8;
+  --accent: #7c5cff;
+  --accent-2: #2dd4bf;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  --radius: 24px;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(124, 92, 255, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(45, 212, 191, 0.14), transparent 24%),
+    var(--bg);
+}
+
+.app {
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.shell {
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.loading,
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  color: var(--text-soft);
+  font-size: 18px;
+}
+
+/* ── Portfolio Hub Hero ─────────────────────────── */
+
+.hub-hero {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 48px 40px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg,
+    rgba(124,92,255,0.08) 0%,
+    rgba(11,16,32,0) 60%);
+  border: 1px solid rgba(124,92,255,0.14);
+}
+
+.hub-hero-left {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.hub-owner {
+  margin: 0 0 8px;
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  background: linear-gradient(130deg, #fff 30%, var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hub-role {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  border: 1px solid rgba(94,234,212,0.3);
+  border-radius: 20px;
+  padding: 3px 14px;
+  margin-bottom: 20px;
+}
+
+.hub-bio {
+  margin: 0 0 22px;
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+.hub-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.hub-tag {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(124,92,255,0.12);
+  border: 1px solid rgba(124,92,255,0.28);
+  color: rgba(255,255,255,0.72);
+  cursor: default;
+}
+
+.hub-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.hub-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 28px 0 0;
+}
+
+.hub-stat:first-child {
+  padding-left: 0;
+}
+
+.hub-stat-num {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+
+.hub-stat-lbl {
+  margin-top: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-soft);
+}
+
+.hub-stat-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(148,163,184,0.18);
+  margin: 0 28px 0 0;
+}
+
+.hub-hero-right {
+  flex: 0 0 320px;
+  max-width: 380px;
+}
+
+.hub-hero-right img {
+  display: block;
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Project detail hero ───────────────────────── */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.hero-copy,
+.hero-preview,
+.section {
+  padding: 24px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin-bottom: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(26px, 3.5vw, 44px);
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: 12px 0 0;
+  color: var(--text-soft);
+  font-size: 16px;
+}
+
+.description {
+  margin: 14px 0 0;
+  color: #dbe6fb;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.stat {
+  min-width: 96px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--bg-soft);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.stat-value {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+/* Hero cover image — constrained height so it doesn't flood the page */
+.hero-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-preview img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Section / project-level styles ───────────── */
+
+.project-cover img,
+.doc-image img,
+.screen-image img,
+.proto-stage img {
+  display: block;
+  max-width: 100%;
+}
+
+.project-cover img,
+.doc-image img,
+.screen-image img,
+.proto-stage img {
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.back-button,
+.project-card,
+.proto-nav button,
+.proto-hotspot-list button,
+.proto-stage button {
+  transition: 160ms ease;
+}
+
+.back-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.back-button:hover,
+.proto-nav button:hover,
+.proto-hotspot-list button:hover {
+  transform: translateY(-1px);
+  background: rgba(124, 92, 255, 0.18);
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(124, 92, 255, 0.35);
+}
+
+.project-cover {
+  padding: 16px 16px 0;
+}
+
+.project-meta {
+  padding: 18px;
+}
+
+.project-meta h3,
+.section-title,
+.proto-side h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.muted {
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.16);
+  color: #d9cbff;
+  font-size: 12px;
+}
+
+.section + .section {
+  margin-top: 22px;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-kicker {
+  color: var(--accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.doc-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.doc-image img {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  display: block;
+}
+
+.doc-meta {
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.doc-list,
+.screen-list,
+.proto-step-list,
+.proto-hotspot-list {
+  margin: 14px 0 0;
+  padding-left: 20px;
+}
+
+.doc-list li + li,
+.proto-step-list li + li {
+  margin-top: 8px;
+}
+
+.screen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.screen-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.screen-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+}
+
+.screen-image {
+  flex-shrink: 0;
+}
+
+.screen-image img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0;
+  box-shadow: none;
+  display: block;
+  width: 100%;
+}
+
+.screen-desc {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.screen-desc h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.screen-desc-section {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent, #7c5cff);
+  opacity: 0.85;
+}
+
+.screen-desc-body {
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.screen-desc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.screen-desc-chips .chip {
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
+.screen-desc-notes {
+  font-size: 12px;
+  color: var(--text-soft);
+  padding-left: 14px;
+  margin: 2px 0 0;
+  line-height: 1.6;
+}
+
+.screen-desc-notes li + li {
+  margin-top: 3px;
+}
+
+/* ── Flow chart ──────────────────────────────────────────── */
+
+.flow-wrap {
+  position: relative;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.flow-container {
+  position: relative;
+  display: inline-grid;
+  gap: 32px 72px;
+  padding: 20px 32px 100px;
+  min-width: 100%;
+}
+
+.flow-svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+}
+
+.flow-node {
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 180px;
+  transition: box-shadow 160ms ease;
+}
+
+.flow-node:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  border-color: rgba(124,92,255,0.4);
+}
+
+.flow-node img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.flow-node-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: rgba(255,255,255,0.04);
+}
+
+.flow-node-label {
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.flow-arrow {
+  fill: none;
+  stroke: rgba(124, 92, 255, 0.75);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.flow-arrow-back {
+  fill: none;
+  stroke: rgba(94, 234, 212, 0.6);
+  stroke-width: 1.8;
+  stroke-dasharray: 6 4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.flow-edge-label-bg {
+  fill: rgba(11, 16, 32, 0.85);
+  rx: 4;
+  ry: 4;
+}
+
+.flow-edge-label {
+  font-size: 11px;
+  font-weight: 600;
+  fill: rgba(255,255,255,0.75);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  letter-spacing: 0.02em;
+}
+
+/* ── Doc image collapse ───────────────── */
+
+.doc-image-wrap {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.doc-image-wrap .doc-image {
+  max-height: 480px;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.doc-image-wrap.expanded .doc-image {
+  max-height: 6000px;
+}
+
+.doc-expand-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 88px;
+  background: linear-gradient(to bottom, transparent, rgba(11,16,32,0.96));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 14px;
+  pointer-events: none;
+}
+
+.doc-image-wrap.expanded .doc-expand-bar {
+  display: none;
+}
+
+.doc-expand-btn {
+  pointer-events: all;
+  background: rgba(15,32,56,0.92);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: var(--text-soft);
+  padding: 7px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s, color 0.15s;
+}
+
+.doc-expand-btn:hover {
+  background: rgba(124,92,255,0.2);
+  color: var(--text);
+}
+
+.proto-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 18px;
+}
+
+.proto-main,
+.proto-side {
+  padding: 18px;
+}
+
+.proto-stage {
+  position: relative;
+  margin-top: 16px;
+}
+
+.proto-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  color: #04111f;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.proto-hotspot.active {
+  outline: 3px solid rgba(124, 92, 255, 0.28);
+}
+
+/* Navigation hotspot – shows edge label + arrow */
+.proto-hotspot-nav {
+  width: auto;
+  min-width: 40px;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(11, 16, 32, 0.82);
+  border: 1.5px solid rgba(94, 234, 212, 0.7);
+  color: rgba(94, 234, 212, 0.95);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.proto-hotspot-nav:hover {
+  background: rgba(94, 234, 212, 0.18);
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 4px 18px rgba(94,234,212,0.25);
+}
+
+.proto-panel {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.proto-nav {
+  display: grid;
+  gap: 10px;
+}
+
+.proto-nav button,
+.proto-hotspot-list button {
+  border: 0;
+  border-radius: 16px;
+  text-align: left;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.proto-nav button.active,
+.proto-hotspot-list button.active {
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  color: #04111f;
+  font-weight: 700;
+}
+
+.editor-toolbar {
+  position: sticky;
+  top: 12px;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto 18px;
+  padding: 12px 16px;
+}
+
+.editor-toolbar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editor-toolbar-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.editor-toolbar-note {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.editor-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.editor-toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.editor-toolbar button.primary {
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  color: #04111f;
+  font-weight: 700;
+}
+
+.editor-toolbar-sep {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(255,255,255,0.1);
+  margin: 0 4px;
+}
+
+/* ── Management UI ──────────────────────────────────────── */
+
+.manage-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255,80,80,0.85);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.project-card:hover .manage-delete-btn {
+  opacity: 1;
+}
+
+/* ── Replace-image control ───────────────────────────────── */
+
+.replace-image-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+  padding: 5px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: rgba(20,22,40,0.82);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.replace-image-btn:hover {
+  background: rgba(108,99,255,0.92);
+}
+
+.replace-image-btn[disabled] {
+  opacity: 0.6 !important;
+  cursor: wait;
+}
+
+/* reveal on hover of the enclosing image container */
+.screen-card:hover .replace-image-btn,
+.doc-image-wrap:hover .replace-image-btn,
+.hero-preview:hover .replace-image-btn,
+.project-card:hover .replace-image-btn {
+  opacity: 1;
+}
+
+/* ensure image wrappers can position the overlay button */
+.screen-image { position: relative; }
+.hero-preview { position: relative; }
+.project-cover { position: relative; }
+
+.manage-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.manage-panel {
+  background: var(--surface, #0f2038);
+  border-radius: 16px;
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.manage-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.manage-panel-head h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.manage-panel-head button {
+  background: transparent;
+  border: 0;
+  color: var(--text-soft);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.manage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.manage-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.manage-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.manage-label em {
+  color: #f87171;
+  font-style: normal;
+}
+
+.manage-field input,
+.manage-field textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.manage-field input:focus,
+.manage-field textarea:focus {
+  outline: none;
+  border-color: var(--accent, #6c63ff);
+}
+
+.manage-hint {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+.manage-upload-zone {
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.manage-upload-zone:hover,
+.manage-upload-zone.drag-over {
+  border-color: var(--accent, #6c63ff);
+  background: rgba(108,99,255,0.08);
+}
+
+.manage-upload-icon {
+  font-size: 28px;
+}
+
+.manage-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.manage-file-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.manage-form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.manage-form-actions button {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: 0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.manage-form-actions button.primary {
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  color: #04111f;
+}
+
+.manage-form-actions button:not(.primary) {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+}
+
+.manage-status {
+  font-size: 13px;
+  color: var(--text-soft);
+  min-height: 20px;
+}
+
+/* ── Section Manager ──────────────────────────────────────── */
+
+.section-mgr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 72px 24px 24px;
+}
+
+.section-mgr-panel {
+  background: var(--surface, #0f2038);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  width: min(400px, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+}
+
+.section-mgr-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.section-mgr-head h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.section-mgr-head button {
+  background: transparent;
+  border: 0;
+  color: var(--text-soft);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.section-mgr-group {
+  padding: 14px 20px;
+}
+
+.section-mgr-group + .section-mgr-group {
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.section-mgr-group-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 10px;
+}
+
+.section-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  gap: 10px;
+}
+
+.section-toggle-row + .section-toggle-row {
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.section-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.section-toggle-icon {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.section-toggle-name {
+  font-weight: 500;
+}
+
+.section-toggle-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.toggle-eye-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.toggle-eye-btn:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.toggle-eye-btn.hidden-section {
+  opacity: 0.45;
+  border-style: dashed;
+}
+
+.section-del-btn {
+  background: transparent;
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #f87171;
+  transition: background 0.15s;
+}
+
+.section-del-btn:hover {
+  background: rgba(248,113,113,0.1);
+}
+
+.section-mgr-add {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-mgr-add input,
+.section-mgr-add textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.section-mgr-add input:focus,
+.section-mgr-add textarea:focus {
+  outline: none;
+  border-color: var(--accent, #7c5cff);
+}
+
+.section-mgr-add-btn {
+  border: 1px dashed rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-soft);
+  padding: 9px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+}
+
+.section-mgr-add-btn:hover {
+  border-color: var(--accent, #7c5cff);
+  color: var(--text);
+}
+
+.section-mgr-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-mgr-add-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.section-mgr-add-form-actions button {
+  flex: 1;
+  padding: 9px;
+  border-radius: 8px;
+  border: 0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.section-mgr-add-form-actions button.primary {
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  color: #04111f;
+}
+
+.section-mgr-add-form-actions button:not(.primary) {
+  background: rgba(255,255,255,0.07);
+  color: var(--text);
+}
+
+/* custom section card */
+.custom-section-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-section-card .section-kicker {
+  color: var(--accent);
+}
+
+.custom-section-body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-soft);
+  white-space: pre-wrap;
+}
+
+.edit-mode [data-edit-path],
+.edit-mode [data-image-path] {
+  cursor: pointer;
+}
+
+.edit-mode [data-edit-path] {
+  outline: 1px dashed rgba(94, 234, 212, 0.7);
+  outline-offset: 4px;
+}
+
+.edit-mode [data-image-path] {
+  outline: 2px dashed rgba(124, 92, 255, 0.65);
+  outline-offset: 6px;
+}
+
+@media (max-width: 1080px) {
+  .hero,
+  .doc-layout,
+  .proto-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .app {
+    padding: 18px;
+  }
+
+  .hero-copy,
+  .hero-preview,
+  .section,
+  .proto-main,
+  .proto-side {
+    padding: 16px;
+  }
+}
+"""
+
+
+JS_TEMPLATE = """const state = {
+  data: null,
+  baseData: null,
+  overrides: {},
+  editMode: false,
+  manageMode: false,
+  showAddPanel: false,
+  showSectionPanel: false,
+  sectionConfig: {},
+  pendingImagePath: null,
+  currentProjectId: null,
+  currentSceneIndex: 0,
+  activeHotspotIndex: 0,
+};
+
+const app = document.getElementById("app");
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function renderTags(tags) {
+  if (!Array.isArray(tags) || !tags.length) {
+    return "";
+  }
+  return `<div class="chips">${tags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("")}</div>`;
+}
+
+function renderList(title, items, className) {
+  if (!Array.isArray(items) || !items.length) {
+    return "";
+  }
+  return `
+    <div>
+      <h4>${escapeHtml(title)}</h4>
+      <ul class="${className}">
+        ${items.map((item) => `<li>${escapeHtml(typeof item === "string" ? item : item.text || item.title || "")}</li>`).join("")}
+      </ul>
+    </div>
+  `;
+}
+
+function getLabels(site, project) {
+  return {
+    ...(site?.labels || {}),
+    ...((project && project.labels) || {}),
+  };
+}
+
+function cloneData(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function getStorageKey() {
+  const title = state.baseData?.site?.title || "project-hub";
+  return `portfolio-site-builder:${title}:${location.pathname}`;
+}
+
+function applyNested(target, source) {
+  if (!source || typeof source !== "object") {
+    return target;
+  }
+  Object.entries(source).forEach(([key, value]) => {
+    const actualKey = Array.isArray(target) ? Number(key) : key;
+    if (value && typeof value === "object") {
+      const valueIsArray = Array.isArray(value);
+      if (target[actualKey] === undefined || target[actualKey] === null) {
+        target[actualKey] = valueIsArray ? [] : {};
+      }
+      applyNested(target[actualKey], value);
+      return;
+    }
+    target[actualKey] = value;
+  });
+  return target;
+}
+
+function refreshData() {
+  state.data = cloneData(state.baseData);
+  applyNested(state.data, state.overrides);
+  // Defensive: strip any null / non-object entries introduced by stale overrides
+  if (Array.isArray(state.data?.projects)) {
+    state.data.projects = state.data.projects.filter(p => p && typeof p === "object");
+  }
+  document.title = state.data.site?.title || "Project Hub";
+  if (state.data.site?.theme?.accent) {
+    document.documentElement.style.setProperty("--accent", state.data.site.theme.accent);
+  }
+  if (state.data.site?.theme?.background) {
+    document.documentElement.style.setProperty("--bg", state.data.site.theme.background);
+  }
+}
+
+function saveOverrides() {
+  localStorage.setItem(getStorageKey(), JSON.stringify(state.overrides));
+}
+
+function loadOverrides() {
+  try {
+    const saved = localStorage.getItem(getStorageKey());
+    state.overrides = saved ? JSON.parse(saved) : {};
+  } catch (error) {
+    console.error(error);
+    state.overrides = {};
+  }
+}
+
+function setByPath(target, path, value) {
+  const parts = path.split(".");
+  let cursor = target;
+  parts.forEach((part, index) => {
+    const isLast = index === parts.length - 1;
+    const nextPart = parts[index + 1];
+    const nextIsIndex = /^\\d+$/.test(nextPart || "");
+    if (isLast) {
+      cursor[part] = value;
+      return;
+    }
+    if (cursor[part] === undefined || cursor[part] === null) {
+      cursor[part] = nextIsIndex ? [] : {};
+    }
+    cursor = cursor[part];
+  });
+}
+
+function deleteByPath(target, path) {
+  const parts = path.split(".");
+  const ancestors = [target];
+  let cursor = target;
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    if (!cursor || typeof cursor !== "object") {
+      return;
+    }
+    cursor = cursor[parts[index]];
+    ancestors.push(cursor);
+  }
+  if (cursor && typeof cursor === "object") {
+    delete cursor[parts[parts.length - 1]];
+  }
+  // Walk up and prune empty wrapper objects/arrays left behind
+  for (let i = ancestors.length - 1; i > 0; i -= 1) {
+    const node = ancestors[i];
+    if (!node || typeof node !== "object") break;
+    const keys = Object.keys(node);
+    const isEmpty = Array.isArray(node)
+      ? node.every((v) => v === undefined)
+      : keys.length === 0;
+    if (!isEmpty) break;
+    const parent = ancestors[i - 1];
+    if (parent && typeof parent === "object") {
+      delete parent[parts[i - 1]];
+    }
+  }
+}
+
+function updateOverride(path, value) {
+  setByPath(state.overrides, path, value);
+  saveOverrides();
+  refreshData();
+  render();
+}
+
+function clearOverride(path) {
+  deleteByPath(state.overrides, path);
+  saveOverrides();
+  refreshData();
+  render();
+}
+
+function downloadJson(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function openImageEditor(path, currentValue) {
+  const choice = window.prompt(
+    "图片编辑：输入 1 修改为路径/URL，输入 2 上传本地图片，输入 3 恢复默认",
+    "1"
+  );
+  if (choice === null) {
+    return;
+  }
+  if (choice === "1") {
+    const nextValue = window.prompt("输入新的图片路径、URL 或 data URL", currentValue || "");
+    if (nextValue !== null && nextValue.trim()) {
+      updateOverride(path, nextValue.trim());
+    }
+    return;
+  }
+  if (choice === "2") {
+    state.pendingImagePath = path;
+    document.getElementById("editor-image-input")?.click();
+    return;
+  }
+  if (choice === "3") {
+    clearOverride(path);
+  }
+}
+
+function bindEditorInteractions() {
+  document.getElementById("editor-toggle")?.addEventListener("click", () => {
+    state.editMode = !state.editMode;
+    render();
+  });
+
+  document.getElementById("editor-export")?.addEventListener("click", () => {
+    downloadJson("site-overrides.json", state.overrides);
+  });
+
+  document.getElementById("editor-save-to-source")?.addEventListener("click", (e) => {
+    saveOverridesToSource(e.currentTarget);
+  });
+
+  document.getElementById("editor-reset")?.addEventListener("click", () => {
+    if (!window.confirm("确定清空当前浏览器中的网页编辑修改吗？")) {
+      return;
+    }
+    state.overrides = {};
+    saveOverrides();
+    refreshData();
+    render();
+  });
+
+  document.getElementById("editor-import-trigger")?.addEventListener("click", () => {
+    document.getElementById("editor-import-input")?.click();
+  });
+
+  document.getElementById("editor-import-input")?.addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    try {
+      const text = await file.text();
+      state.overrides = JSON.parse(text);
+      saveOverrides();
+      refreshData();
+      render();
+    } catch (error) {
+      console.error(error);
+      window.alert("导入失败，JSON 格式不正确。");
+    } finally {
+      event.target.value = "";
+    }
+  });
+
+  document.getElementById("editor-image-input")?.addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !state.pendingImagePath) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateOverride(state.pendingImagePath, String(reader.result || ""));
+      state.pendingImagePath = null;
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  });
+
+  document.querySelectorAll("[data-edit-path]").forEach((node) => {
+    node.addEventListener("click", (event) => {
+      if (!state.editMode) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const path = node.getAttribute("data-edit-path");
+      const currentValue = node.textContent?.trim() || "";
+      const nextValue = window.prompt("编辑文本内容", currentValue);
+      if (path && nextValue !== null) {
+        updateOverride(path, nextValue);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-image-path]").forEach((node) => {
+    node.addEventListener("click", (event) => {
+      if (!state.editMode) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const path = node.getAttribute("data-image-path");
+      const currentValue = node.getAttribute("src") || "";
+      if (path) {
+        openImageEditor(path, currentValue);
+      }
+    });
+  });
+}
+
+function renderEditorToolbar() {
+  return `
+    <div class="panel editor-toolbar">
+      <div class="editor-toolbar-info">
+        <div class="editor-toolbar-title">网页内编辑模式</div>
+        <div class="editor-toolbar-note">
+          ${state.editMode
+            ? (state.manageMode
+                ? "编辑模式已开启:点击文字或图片即可修改。图片修改可点「保存到源文件」写回磁盘并自动重建。"
+                : "编辑模式已开启:点击文字或图片即可修改。修改仅保存在当前浏览器,可导出 JSON。")
+            : "当前为浏览模式。点击「开启编辑」后可直接修改文字和图片。"}
+        </div>
+      </div>
+      <div class="editor-toolbar-actions">
+        <button type="button" id="editor-toggle" class="${state.editMode ? "primary" : ""}">${state.editMode ? "退出编辑" : "开启编辑"}</button>
+        ${state.editMode && state.manageMode ? `<button type="button" id="editor-save-to-source" class="primary" title="把本浏览器内对图片的修改写回源文件并重建站点">保存到源文件</button>` : ""}
+        <button type="button" id="editor-export">导出修改</button>
+        <button type="button" id="editor-import-trigger">导入修改</button>
+        <button type="button" id="editor-reset">清空修改</button>
+      </div>
+      <input id="editor-import-input" type="file" accept="application/json" hidden />
+      <input id="editor-image-input" type="file" accept="image/*" hidden />
+      ${state.manageMode ? `
+      <div class="editor-toolbar-sep"></div>
+      <div class="editor-toolbar-info">
+        <div class="editor-toolbar-title">项目管理</div>
+        <div class="editor-toolbar-note">可在当前站点中增减项目，图片会自动部署到正确位置。</div>
+      </div>
+      <div class="editor-toolbar-actions">
+        <button type="button" id="manage-add-project" class="primary">+ 添加项目</button>
+      </div>` : ""}
+      ${state.currentProjectId ? `
+      <div class="editor-toolbar-sep"></div>
+      <div class="editor-toolbar-info">
+        <div class="editor-toolbar-title">模块管理</div>
+        <div class="editor-toolbar-note">可显示/隐藏各内置模块，或新增自定义模块。</div>
+      </div>
+      <div class="editor-toolbar-actions">
+        <button type="button" id="open-section-panel">管理模块</button>
+      </div>` : ""}
+    </div>
+  `;
+}
+
+function getProjectById(projectId) {
+  return state.data.projects.find((project) => project.id === projectId) || null;
+}
+
+function hasPrototype(project) {
+  const enabled = Boolean(state.data.site.prototype_enabled) || Boolean(project.prototype?.enabled);
+  return enabled && Array.isArray(project.prototype?.scenes) && project.prototype.scenes.length > 0;
+}
+
+function setProject(projectId) {
+  state.currentProjectId = projectId;
+  state.currentSceneIndex = 0;
+  state.activeHotspotIndex = 0;
+  window.location.hash = projectId ? `#${projectId}` : "";
+  render();
+}
+
+function setScene(index) {
+  state.currentSceneIndex = index;
+  state.activeHotspotIndex = 0;
+  render();
+}
+
+function setHotspot(index) {
+  state.activeHotspotIndex = index;
+  render();
+}
+
+function getCurrentScene(project) {
+  const scenes = project.prototype?.scenes || [];
+  if (!scenes.length) {
+    return null;
+  }
+  const safeIndex = Math.max(0, Math.min(state.currentSceneIndex, scenes.length - 1));
+  state.currentSceneIndex = safeIndex;
+  const scene = scenes[safeIndex];
+  const hotspots = Array.isArray(scene.hotspots) ? scene.hotspots : [];
+  if (!hotspots.length) {
+    state.activeHotspotIndex = -1;
+  } else if (state.activeHotspotIndex < 0 || state.activeHotspotIndex >= hotspots.length) {
+    state.activeHotspotIndex = 0;
+  }
+  return scene;
+}
+
+function renderHome(data) {
+  const labels   = getLabels(data.site, null);
+  const heroImg  = data.site.hero_image || null;
+  const owner    = data.site.owner  || "";
+  const role     = data.site.role   || "";
+  const bio      = data.site.bio    || "";
+  const allTags  = data.site.all_tags || [];
+
+  // Aggregated stats
+  const totalProjects = data.projects.length;
+  const totalScreens  = data.projects.reduce((s, p) => s + (p.screens?.length || 0), 0);
+  const totalDocs     = data.projects.filter(p => p.interaction_doc).length;
+
+  const tagCloud = allTags.length
+    ? `<div class="hub-tags">${allTags.map((t, i) =>
+        `<span class="hub-tag" data-edit-path="site.all_tags.${i}">${escapeHtml(t)}</span>`
+      ).join("")}</div>`
+    : "";
+
+  return `
+    <div class="shell">
+      <header class="hub-hero panel">
+        <div class="hub-hero-left">
+          ${owner ? `<h1 class="hub-owner" data-edit-path="site.owner">${escapeHtml(owner)}</h1>` : ""}
+          ${role  ? `<div class="hub-role" data-edit-path="site.role">${escapeHtml(role)}</div>` : ""}
+          ${bio   ? `<p class="hub-bio" data-edit-path="site.bio">${escapeHtml(bio)}</p>` : ""}
+          ${tagCloud}
+          <div class="hub-stats">
+            <div class="hub-stat">
+              <span class="hub-stat-num">${totalProjects}</span>
+              <span class="hub-stat-lbl">${escapeHtml(labels.stat_project_count || "项目")}</span>
+            </div>
+            <div class="hub-stat-divider"></div>
+            <div class="hub-stat">
+              <span class="hub-stat-num">${totalScreens}</span>
+              <span class="hub-stat-lbl">${escapeHtml(labels.stat_screen_count || "界面")}</span>
+            </div>
+            ${totalDocs > 0 ? `
+            <div class="hub-stat-divider"></div>
+            <div class="hub-stat">
+              <span class="hub-stat-num">${totalDocs}</span>
+              <span class="hub-stat-lbl">${escapeHtml(labels.stat_doc_count || "交互文档")}</span>
+            </div>` : ""}
+          </div>
+        </div>
+        ${heroImg ? `
+        <div class="hub-hero-right">
+          <img src="${heroImg.src}" alt="${escapeHtml(heroImg.title || owner || "portfolio")}" data-image-path="site.hero_image.src" />
+        </div>` : ""}
+      </header>
+      <section class="section panel">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker" data-edit-path="site.labels.home_section_kicker">${escapeHtml(labels.home_section_kicker || "Works")}</div>
+            <h2 class="section-title" data-edit-path="site.labels.home_section_title">${escapeHtml(labels.home_section_title || "项目")}</h2>
+          </div>
+          ${state.manageMode ? `<button type="button" class="btn-outline" id="open-add-panel">+ 添加项目</button>` : ""}
+        </div>
+        <div class="project-grid">
+          ${data.projects.map((project, index) => `
+            <article class="panel project-card" data-project-id="${project.id}">
+              ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="删除此项目">✕</button>` : ""}
+              <div class="project-cover">
+                ${project.card_cover ? `<img src="${project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${index}.card_cover.src" />` : ""}
+              </div>
+              <div class="project-meta">
+                <h3 data-edit-path="projects.${index}.title">${escapeHtml(project.title)}</h3>
+                ${project.subtitle ? `<p class="muted" data-edit-path="projects.${index}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
+                ${project.summary ? `<p class="muted" data-edit-path="projects.${index}.summary">${escapeHtml(project.summary)}</p>` : ""}
+                ${renderTags(project.tags)}
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderInteractionDoc(project, projectIndex) {
+  const labels = getLabels(state.data.site, project);
+  if (!project.interaction_doc) {
+    return `
+      <section class="section panel">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.interaction_doc_kicker">${escapeHtml(labels.interaction_doc_kicker || "Document")}</div>
+            <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.interaction_doc_title">${escapeHtml(labels.interaction_doc_title || "交互文档")}</h2>
+          </div>
+        </div>
+        <div class="empty" data-edit-path="projects.${projectIndex}.labels.interaction_doc_empty">${escapeHtml(labels.interaction_doc_empty || "当前项目还没有配置交互文档。")}</div>
+      </section>
+    `;
+  }
+
+  const hasDocMeta = project.interaction_doc.title
+    || project.interaction_doc.caption
+    || project.interaction_doc.summary
+    || (project.interaction_doc.notes && project.interaction_doc.notes.length)
+    || (project.interaction_doc.states && project.interaction_doc.states.length);
+
+  return `
+    <section class="section panel">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.interaction_doc_kicker">${escapeHtml(labels.interaction_doc_kicker || "Document")}</div>
+          <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.interaction_doc_title">${escapeHtml(labels.interaction_doc_title || "交互文档")}</h2>
+          <p class="muted" data-edit-path="projects.${projectIndex}.labels.interaction_doc_description">${escapeHtml(labels.interaction_doc_description || "先展示整张交互文档，用来承接整体流程和页面关系说明。")}</p>
+        </div>
+      </div>
+      <div class="doc-layout">
+        <div class="doc-image-wrap" id="doc-wrap-${projectIndex}">
+          <div class="doc-image">
+            <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" />
+          </div>
+          <div class="doc-expand-bar">
+            <button type="button" class="doc-expand-btn" onclick="(function(){var w=document.getElementById('doc-wrap-${projectIndex}');w&&w.classList.toggle('expanded')})()">展开查看完整文档 ▼</button>
+          </div>
+        </div>
+        ${hasDocMeta ? `
+        <div class="doc-meta">
+          <h3 data-edit-path="projects.${projectIndex}.interaction_doc.title">${escapeHtml(project.interaction_doc.title)}</h3>
+          ${project.interaction_doc.caption ? `<p class="muted" data-edit-path="projects.${projectIndex}.interaction_doc.caption">${escapeHtml(project.interaction_doc.caption)}</p>` : ""}
+          ${project.interaction_doc.summary ? `<p class="muted" data-edit-path="projects.${projectIndex}.interaction_doc.summary">${escapeHtml(project.interaction_doc.summary)}</p>` : ""}
+          ${renderList(labels.doc_notes_title || "关键说明", project.interaction_doc.notes, "doc-list")}
+          ${renderList(labels.doc_states_title || "流程节点", project.interaction_doc.states, "doc-list")}
+        </div>` : ""}
+      </div>
+    </section>
+  `;
+}
+
+function renderScreens(project, projectIndex) {
+  const labels = getLabels(state.data.site, project);
+  if (!Array.isArray(project.screens) || !project.screens.length) {
+    return `
+      <section class="section panel">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.screens_kicker">${escapeHtml(labels.screens_kicker || "Screens")}</div>
+            <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.screens_title">${escapeHtml(labels.screens_title || "单独界面")}</h2>
+          </div>
+        </div>
+        <div class="empty" data-edit-path="projects.${projectIndex}.labels.screens_empty">${escapeHtml(labels.screens_empty || "当前项目还没有配置界面列表。")}</div>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="section panel">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.screens_kicker">${escapeHtml(labels.screens_kicker || "Screens")}</div>
+          <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.screens_title">${escapeHtml(labels.screens_title || "单独界面")}</h2>
+          <p class="muted" data-edit-path="projects.${projectIndex}.labels.screens_description">${escapeHtml(labels.screens_description || "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。")}</p>
+        </div>
+      </div>
+      <div class="screen-grid">
+        ${project.screens.map((screen, screenIndex) => {
+          const title = screen.hover_title || screen.title;
+          const desc  = screen.hover_description || screen.summary || "";
+          const states = Array.isArray(screen.states) ? screen.states : [];
+          const notes  = Array.isArray(screen.notes)  ? screen.notes  : [];
+          return `
+          <article class="panel screen-card">
+            <div class="screen-image">
+              <img src="${screen.src}" alt="${escapeHtml(screen.title)}"
+                   data-image-path="projects.${projectIndex}.screens.${screenIndex}.src" />
+            </div>
+            <div class="screen-desc">
+              ${screen.section ? `<div class="screen-desc-section" data-edit-path="projects.${projectIndex}.screens.${screenIndex}.section">${escapeHtml(screen.section)}</div>` : ""}
+              <h4 data-edit-path="projects.${projectIndex}.screens.${screenIndex}.hover_title">${escapeHtml(title)}</h4>
+              ${desc ? `<p class="screen-desc-body" data-edit-path="projects.${projectIndex}.screens.${screenIndex}.hover_description">${escapeHtml(desc)}</p>` : ""}
+              ${states.length ? `<div class="screen-desc-chips">${states.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}</div>` : ""}
+              ${notes.length ? `<ul class="screen-desc-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>` : ""}
+            </div>
+          </article>`;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderFlow(project, projectIndex) {
+  const flow = project.flow;
+  if (!flow || !Array.isArray(flow.nodes) || !flow.nodes.length) return "";
+
+  const cols = Math.max(...flow.nodes.map(n => n.col || 0)) + 1;
+  const rows = Math.max(...flow.nodes.map(n => n.row || 0)) + 1;
+
+  return `
+    <section class="section panel">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Flow</div>
+          <h2 class="section-title">${escapeHtml(flow.title || "交互流程图")}</h2>
+          ${flow.description ? `<p class="muted">${escapeHtml(flow.description)}</p>` : ""}
+        </div>
+      </div>
+      <div class="flow-wrap">
+        <div class="flow-container" id="flow-${projectIndex}"
+             style="grid-template-columns:repeat(${cols},180px);grid-template-rows:repeat(${rows},auto)">
+          <svg class="flow-svg" id="flow-svg-${projectIndex}" aria-hidden="true"></svg>
+          ${flow.nodes.map(node => {
+            const screen = (project.screens || []).find(s => s.id === node.screen_id)
+                        || (project.interaction_doc?.id === node.screen_id ? project.interaction_doc : null);
+            return `
+              <div class="flow-node" id="fnode-${projectIndex}-${escapeHtml(node.id)}"
+                   style="grid-column:${(node.col||0)+1};grid-row:${(node.row||0)+1}">
+                ${screen
+                  ? `<img src="${screen.src}" alt="${escapeHtml(node.label)}" />`
+                  : `<div class="flow-node-placeholder"></div>`}
+                <div class="flow-node-label">${escapeHtml(node.label)}</div>
+              </div>`;
+          }).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function drawFlowArrows(projectIndex, flow) {
+  if (!flow?.nodes?.length || !flow?.edges?.length) return;
+  const container = document.getElementById(`flow-${projectIndex}`);
+  const svg       = document.getElementById(`flow-svg-${projectIndex}`);
+  if (!container || !svg) return;
+
+  const cr = container.getBoundingClientRect();
+  svg.style.width  = cr.width  + "px";
+  svg.style.height = cr.height + "px";
+
+  const pos = {};
+  flow.nodes.forEach(node => {
+    const el = document.getElementById(`fnode-${projectIndex}-${node.id}`);
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    pos[node.id] = {
+      cx: r.left - cr.left + r.width  / 2,
+      cy: r.top  - cr.top  + r.height / 2,
+      x1: r.left - cr.left,
+      x2: r.left - cr.left + r.width,
+      y1: r.top  - cr.top,
+      y2: r.top  - cr.top  + r.height,
+      w:  r.width, h: r.height,
+    };
+  });
+
+  const maxY2 = Math.max(...Object.values(pos).map(p => p.y2));
+  const backRailY = maxY2 + 52;   // horizontal rail under all nodes
+
+  const idFwd  = `ahf${projectIndex}`;
+  const idBack = `ahb${projectIndex}`;
+  let inner = `
+    <defs>
+      <marker id="${idFwd}" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0,9 3.5,0 7" fill="rgba(124,92,255,0.85)" />
+      </marker>
+      <marker id="${idBack}" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0,9 3.5,0 7" fill="rgba(94,234,212,0.75)" />
+      </marker>
+    </defs>`;
+
+  let backOffset = 0;   // stagger multiple back arrows so rails don't overlap
+
+  (flow.edges || []).forEach(edge => {
+    const f = pos[edge.from];
+    const t = pos[edge.to];
+    if (!f || !t) return;
+
+    const isBack = edge.type === "back" || (f.cx > t.cx + 20);
+    let d, lx, ly;
+
+    if (!isBack) {
+      // Forward: cubic bezier – exit right, enter left
+      const x1 = f.x2 + 3, y1 = f.cy;
+      const x2 = t.x1 - 3, y2 = t.cy;
+      const mx  = (x1 + x2) / 2;
+      d  = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+      // Label above midpoint of curve
+      lx = mx;
+      ly = (y1 + y2) / 2 - 14;
+    } else {
+      // Back: orthogonal L-route with rounded corners going below all nodes
+      backOffset += 0;   // same rail, OK for most cases
+      const railY = backRailY + backOffset;
+      const rc = 10;     // corner radius
+      const x1 = f.cx, y1 = f.y2 + 3;
+      const x2 = t.cx, y2 = t.y2 + 3;
+      const goLeft = x2 < x1;
+      // Path: straight down → corner → horizontal → corner → straight up
+      d = `M${x1},${y1}
+           L${x1},${railY - rc}
+           Q${x1},${railY} ${goLeft ? x1 - rc : x1 + rc},${railY}
+           L${goLeft ? x2 + rc : x2 - rc},${railY}
+           Q${x2},${railY} ${x2},${railY - rc}
+           L${x2},${y2}`;
+      lx = (x1 + x2) / 2;
+      ly = railY + 16;
+    }
+
+    const cls = isBack ? "flow-arrow-back" : "flow-arrow";
+    const mid = isBack ? idBack : idFwd;
+    inner += `<path d="${d}" class="${cls}" marker-end="url(#${mid})" />`;
+
+    if (edge.label) {
+      const tw = edge.label.length * 7 + 14;
+      const th = 18;
+      inner += `
+        <rect x="${lx - tw/2}" y="${ly - th/2}" width="${tw}" height="${th}"
+              rx="4" ry="4" class="flow-edge-label-bg" />
+        <text x="${lx}" y="${ly}" class="flow-edge-label">${escapeHtml(edge.label)}</text>`;
+    }
+  });
+
+  svg.innerHTML = inner;
+}
+
+function renderPrototype(project, projectIndex) {
+  const labels = getLabels(state.data.site, project);
+  const protoEnabled = Boolean(state.data.site.prototype_enabled) || Boolean(project.prototype?.enabled);
+  if (!protoEnabled) {
+    return `
+      <section class="section panel">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.prototype_kicker">${escapeHtml(labels.prototype_kicker || "Prototype")}</div>
+            <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.prototype_title">${escapeHtml(labels.prototype_title || "动态交互原型")}</h2>
+            <p class="muted" data-edit-path="projects.${projectIndex}.labels.prototype_disabled">${escapeHtml(labels.prototype_disabled || "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。")}</p>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  if (!hasPrototype(project)) {
+    return `
+      <section class="section panel">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.prototype_kicker">${escapeHtml(labels.prototype_kicker || "Prototype")}</div>
+            <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.prototype_title">${escapeHtml(labels.prototype_title || "动态交互原型")}</h2>
+            <p class="muted" data-edit-path="projects.${projectIndex}.labels.prototype_empty">${escapeHtml(labels.prototype_empty || "原型模块已启用，但当前项目尚未配置 prototype 场景数据。")}</p>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  const scene = getCurrentScene(project);
+  const hotspots = Array.isArray(scene.hotspots) ? scene.hotspots : [];
+  const activeHotspot = hotspots[state.activeHotspotIndex] || null;
+
+  return `
+    <section class="section panel">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.prototype_kicker">${escapeHtml(labels.prototype_kicker || "Prototype")}</div>
+          <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.prototype_title">${escapeHtml(labels.prototype_title || "动态交互原型")}</h2>
+          <p class="muted" data-edit-path="projects.${projectIndex}.labels.prototype_description">${escapeHtml(labels.prototype_description || "流程和热点说明来自交互文档整理后的原型配置。")}</p>
+        </div>
+      </div>
+      <div class="proto-layout">
+        <div class="panel proto-main">
+          <h3 data-edit-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.title">${escapeHtml(scene.title)}</h3>
+          ${scene.summary ? `<p class="muted" data-edit-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.summary">${escapeHtml(scene.summary)}</p>` : ""}
+          <div class="proto-stage">
+            <img src="${scene.src}" alt="${escapeHtml(scene.title)}" data-image-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.src" />
+            ${hotspots.map((hotspot, index) => {
+              const isNav = hotspot.goto_scene_index !== undefined && hotspot.goto_scene_index !== null;
+              const label = escapeHtml(hotspot.label || hotspot.title || (isNav ? "→" : String(index + 1)));
+              const title = escapeHtml(hotspot.title || hotspot.label || `热点 ${index + 1}`);
+              const gotoAttr = isNav ? `data-goto-scene="${hotspot.goto_scene_index}"` : "";
+              const cls = `proto-hotspot${isNav ? " proto-hotspot-nav" : ""}${(!isNav && index === state.activeHotspotIndex) ? " active" : ""}`;
+              return `<button type="button" class="${cls}"
+                style="left:${Number(hotspot.x)||0}%;top:${Number(hotspot.y)||0}%"
+                data-hotspot-index="${index}" ${gotoAttr}
+                title="${title}"
+              >${isNav ? `${label} →` : String(index + 1)}</button>`;
+            }).join("")}
+          </div>
+          ${activeHotspot ? `
+            <div class="proto-panel">
+              <h4>${escapeHtml(activeHotspot.title || activeHotspot.label || labels.hotspot_title || "热点说明")}</h4>
+              <p class="muted">${escapeHtml(activeHotspot.content || activeHotspot.description || "")}</p>
+            </div>
+          ` : ""}
+        </div>
+        <aside class="panel proto-side">
+          <div>
+            <h3 data-edit-path="projects.${projectIndex}.labels.scene_list_title">${escapeHtml(labels.scene_list_title || "流程场景")}</h3>
+            <div class="proto-nav">
+              ${project.prototype.scenes.map((item, index) => `
+                <button type="button" class="${index === state.currentSceneIndex ? "active" : ""}" data-scene-index="${index}">
+                  ${index + 1}. ${escapeHtml(item.title)}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+          ${renderList(labels.steps_title || "步骤说明", scene.steps, "proto-step-list")}
+          ${hotspots.length ? `
+            <div>
+              <h3 data-edit-path="projects.${projectIndex}.labels.hotspot_title">${escapeHtml(labels.hotspot_title || "热点说明")}</h3>
+              <div class="proto-hotspot-list">
+                ${hotspots.map((item, index) => `
+                  <button type="button" class="${index === state.activeHotspotIndex ? "active" : ""}" data-hotspot-index="${index}">
+                    ${index + 1}. ${escapeHtml(item.title || item.label || "未命名热点")}
+                  </button>
+                `).join("")}
+              </div>
+            </div>
+          ` : ""}
+        </aside>
+      </div>
+    </section>
+  `;
+}
+
+function renderProject(project, projectIndex) {
+  const labels = getLabels(state.data.site, project);
+  return `
+    <div class="shell">
+      <div class="topbar">
+        <button type="button" class="back-button" data-back-home data-edit-path="projects.${projectIndex}.labels.back_to_home">${escapeHtml(labels.back_to_home || "返回项目总览")}</button>
+      </div>
+      <header class="hero">
+        <section class="panel hero-copy">
+          <div class="eyebrow" data-edit-path="projects.${projectIndex}.labels.project_detail_eyebrow">${escapeHtml(labels.project_detail_eyebrow || "Project Detail")}</div>
+          <h1 class="title" data-edit-path="projects.${projectIndex}.title">${escapeHtml(project.title)}</h1>
+          ${project.subtitle ? `<p class="subtitle" data-edit-path="projects.${projectIndex}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
+          ${project.summary ? `<p class="description" data-edit-path="projects.${projectIndex}.summary">${escapeHtml(project.summary)}</p>` : ""}
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-value">${project.screens?.length || 0}</span>
+              <span class="stat-label" data-edit-path="projects.${projectIndex}.labels.stat_detail_screens">${escapeHtml(labels.stat_detail_screens || "界面数量")}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">${project.interaction_doc ? 1 : 0}</span>
+              <span class="stat-label" data-edit-path="projects.${projectIndex}.labels.stat_detail_doc">${escapeHtml(labels.stat_detail_doc || "交互文档")}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">${hasPrototype(project) ? project.prototype.scenes.length : 0}</span>
+              <span class="stat-label" data-edit-path="projects.${projectIndex}.labels.stat_detail_scenes">${escapeHtml(labels.stat_detail_scenes || "原型场景")}</span>
+            </div>
+          </div>
+          ${renderTags(project.tags)}
+        </section>
+        <section class="panel hero-preview">
+          ${project.cover ? `<img src="${project.cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${projectIndex}.cover.src" />` : ""}
+        </section>
+      </header>
+      ${isSectionVisible(project.id, "interaction_doc") ? renderInteractionDoc(project, projectIndex) : ""}
+      ${isSectionVisible(project.id, "screens")         ? renderScreens(project, projectIndex) : ""}
+      ${isSectionVisible(project.id, "flow")            ? renderFlow(project, projectIndex) : ""}
+      ${renderCustomSections(project.id, projectIndex)}
+      ${isSectionVisible(project.id, "prototype")       ? renderPrototype(project, projectIndex) : ""}
+    </div>
+  `;
+}
+
+function render() {
+  if (!state.data || !Array.isArray(state.data.projects)) {
+    app.innerHTML = '<div class="empty">No project data found.</div>';
+    return;
+  }
+
+  const projectIndex = state.currentProjectId
+    ? state.data.projects.findIndex((project) => project && project.id === state.currentProjectId)
+    : -1;
+  const project = projectIndex >= 0 ? state.data.projects[projectIndex] : null;
+  app.classList.toggle("edit-mode", state.editMode);
+  try {
+    app.innerHTML = `${renderEditorToolbar()}${project ? renderProject(project, projectIndex) : renderHome(state.data)}`;
+  } catch (err) {
+    console.error("render failed:", err);
+    const stack = (err && (err.stack || err.message)) || String(err);
+    app.innerHTML = `<div class="empty" style="padding:24px;white-space:pre-wrap;font-family:monospace;font-size:12px;color:#f87171;">Render error.${escapeHtml(" — ") + escapeHtml(stack)}</div>`;
+    return;
+  }
+  bindEditorInteractions();
+  if (state.manageMode) bindManageInteractions();
+
+  // Section manager button
+  document.getElementById("open-section-panel")?.addEventListener("click", () => {
+    if (!project || document.getElementById("section-mgr-overlay")) return;
+    document.body.insertAdjacentHTML("beforeend", renderSectionPanel(project));
+    bindSectionPanel(project);
+  });
+
+  // Draw flow arrows after DOM is ready
+  if (project?.flow) {
+    requestAnimationFrame(() => drawFlowArrows(projectIndex, project.flow));
+  }
+
+  document.querySelectorAll("[data-project-id]").forEach((node) => {
+    node.addEventListener("click", () => {
+      if (state.editMode) {
+        return;
+      }
+      setProject(node.getAttribute("data-project-id"));
+    });
+  });
+
+  document.querySelectorAll("[data-back-home]").forEach((node) => {
+    node.addEventListener("click", () => {
+      if (state.editMode) {
+        return;
+      }
+      setProject(null);
+    });
+  });
+
+  document.querySelectorAll("[data-scene-index]").forEach((node) => {
+    node.addEventListener("click", () => setScene(Number(node.getAttribute("data-scene-index"))));
+  });
+
+  document.querySelectorAll("[data-hotspot-index]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const idx = Number(node.getAttribute("data-hotspot-index"));
+      const gotoAttr = node.getAttribute("data-goto-scene");
+      if (gotoAttr !== null && gotoAttr !== "") {
+        // Navigation hotspot: switch scene and reset hotspot selection
+        setScene(Number(gotoAttr));
+      } else {
+        setHotspot(idx);
+      }
+    });
+  });
+}
+
+function applyHash() {
+  const projectId = window.location.hash.replace(/^#/, "");
+  state.currentProjectId = projectId || null;
+}
+
+// ── Section Manager ──────────────────────────────────────────────────────
+
+const BUILTIN_SECTIONS = [
+  { id: "interaction_doc", label: "交互文档",  icon: "📄" },
+  { id: "screens",         label: "单独界面",  icon: "🖼" },
+  { id: "flow",            label: "流程图",    icon: "🔀" },
+  { id: "prototype",       label: "交互原型",  icon: "▶" },
+];
+
+const SECTION_CFG_KEY = "portfolio_section_cfg_v1";
+
+function loadSectionConfig() {
+  try {
+    const raw = localStorage.getItem(SECTION_CFG_KEY);
+    if (raw) state.sectionConfig = JSON.parse(raw);
+  } catch { state.sectionConfig = {}; }
+}
+
+function saveSectionConfig() {
+  localStorage.setItem(SECTION_CFG_KEY, JSON.stringify(state.sectionConfig));
+}
+
+function getProjectCfg(projectId) {
+  if (!state.sectionConfig[projectId]) {
+    state.sectionConfig[projectId] = { visible: {}, custom: [] };
+  }
+  return state.sectionConfig[projectId];
+}
+
+function isSectionVisible(projectId, sectionId) {
+  return getProjectCfg(projectId).visible[sectionId] !== false;
+}
+
+function toggleSection(projectId, sectionId) {
+  const cfg = getProjectCfg(projectId);
+  cfg.visible[sectionId] = !isSectionVisible(projectId, sectionId);
+  saveSectionConfig();
+  render();
+}
+
+function addCustomSection(projectId, title, kicker, body) {
+  const cfg = getProjectCfg(projectId);
+  if (!Array.isArray(cfg.custom)) cfg.custom = [];
+  cfg.custom.push({
+    id: "cs-" + Date.now(),
+    title: title.trim(),
+    kicker: kicker.trim(),
+    body: body.trim(),
+  });
+  saveSectionConfig();
+  render();
+}
+
+function removeCustomSection(projectId, sectionId) {
+  const cfg = getProjectCfg(projectId);
+  cfg.custom = (cfg.custom || []).filter(s => s.id !== sectionId);
+  saveSectionConfig();
+  render();
+}
+
+function renderCustomSections(projectId, projectIndex) {
+  const cfg = getProjectCfg(projectId);
+  if (!Array.isArray(cfg.custom) || !cfg.custom.length) return "";
+  return cfg.custom.map(section => `
+    <section class="section">
+      <div class="custom-section-card">
+        ${section.kicker ? `<div class="section-kicker">${escapeHtml(section.kicker)}</div>` : ""}
+        <h2 class="section-title">${escapeHtml(section.title)}</h2>
+        ${section.body ? `<p class="custom-section-body">${escapeHtml(section.body)}</p>` : ""}
+      </div>
+    </section>
+  `).join("");
+}
+
+function renderSectionPanel(project) {
+  const cfg = getProjectCfg(project.id);
+  const custom = Array.isArray(cfg.custom) ? cfg.custom : [];
+  return `
+    <div class="section-mgr-overlay" id="section-mgr-overlay">
+      <div class="section-mgr-panel">
+        <div class="section-mgr-head">
+          <h3>模块管理</h3>
+          <button type="button" id="section-mgr-close">&#x2715;</button>
+        </div>
+        <div class="section-mgr-group">
+          <div class="section-mgr-group-title">内置模块</div>
+          ${BUILTIN_SECTIONS.map(s => {
+            const visible = isSectionVisible(project.id, s.id);
+            return `
+              <div class="section-toggle-row">
+                <div class="section-toggle-label">
+                  <span class="section-toggle-icon">${s.icon}</span>
+                  <span class="section-toggle-name" style="${!visible ? "opacity:.4" : ""}">${s.label}</span>
+                </div>
+                <button type="button"
+                        class="toggle-eye-btn ${visible ? "" : "hidden-section"}"
+                        data-toggle-section="${project.id}"
+                        data-section-id="${s.id}">
+                  ${visible ? "显示中" : "已隐藏"}
+                </button>
+              </div>`;
+          }).join("")}
+        </div>
+        <div class="section-mgr-group">
+          <div class="section-mgr-group-title">自定义模块</div>
+          ${custom.length ? custom.map(s => `
+            <div class="section-toggle-row">
+              <div class="section-toggle-label">
+                <span class="section-toggle-icon">&#x1F4DD;</span>
+                <span class="section-toggle-name">${escapeHtml(s.title)}</span>
+              </div>
+              <button type="button" class="section-del-btn"
+                      data-del-custom="${project.id}"
+                      data-custom-id="${s.id}">删除</button>
+            </div>`).join("") : `<div style="font-size:13px;color:var(--text-soft)">暂无自定义模块</div>`}
+        </div>
+        <div class="section-mgr-add">
+          <div class="section-mgr-group-title">新增自定义模块</div>
+          <div id="section-add-wrap">
+            <button type="button" class="section-mgr-add-btn" id="show-cs-form">+ 新增自定义模块</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function showAddSectionForm(projectId) {
+  const wrap = document.getElementById("section-add-wrap");
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div class="section-mgr-add-form">
+      <input type="text" id="cs-title" placeholder="模块标题（必填）" />
+      <input type="text" id="cs-kicker" placeholder="标签文字（可选，如 Design / Notes）" />
+      <textarea id="cs-body" rows="4" placeholder="正文内容（可选）"></textarea>
+      <div class="section-mgr-add-form-actions">
+        <button type="button" class="primary" id="cs-confirm">确认添加</button>
+        <button type="button" id="cs-cancel">取消</button>
+      </div>
+    </div>
+  `;
+  const rebindCancel = () => {
+    document.getElementById("cs-cancel")?.addEventListener("click", () => {
+      wrap.innerHTML = `<button type="button" class="section-mgr-add-btn" id="show-cs-form">+ 新增自定义模块</button>`;
+      document.getElementById("show-cs-form")?.addEventListener("click", () => showAddSectionForm(projectId));
+    });
+  };
+  rebindCancel();
+  document.getElementById("cs-confirm")?.addEventListener("click", () => {
+    const title = document.getElementById("cs-title")?.value.trim() || "";
+    if (!title) { document.getElementById("cs-title")?.focus(); return; }
+    addCustomSection(
+      projectId,
+      title,
+      document.getElementById("cs-kicker")?.value || "",
+      document.getElementById("cs-body")?.value || "",
+    );
+  });
+}
+
+function bindSectionPanel(project) {
+  const overlay = document.getElementById("section-mgr-overlay");
+  if (!overlay) return;
+  overlay.querySelector("#section-mgr-close")?.addEventListener("click", () => {
+    overlay.remove(); state.showSectionPanel = false;
+  });
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) { overlay.remove(); state.showSectionPanel = false; }
+  });
+  overlay.querySelectorAll("[data-toggle-section]").forEach(btn => {
+    btn.addEventListener("click", () => toggleSection(btn.dataset.toggleSection, btn.dataset.sectionId));
+  });
+  overlay.querySelectorAll("[data-del-custom]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (confirm("确认删除此自定义模块？")) removeCustomSection(btn.dataset.delCustom, btn.dataset.customId);
+    });
+  });
+  overlay.querySelector("#show-cs-form")?.addEventListener("click", () => showAddSectionForm(project.id));
+}
+
+// ── Management: add / remove projects ─────────────────────────────────────
+
+async function checkManagementApi() {
+  try {
+    const res = await fetch("/api/status", { cache: "no-store" });
+    if (res.ok) {
+      const json = await res.json();
+      state.manageMode = Boolean(json.manage);
+    }
+  } catch {
+    state.manageMode = false;
+  }
+}
+
+async function reloadSiteData() {
+  const res = await fetch("./site-data.json", { cache: "no-store" });
+  state.baseData = await res.json();
+  refreshData();
+}
+
+function renderAddProjectPanel() {
+  return `
+    <div class="manage-overlay" id="add-project-overlay">
+      <div class="manage-panel">
+        <div class="manage-panel-head">
+          <h2>添加新项目</h2>
+          <button type="button" id="manage-panel-close">✕</button>
+        </div>
+        <form id="manage-add-form" class="manage-form" enctype="multipart/form-data">
+          <label class="manage-field">
+            <span class="manage-label">项目标题 <em>*</em></span>
+            <input type="text" name="title" placeholder="请输入项目标题" required />
+          </label>
+          <label class="manage-field">
+            <span class="manage-label">副标题</span>
+            <input type="text" name="subtitle" placeholder="可选" />
+          </label>
+          <label class="manage-field">
+            <span class="manage-label">项目说明</span>
+            <textarea name="description" rows="3" placeholder="可选，对项目做简短介绍"></textarea>
+          </label>
+          <div class="manage-field">
+            <span class="manage-label">上传图片</span>
+            <p class="manage-hint">可同时上传多张图片。文件名含「交互/总览/流程/board/flow/doc」的将自动识别为交互文档，其余为界面图。</p>
+            <label class="manage-upload-zone" id="manage-upload-zone">
+              <input type="file" name="images" accept="image/*" multiple id="manage-file-input" hidden />
+              <span class="manage-upload-icon">⬆</span>
+              <span>点击选择图片，或将文件拖拽至此处</span>
+            </label>
+            <div class="manage-preview" id="manage-preview"></div>
+          </div>
+          <div class="manage-form-actions">
+            <button type="submit" class="primary">确认添加</button>
+            <button type="button" id="manage-cancel-btn">取消</button>
+          </div>
+          <div id="manage-status" class="manage-status"></div>
+        </form>
+      </div>
+    </div>
+  `;
+}
+
+function bindManagePanel() {
+  const overlay = document.getElementById("add-project-overlay");
+  if (!overlay) return;
+
+  // close
+  overlay.querySelector("#manage-panel-close").addEventListener("click", () => {
+    overlay.remove();
+  });
+  overlay.querySelector("#manage-cancel-btn").addEventListener("click", () => {
+    overlay.remove();
+  });
+
+  // click outside to close
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  // file input via zone click
+  const zone = overlay.querySelector("#manage-upload-zone");
+  const fileInput = overlay.querySelector("#manage-file-input");
+  zone.addEventListener("click", () => fileInput.click());
+
+  // drag & drop
+  zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
+  zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    zone.classList.remove("drag-over");
+    const dt = new DataTransfer();
+    Array.from(fileInput.files || []).forEach((f) => dt.items.add(f));
+    Array.from(e.dataTransfer.files).forEach((f) => dt.items.add(f));
+    fileInput.files = dt.files;
+    fileInput.dispatchEvent(new Event("change"));
+  });
+
+  // preview
+  const DOC_KW = ["交互","总览","流程","文档","doc","document","flow","board","mockup","overview","ux","wireframe"];
+  fileInput.addEventListener("change", () => {
+    const preview = overlay.querySelector("#manage-preview");
+    preview.innerHTML = Array.from(fileInput.files).map((f) => {
+      const stem = f.name.toLowerCase().replace(/[.][^.]+$/, "");
+      const isDoc = DOC_KW.some((k) => stem.includes(k));
+      const tag = isDoc
+        ? `<span class="chip" style="background:var(--accent,#6c63ff);color:#fff">交互文档</span>`
+        : `<span class="chip">界面图</span>`;
+      return `<div class="manage-file-chip">${tag} ${escapeHtml(f.name)}</div>`;
+    }).join("");
+  });
+
+  // submit
+  const form = overlay.querySelector("#manage-add-form");
+  const status = overlay.querySelector("#manage-status");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = "正在上传并重建站点，请稍候…";
+
+    const fd = new FormData(form);
+    // Ensure all selected files are in FormData under "images"
+    Array.from(fileInput.files).forEach((f) => {
+      if (!fd.getAll("images").includes(f)) fd.append("images", f);
+    });
+
+    try {
+      const res = await fetch("/api/add-project", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed");
+      status.textContent = "✓ 项目已添加，站点已重建！";
+      await reloadSiteData();
+      setTimeout(() => { overlay.remove(); render(); }, 800);
+    } catch (err) {
+      status.textContent = "✗ 添加失败：" + err.message;
+      btn.disabled = false;
+    }
+  });
+}
+
+async function handleRemoveProject(projectId) {
+  if (!confirm(`确认删除项目"${projectId}"？此操作不可撤销（仅从站点索引移除，不删除源文件）。`)) return;
+  try {
+    const res = await fetch("/api/remove-project", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ project_id: projectId }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || "Failed");
+    await reloadSiteData();
+    render();
+  } catch (err) {
+    alert("删除失败：" + err.message);
+  }
+}
+
+// Force all images inside #app to refetch (defeats browser cache after replacement)
+function bustAllImages() {
+  const stamp = Date.now();
+  document.querySelectorAll("#app img").forEach((img) => {
+    try {
+      const url = new URL(img.getAttribute("src"), window.location.href);
+      url.searchParams.set("v", stamp);
+      img.src = url.pathname + url.search;
+    } catch {
+      // data: URLs or malformed, skip
+    }
+  });
+}
+
+// Walk state.overrides for any image src that was replaced in edit mode.
+// Each entry returned has everything needed to POST /api/replace-image.
+function collectImageOverrideTasks(overrides, baseData) {
+  const tasks = [];
+  const walk = (obj, path) => {
+    if (!obj || typeof obj !== "object") return;
+    Object.entries(obj).forEach(([key, value]) => {
+      const p = path ? `${path}.${key}` : key;
+      if (key === "src" && typeof value === "string" && value.startsWith("data:")) {
+        const parentPath = path;
+        const parent = parentPath
+          .split(".")
+          .filter(Boolean)
+          .reduce((cur, part) => (cur == null ? cur : cur[part]), baseData);
+        const projMatch = /^projects\\.(\\d+)\\b/.exec(parentPath || "");
+        const projectSlot = projMatch ? baseData?.projects?.[Number(projMatch[1])] : null;
+        const relativePath = parent && parent.relative_path;
+        if (projectSlot && projectSlot.id && relativePath) {
+          tasks.push({
+            overridePath: p,
+            projectId: projectSlot.id,
+            relativePath: relativePath,
+            dataUrl: value,
+          });
+        }
+      } else if (value && typeof value === "object") {
+        walk(value, p);
+      }
+    });
+  };
+  walk(overrides, "");
+  return tasks;
+}
+
+async function saveOverridesToSource(btn) {
+  const tasks = collectImageOverrideTasks(state.overrides, state.baseData);
+  if (!tasks.length) {
+    alert("当前没有待保存的图片修改。编辑模式下点击图片替换后再保存。");
+    return;
+  }
+
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  const errors = [];
+
+  for (let i = 0; i < tasks.length; i += 1) {
+    const t = tasks[i];
+    btn.textContent = `保存中 (${i + 1}/${tasks.length})…`;
+    try {
+      const blob = await (await fetch(t.dataUrl)).blob();
+      const fd = new FormData();
+      fd.append("project_id", t.projectId);
+      fd.append("file", t.relativePath);
+      fd.append("image", blob, `upload-${i}.png`);
+      const res = await fetch("/api/replace-image", { method: "POST", body: fd });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+      deleteByPath(state.overrides, t.overridePath);
+    } catch (err) {
+      errors.push(`${t.overridePath}: ${err.message}`);
+    }
+  }
+
+  saveOverrides();
+  try {
+    await reloadSiteData();
+    render();
+    bustAllImages();
+  } catch (err) {
+    console.error("reload after save failed:", err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = originalLabel;
+
+  const ok = tasks.length - errors.length;
+  if (errors.length) {
+    alert(`已保存 ${ok}/${tasks.length},部分失败:\\n${errors.join("\\n")}`);
+  } else {
+    alert(`✓ ${ok} 张图片已写回源文件,站点已重建。`);
+  }
+}
+
+function bindManageInteractions() {
+  // Add project button in toolbar
+  document.getElementById("manage-add-project")?.addEventListener("click", () => {
+    if (!document.getElementById("add-project-overlay")) {
+      document.body.insertAdjacentHTML("beforeend", renderAddProjectPanel());
+      bindManagePanel();
+    }
+  });
+
+  // Remove buttons on project cards
+  document.querySelectorAll("[data-remove-project]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      handleRemoveProject(btn.dataset.removeProject);
+    });
+  });
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+
+async function boot() {
+  try {
+    await checkManagementApi();
+    const response = await fetch("./site-data.json", { cache: "no-store" });
+    state.baseData = await response.json();
+    loadOverrides();
+    loadSectionConfig();
+    refreshData();
+
+    if (state.data.site?.theme?.accent) {
+      document.documentElement.style.setProperty("--accent", state.data.site.theme.accent);
+    }
+    if (state.data.site?.theme?.background) {
+      document.documentElement.style.setProperty("--bg", state.data.site.theme.background);
+    }
+
+    applyHash();
+    render();
+    window.addEventListener("hashchange", () => {
+      applyHash();
+      render();
+    });
+  } catch (error) {
+    console.error(error);
+    const msg = error && (error.stack || error.message || String(error)) || "unknown";
+    app.innerHTML = `<div class="empty" style="padding:24px;white-space:pre-wrap;font-family:monospace;font-size:12px;color:#f87171;">Failed to load site data.${escapeHtml(" — ") + escapeHtml(msg)}</div>`;
+  }
+}
+
+boot();
+"""
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate a multi-project hub or a single-project detail site."
+    )
+    parser.add_argument("--input-dir", required=True, help="Folder containing one project or a projects index.")
+    parser.add_argument("--title", help="Optional site title override.")
+    parser.add_argument("--subtitle", default="", help="Optional site subtitle override.")
+    parser.add_argument("--description", default="", help="Optional site description override.")
+    parser.add_argument("--manifest", help="Optional manifest path. For multi-project mode, this should point to projects.index.json.")
+    parser.add_argument("--output-dir", help="Optional output directory.")
+    parser.add_argument("--serve", action="store_true", help="Start a local preview server.")
+    parser.add_argument("--manage", action="store_true", help="Start a management server with project add/remove API.")
+    parser.add_argument("--port", type=int, default=8123, help="Preview server port.")
+    parser.add_argument("--open-browser", action="store_true", help="Open the preview URL in the system browser.")
+    parser.add_argument(
+        "--enable-prototype",
+        action="store_true",
+        help="Enable the interactive prototype module, including prototype scenes, steps, and hotspots.",
+    )
+    parser.add_argument(
+        "--mode",
+        default="auto",
+        choices=("auto", "portfolio", "demo", "hybrid"),
+        help="Legacy compatibility flag. The new layout always renders project overview plus project detail sections.",
+    )
+    return parser.parse_args()
+
+
+def read_json(path: Path | None) -> dict[str, Any]:
+    if not path or not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"Invalid JSON: {path} ({exc})") from exc
+
+
+def slugify(value: str) -> str:
+    normalized = re.sub(r"[^\w\s-]", "", value).strip().lower()
+    normalized = re.sub(r"[-\s]+", "-", normalized)
+    return normalized or "project"
+
+
+def normalize_text(value: str) -> str:
+    return re.sub(r"[_-]+", " ", value).strip()
+
+
+def title_from_stem(stem: str) -> str:
+    cleaned = re.sub(r"^[\W_]*\d+[\W_]*", "", stem).strip()
+    return normalize_text(cleaned or stem) or stem
+
+
+def is_hidden_or_ignored(path: Path) -> bool:
+    return any(part.startswith(".") or part in IGNORE_DIR_NAMES for part in path.parts)
+
+
+def discover_images(input_dir: Path) -> list[Path]:
+    images: list[Path] = []
+    for path in input_dir.rglob("*"):
+        if not path.is_file():
+            continue
+        if path.suffix.lower() not in IMAGE_EXTENSIONS:
+            continue
+        rel = path.relative_to(input_dir)
+        if is_hidden_or_ignored(rel):
+            continue
+        images.append(path)
+    return sorted(images, key=lambda item: str(item.relative_to(input_dir)).lower())
+
+
+def locate_site_manifest(project_dir: Path) -> Path | None:
+    for name in ("site.meta.json", "portfolio.meta.json"):
+        candidate = project_dir / name
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def locate_index_manifest(input_dir: Path, manifest_arg: str | None) -> Path | None:
+    if manifest_arg:
+        return Path(manifest_arg).expanduser().resolve()
+    candidate = input_dir / "projects.index.json"
+    if candidate.exists():
+        return candidate
+    return None
+
+
+def resolve_output_dir(input_dir: Path, output_dir_arg: str | None) -> Path:
+    if output_dir_arg:
+        return Path(output_dir_arg).expanduser().resolve()
+    return (input_dir / "_portfolio_site" / input_dir.name).resolve()
+
+
+def prepare_output_dir(output_dir: Path) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    assets_dir = output_dir / "assets"
+    if assets_dir.exists():
+        shutil.rmtree(assets_dir)
+    assets_dir.mkdir(parents=True, exist_ok=True)
+    for file_name in ("index.html", "styles.css", "app.js", "site-data.json"):
+        file_path = output_dir / file_name
+        if file_path.exists():
+            file_path.unlink()
+
+
+def copy_asset(
+    source_path: Path,
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> str:
+    cache_key = str(source_path.resolve())
+    if cache_key in cache:
+        return cache[cache_key]
+
+    try:
+        rel = source_path.relative_to(project_dir)
+    except ValueError:
+        rel = Path(source_path.name)
+    target = output_dir / "assets" / asset_prefix / rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source_path, target)
+    public_path = target.relative_to(output_dir).as_posix()
+    cache[cache_key] = public_path
+    return public_path
+
+
+def resolve_source_path(project_dir: Path, file_value: str) -> tuple[Path, str]:
+    candidate = Path(file_value)
+    source_path = (
+        candidate.expanduser().resolve()
+        if candidate.is_absolute()
+        else (project_dir / candidate).resolve()
+    )
+    if not source_path.exists():
+        raise SystemExit(f"Referenced file not found: {file_value}")
+    try:
+        relative_path = source_path.relative_to(project_dir.resolve()).as_posix()
+    except ValueError:
+        relative_path = source_path.name
+    return source_path, relative_path
+
+
+def listify(values: Any) -> list[Any]:
+    return values if isinstance(values, list) else []
+
+
+def merge_labels(*label_sets: Any) -> dict[str, str]:
+    merged = dict(DEFAULT_LABELS)
+    for label_set in label_sets:
+        if isinstance(label_set, dict):
+            for key, value in label_set.items():
+                if value is not None:
+                    merged[str(key)] = str(value)
+    return merged
+
+
+def build_item(
+    entry: dict[str, Any],
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any]:
+    source_path, relative_path = resolve_source_path(project_dir, entry["file"])
+    return {
+        "id": entry.get("id") or Path(relative_path).stem,
+        "relative_path": relative_path,
+        "title": entry.get("title") or title_from_stem(source_path.stem),
+        "caption": entry.get("caption", ""),
+        "section": entry.get("section", ""),
+        "tags": listify(entry.get("tags")),
+        "summary": entry.get("summary", ""),
+        "notes": listify(entry.get("notes")),
+        "states": listify(entry.get("states")),
+        "doc_refs": listify(entry.get("doc_refs")),
+        "hover_title": entry.get("hover_title", ""),
+        "hover_description": entry.get("hover_description", ""),
+        "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+    }
+
+
+def build_media_asset(
+    file_value: str | None,
+    title: str,
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any] | None:
+    if not file_value:
+        return None
+    source_path, relative_path = resolve_source_path(project_dir, file_value)
+    return {
+        "id": Path(relative_path).stem,
+        "relative_path": relative_path,
+        "title": title,
+        "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+    }
+
+
+def build_proto_hotspots(hotspots: Any) -> list[dict[str, Any]]:
+    if not isinstance(hotspots, list):
+        return []
+    results: list[dict[str, Any]] = []
+    for index, hotspot in enumerate(hotspots):
+        if not isinstance(hotspot, dict):
+            continue
+        results.append(
+            {
+                "id": hotspot.get("id") or f"hotspot-{index + 1}",
+                "x": float(hotspot.get("x", 0)),
+                "y": float(hotspot.get("y", 0)),
+                "title": hotspot.get("title") or hotspot.get("label", ""),
+                "label": hotspot.get("label", ""),
+                "content": hotspot.get("content") or hotspot.get("description", ""),
+            }
+        )
+    return results
+
+
+def build_prototype_scene(
+    entry: dict[str, Any],
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any]:
+    source_path, relative_path = resolve_source_path(project_dir, entry["file"])
+    return {
+        "id": entry.get("id") or Path(relative_path).stem,
+        "relative_path": relative_path,
+        "title": entry.get("title") or title_from_stem(source_path.stem),
+        "caption": entry.get("caption", ""),
+        "summary": entry.get("summary", ""),
+        "steps": listify(entry.get("steps")),
+        "hotspots": build_proto_hotspots(entry.get("hotspots")),
+        "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+    }
+
+
+def detect_cover_entry(
+    cover_value: str | None,
+    screens: list[dict[str, Any]],
+    interaction_doc: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    if cover_value:
+        normalized = str(cover_value).replace("\\", "/")
+        for item in screens:
+            if item["relative_path"] == normalized:
+                return item
+        if interaction_doc and interaction_doc["relative_path"] == normalized:
+            return interaction_doc
+    return screens[0] if screens else interaction_doc
+
+
+_DOC_STEM_KEYWORDS = (
+    "交互", "总览", "流程", "文档",
+    "doc", "document", "flow", "board", "mockup", "overview", "wireframe",
+)
+
+
+def _auto_detect_interaction_doc_from_screens(screens: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Return the first screen whose filename contains interaction-doc keywords."""
+    for item in screens:
+        stem = Path(item["relative_path"]).stem.lower()
+        if any(k in stem for k in _DOC_STEM_KEYWORDS):
+            return item
+    return None
+
+
+def detect_interaction_doc(
+    meta: dict[str, Any],
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any] | None:
+    value = meta.get("interaction_doc")
+    if isinstance(value, dict) and value.get("file"):
+        return build_item(value, project_dir, output_dir, asset_prefix, cache)
+    if isinstance(value, str):
+        return build_item({"file": value, "title": "交互文档"}, project_dir, output_dir, asset_prefix, cache)
+    return None
+
+
+def _build_flow(
+    flow_meta: Any,
+    screens: list[dict[str, Any]],
+    interaction_doc: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Parse the `flow` block from site.meta.json into a clean data structure."""
+    if not isinstance(flow_meta, dict):
+        return None
+    nodes_raw = flow_meta.get("nodes")
+    if not isinstance(nodes_raw, list) or not nodes_raw:
+        return None
+
+    all_items = {s["id"]: s for s in screens}
+    if interaction_doc:
+        all_items[interaction_doc["id"]] = interaction_doc
+
+    nodes = []
+    for node in nodes_raw:
+        if not isinstance(node, dict) or not node.get("id"):
+            continue
+        nodes.append({
+            "id": str(node["id"]),
+            "label": str(node.get("label", node["id"])),
+            "screen_id": str(node["screen_id"]) if node.get("screen_id") else None,
+            "col": int(node.get("col", 0)),
+            "row": int(node.get("row", 0)),
+        })
+
+    edges = []
+    for edge in flow_meta.get("edges", []):
+        if not isinstance(edge, dict) or not edge.get("from") or not edge.get("to"):
+            continue
+        edges.append({
+            "from": str(edge["from"]),
+            "to": str(edge["to"]),
+            "label": str(edge.get("label", "")),
+            "type": str(edge.get("type", "forward")),
+        })
+
+    return {
+        "title": str(flow_meta.get("title", "交互流程图")),
+        "description": str(flow_meta.get("description", "")),
+        "nodes": nodes,
+        "edges": edges,
+    }
+
+
+def _auto_build_prototype_from_flow(
+    flow: dict[str, Any],
+    screens: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    """Derive prototype scenes + nav-hotspots automatically from flow data."""
+    nodes = flow.get("nodes", [])
+    edges = flow.get("edges", [])
+    if not nodes or not edges:
+        return None
+
+    screen_map = {s["id"]: s for s in screens}
+
+    # collect only nodes that have a matching screen image
+    valid_nodes = [n for n in nodes if n.get("screen_id") and n["screen_id"] in screen_map]
+    if not valid_nodes:
+        return None
+
+    # node_id → future scene list index
+    node_id_to_idx: dict[str, int] = {n["id"]: i for i, n in enumerate(valid_nodes)}
+
+    # outgoing edges per node
+    outgoing: dict[str, list[dict[str, Any]]] = {}
+    for edge in edges:
+        outgoing.setdefault(edge["from"], []).append(edge)
+
+    scenes: list[dict[str, Any]] = []
+    for node in valid_nodes:
+        screen = screen_map[node["screen_id"]]
+        edges_out = outgoing.get(node["id"], [])
+        n = len(edges_out)
+
+        hotspots: list[dict[str, Any]] = []
+        for i, edge in enumerate(edges_out):
+            tgt_idx = node_id_to_idx.get(edge["to"])
+            if tgt_idx is None:
+                continue
+            # Distribute hotspots evenly along the bottom 20% of the screen
+            if n == 1:
+                x = 50.0
+            else:
+                margin = max(15.0, 40.0 - n * 3)
+                x = round(margin + i * (100.0 - 2 * margin) / (n - 1), 1)
+            hotspots.append({
+                "id": f"hs-{node['id']}-{edge['to']}",
+                "x": x,
+                "y": 84.0,
+                "title": edge.get("label") or f"→ {edge['to']}",
+                "label": edge.get("label", ""),
+                "content": "",
+                "goto_scene_index": tgt_idx,
+            })
+
+        label = node.get("label", "").replace("\n", " ")
+        scenes.append({
+            **screen,
+            "id": node["id"],
+            "title": label or screen["title"],
+            "summary": "",
+            "steps": [],
+            "hotspots": hotspots,
+        })
+
+    return {
+        "intro": "点击画面中的热区按钮，可切换到对应交互场景。",
+        "scenes": scenes,
+        "auto_generated": True,
+    }
+
+
+def build_project(
+    project_dir: Path,
+    output_dir: Path,
+    prototype_enabled: bool,
+    index_entry: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    manifest = read_json(locate_site_manifest(project_dir))
+    project_id = (
+        str((index_entry or {}).get("id", "")).strip()
+        or str(manifest.get("id", "")).strip()
+        or slugify(project_dir.name)
+    )
+    asset_prefix = project_id
+    cache: dict[str, str] = {}
+
+    items_meta = manifest.get("items")
+    if isinstance(items_meta, list) and items_meta:
+        screens = [build_item(entry, project_dir, output_dir, asset_prefix, cache) for entry in items_meta if isinstance(entry, dict) and entry.get("file")]
+    else:
+        screens = []
+        for source_path in discover_images(project_dir):
+            rel = source_path.relative_to(project_dir).as_posix()
+            screens.append(
+                {
+                    "id": Path(rel).stem,
+                    "relative_path": rel,
+                    "title": title_from_stem(source_path.stem),
+                    "caption": "",
+                    "section": "",
+                    "tags": [],
+                    "summary": "",
+                    "notes": [],
+                    "states": [],
+                    "doc_refs": [],
+                    "hover_title": "",
+                    "hover_description": "",
+                    "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+                }
+            )
+
+    interaction_doc = detect_interaction_doc(manifest, project_dir, output_dir, asset_prefix, cache)
+    if interaction_doc:
+        screens = [item for item in screens if item["relative_path"] != interaction_doc["relative_path"]]
+    elif not manifest.get("interaction_doc"):
+        # Auto-detect from filename when no explicit interaction_doc is configured
+        interaction_doc = _auto_detect_interaction_doc_from_screens(screens)
+        if interaction_doc:
+            screens = [item for item in screens if item["relative_path"] != interaction_doc["relative_path"]]
+
+    explicit_detail_cover = (
+        (index_entry or {}).get("detail_cover")
+        or manifest.get("detail_cover")
+        or manifest.get("cover")
+        or manifest.get("hero")
+    )
+    cover = detect_cover_entry(explicit_detail_cover, screens, interaction_doc)
+    card_cover = build_media_asset(
+        (index_entry or {}).get("card_cover") or manifest.get("card_cover"),
+        f"{title_from_stem(project_dir.name)} card cover",
+        project_dir,
+        output_dir,
+        asset_prefix,
+        cache,
+    ) or cover
+    prototype_meta = manifest.get("prototype")
+    if not isinstance(prototype_meta, dict):
+        prototype_meta = manifest.get("demo") if isinstance(manifest.get("demo"), dict) else {}
+
+    scenes_meta = prototype_meta.get("scenes", [])
+    proto_scenes = [
+        build_prototype_scene(entry, project_dir, output_dir, asset_prefix, cache)
+        for entry in scenes_meta
+        if isinstance(entry, dict) and entry.get("file")
+    ]
+
+    # Auto-generate prototype from flow when no explicit scenes are configured
+    proto_intro = prototype_meta.get("intro", "")
+    auto_proto_generated = False
+    flow_data = _build_flow(manifest.get("flow"), screens, interaction_doc)
+    if not proto_scenes and flow_data:
+        auto_proto = _auto_build_prototype_from_flow(flow_data, screens)
+        if auto_proto:
+            proto_scenes = auto_proto["scenes"]
+            proto_intro = auto_proto["intro"]
+            auto_proto_generated = True
+
+    # Auto-enable prototype when scenes were successfully derived from flow
+    effective_prototype_enabled = prototype_enabled or (auto_proto_generated and bool(proto_scenes))
+
+    tags = listify((index_entry or {}).get("tags")) or listify(manifest.get("tags"))
+    title = (index_entry or {}).get("title") or manifest.get("title") or project_dir.name
+    subtitle = (index_entry or {}).get("subtitle") or manifest.get("subtitle", "")
+    summary = (index_entry or {}).get("summary") or manifest.get("description") or manifest.get("summary", "")
+    labels = merge_labels(manifest.get("labels"), (index_entry or {}).get("labels"))
+
+    return {
+        "id": project_id,
+        "title": title,
+        "subtitle": subtitle,
+        "summary": summary,
+        "tags": tags,
+        "labels": labels,
+        "cover": cover,
+        "card_cover": card_cover,
+        "interaction_doc": interaction_doc,
+        "screens": screens,
+        "flow": flow_data,
+        "prototype": {
+            "enabled": effective_prototype_enabled,
+            "intro": proto_intro,
+            "scenes": proto_scenes,
+        },
+    }
+
+
+def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path) -> dict[str, Any]:
+    index_manifest_path = locate_index_manifest(input_dir, args.manifest)
+    index_manifest = read_json(index_manifest_path)
+
+    site_asset_cache: dict[str, str] = {}
+    if index_manifest.get("projects"):
+        projects: list[dict[str, Any]] = []
+        for entry in index_manifest["projects"]:
+            if not isinstance(entry, dict) or not entry.get("path"):
+                continue
+            project_dir = (input_dir / entry["path"]).resolve()
+            if not project_dir.exists():
+                raise SystemExit(f"Project path not found: {entry['path']}")
+            projects.append(
+                build_project(project_dir, output_dir, args.enable_prototype, entry)
+            )
+        if not projects:
+            raise SystemExit("No valid projects found in projects.index.json")
+
+        site_hero_image = build_media_asset(
+            index_manifest.get("hero_image"),
+            "site hero image",
+            input_dir,
+            output_dir,
+            "__site",
+            site_asset_cache,
+        )
+        all_tags: list[str] = []
+        for p in projects:
+            for t in (p.get("tags") or []):
+                if t and t not in all_tags:
+                    all_tags.append(t)
+        return {
+            "site": {
+                "title": args.title or index_manifest.get("title") or input_dir.name,
+                "subtitle": args.subtitle or index_manifest.get("subtitle", ""),
+                "description": args.description or index_manifest.get("description", ""),
+                "owner": index_manifest.get("owner", ""),
+                "role": index_manifest.get("role", ""),
+                "bio": index_manifest.get("bio", ""),
+                "all_tags": index_manifest.get("all_tags") or all_tags,
+                "prototype_enabled": args.enable_prototype,
+                "labels": merge_labels(index_manifest.get("labels")),
+                "hero_image": site_hero_image,
+                "theme": {
+                    "accent": index_manifest.get("theme", {}).get("accent", "#7c5cff"),
+                    "background": index_manifest.get("theme", {}).get("background", "#0b1020"),
+                },
+            },
+            "projects": projects,
+        }
+
+    project = build_project(input_dir, output_dir, args.enable_prototype)
+    site_title = args.title or project["title"] or input_dir.name
+    single_manifest = read_json(locate_site_manifest(input_dir))
+    site_hero_image = build_media_asset(
+        single_manifest.get("hero_image"),
+        "site hero image",
+        input_dir,
+        output_dir,
+        "__site",
+        site_asset_cache,
+    )
+    all_tags: list[str] = []
+    for t in (project.get("tags") or []):
+        if t and t not in all_tags:
+            all_tags.append(t)
+    return {
+        "site": {
+            "title": site_title,
+            "subtitle": args.subtitle or single_manifest.get("subtitle", ""),
+            "description": args.description or single_manifest.get("description", ""),
+            "owner": single_manifest.get("owner", ""),
+            "role": single_manifest.get("role", ""),
+            "bio": single_manifest.get("bio", ""),
+            "all_tags": single_manifest.get("all_tags") or all_tags,
+            "prototype_enabled": args.enable_prototype,
+            "labels": merge_labels(single_manifest.get("labels")),
+            "hero_image": site_hero_image,
+            "theme": {
+                "accent": single_manifest.get("theme", {}).get("accent", "#7c5cff"),
+                "background": single_manifest.get("theme", {}).get("background", "#0b1020"),
+            },
+        },
+        "projects": [project],
+    }
+
+
+def write_site_files(output_dir: Path, data: dict[str, Any]) -> None:
+    (output_dir / "index.html").write_text(HTML_TEMPLATE, encoding="utf-8")
+    (output_dir / "styles.css").write_text(CSS_TEMPLATE, encoding="utf-8")
+    (output_dir / "app.js").write_text(JS_TEMPLATE, encoding="utf-8")
+    (output_dir / "site-data.json").write_text(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def start_server(output_dir: Path, port: int, open_browser: bool) -> None:
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(output_dir))
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer(("127.0.0.1", port), handler) as server:
+        url = f"http://127.0.0.1:{port}"
+        print(f"Preview URL: {url}")
+        print("Press Ctrl+C to stop the server.")
+        if open_browser:
+            webbrowser.open(url)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\\nServer stopped.")
+
+
+def build_site(args: argparse.Namespace) -> Path:
+    input_dir = Path(args.input_dir).expanduser().resolve()
+    if not input_dir.exists() or not input_dir.is_dir():
+        raise SystemExit(f"Input folder not found: {input_dir}")
+
+    output_dir = resolve_output_dir(input_dir, args.output_dir)
+    if output_dir == input_dir:
+        raise SystemExit("Output directory cannot be the same as the input directory.")
+
+    prepare_output_dir(output_dir)
+    data = build_site_data(args, input_dir, output_dir)
+    write_site_files(output_dir, data)
+    return output_dir
+
+
+def main() -> int:
+    args = parse_args()
+    output_dir = build_site(args)
+    print(f"Generated site: {output_dir}")
+    if getattr(args, "manage", False):
+        from manage_server import start_management_server  # noqa: PLC0415
+        input_dir = Path(args.input_dir).expanduser().resolve()
+        start_management_server(input_dir, output_dir, args, args.port, args.open_browser)
+    elif args.serve:
+        start_server(output_dir, args.port, args.open_browser)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
