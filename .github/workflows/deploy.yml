@@ -1,12 +1,8 @@
 name: Build & Deploy Portfolio to GitHub Pages
 
-# 当前只允许手动触发,避免作品集未完善时自动发布
-# 准备好公开时改回:
-#   on:
-#     push:
-#       branches: [main]
-#     workflow_dispatch:
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
