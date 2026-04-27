@@ -316,6 +316,67 @@ def add_project_screen(
     return {"ok": True, "project_id": project_id, "item": new_entry, "file": target.name}
 
 
+def update_project_flow(
+    input_dir: Path,
+    project_id: str,
+    flow_data: Any,
+) -> dict[str, Any]:
+    """Replace a project's flow block in site.meta.json with the given structure."""
+    if not isinstance(flow_data, dict):
+        raise ValueError("flow data must be an object")
+
+    project_dir = _resolve_project_dir(input_dir, project_id)
+    meta_path = _locate_project_meta(project_dir)
+    meta = read_json(meta_path) if meta_path.exists() else {}
+
+    cleaned: dict[str, Any] = {
+        "title": str(flow_data.get("title", "交互流程图") or "交互流程图"),
+        "description": str(flow_data.get("description", "")),
+        "nodes": [],
+        "edges": [],
+    }
+
+    raw_nodes = flow_data.get("nodes")
+    if isinstance(raw_nodes, list):
+        for node in raw_nodes:
+            if not isinstance(node, dict) or not str(node.get("id", "")).strip():
+                continue
+            cleaned["nodes"].append({
+                "id": str(node["id"]).strip(),
+                "label": str(node.get("label", "")).strip() or str(node["id"]).strip(),
+                "screen_id": str(node["screen_id"]).strip() if node.get("screen_id") not in (None, "") else None,
+                "col": int(node.get("col", 0) or 0),
+                "row": int(node.get("row", 0) or 0),
+            })
+
+    # Drop nodes with screen_id=None (cleaner output)
+    for node in cleaned["nodes"]:
+        if node["screen_id"] is None:
+            node.pop("screen_id", None)
+
+    raw_edges = flow_data.get("edges")
+    if isinstance(raw_edges, list):
+        for edge in raw_edges:
+            if not isinstance(edge, dict):
+                continue
+            src = str(edge.get("from", "")).strip()
+            dst = str(edge.get("to", "")).strip()
+            if not src or not dst:
+                continue
+            entry: dict[str, Any] = {
+                "from": src,
+                "to": dst,
+                "label": str(edge.get("label", "")).strip(),
+            }
+            if str(edge.get("type", "")).strip() == "back":
+                entry["type"] = "back"
+            cleaned["edges"].append(entry)
+
+    meta["flow"] = cleaned
+    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"ok": True, "project_id": project_id, "flow": cleaned}
+
+
 def replace_project_image(
     input_dir: Path,
     project_id: str,
@@ -415,6 +476,7 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
                 "/api/replace-image": self._handle_replace_image,
                 "/api/add-screen": self._handle_add_screen,
                 "/api/remove-screen": self._handle_remove_screen,
+                "/api/update-flow": self._handle_update_flow,
                 "/api/rebuild": self._handle_rebuild,
             }
             fn = handlers.get(clean_path)
@@ -547,6 +609,25 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
                     hover_title=fields.get("hover_title", ""),
                     hover_description=fields.get("hover_description", ""),
                 )
+                self._rebuild()
+                self.send_json(result)
+            except Exception as exc:  # noqa: BLE001
+                self.send_json({"error": str(exc)}, 500)
+
+        def _handle_update_flow(self) -> None:
+            body = self.read_body()
+            try:
+                data = json.loads(body)
+            except Exception:
+                self.send_json({"error": "Invalid JSON"}, 400)
+                return
+            project_id = str(data.get("project_id", "")).strip()
+            flow_data = data.get("flow")
+            if not project_id:
+                self.send_json({"error": "project_id required"}, 400)
+                return
+            try:
+                result = update_project_flow(input_dir, project_id, flow_data)
                 self._rebuild()
                 self.send_json(result)
             except Exception as exc:  # noqa: BLE001

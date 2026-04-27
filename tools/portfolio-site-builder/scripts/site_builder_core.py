@@ -1024,6 +1024,133 @@ body {
   gap: 20px;
 }
 
+/* ── Flow Editor ──────────────────────────────────────────── */
+
+.flow-editor-panel {
+  width: min(880px, 100%);
+}
+
+.flow-editor-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-right: 4px;
+}
+
+.flow-editor-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flow-editor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+}
+
+.flow-editor-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flow-editor-section-head h3 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.flow-editor-hint {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.flow-nodes-list,
+.flow-edges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-editor-empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--text-soft);
+  font-size: 13px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 8px;
+}
+
+.flow-editor-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding: 8px;
+  background: rgba(15, 23, 42, 0.45);
+  border-radius: 8px;
+}
+
+.flow-editor-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.flow-editor-cell-narrow { flex: 0 0 64px; }
+.flow-editor-cell-wide   { flex: 1.4; }
+
+.flow-editor-cell-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.flow-editor-cell input,
+.flow-editor-cell select {
+  width: 100%;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.flow-editor-row-del {
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 80, 80, 0.6);
+  color: #fff;
+  cursor: pointer;
+  align-self: center;
+  margin-bottom: 2px;
+}
+
+.flow-editor-foot {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.flow-editor-foot .manage-status {
+  margin-right: auto;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
 .manage-panel-head {
   display: flex;
   justify-content: space-between;
@@ -2022,7 +2149,24 @@ function renderScreens(project, projectIndex) {
 
 function renderFlow(project, projectIndex) {
   const flow = project.flow;
-  if (!flow || !Array.isArray(flow.nodes) || !flow.nodes.length) return "";
+  const canEdit = state.editMode && state.manageMode;
+  if (!flow || !Array.isArray(flow.nodes) || !flow.nodes.length) {
+    if (canEdit) {
+      return `
+        <section class="section panel">
+          <div class="section-head">
+            <div>
+              <div class="section-kicker">Flow</div>
+              <h2 class="section-title">交互流程图</h2>
+              <p class="muted">当前项目还没有流程图, 点右侧按钮新建。</p>
+            </div>
+            <button type="button" class="btn-outline" id="flow-edit-btn" data-project-id="${escapeHtml(project.id)}">✎ 编辑流程图</button>
+          </div>
+        </section>
+      `;
+    }
+    return "";
+  }
 
   const cols = Math.max(...flow.nodes.map(n => n.col || 0)) + 1;
   const rows = Math.max(...flow.nodes.map(n => n.row || 0)) + 1;
@@ -2035,6 +2179,7 @@ function renderFlow(project, projectIndex) {
           <h2 class="section-title">${escapeHtml(flow.title || "交互流程图")}</h2>
           ${flow.description ? `<p class="muted">${escapeHtml(flow.description)}</p>` : ""}
         </div>
+        ${canEdit ? `<button type="button" class="btn-outline" id="flow-edit-btn" data-project-id="${escapeHtml(project.id)}">✎ 编辑流程图</button>` : ""}
       </div>
       <div class="flow-wrap">
         <div class="flow-container" id="flow-${projectIndex}"
@@ -2840,6 +2985,13 @@ function bindManageInteractions() {
       bindAddScreenPanel(projectId);
     }
   });
+
+  // Flow editor button
+  document.getElementById("flow-edit-btn")?.addEventListener("click", (e) => {
+    const projectId = e.currentTarget.dataset.projectId || state.currentProjectId;
+    if (!projectId) return;
+    openFlowEditor(projectId);
+  });
 }
 
 async function handleRemoveScreen(relativePath) {
@@ -2959,6 +3111,278 @@ function bindAddScreenPanel(projectId) {
       submitBtn.disabled = false;
     }
   });
+}
+
+// ── Flow Editor ──────────────────────────────────────────────────────────
+
+function openFlowEditor(projectId) {
+  const project = (state.data?.projects || []).find(p => p.id === projectId);
+  if (!project) {
+    alert("找不到项目: " + projectId);
+    return;
+  }
+  if (document.getElementById("flow-editor-overlay")) return;
+
+  const screens = Array.isArray(project.screens) ? project.screens : [];
+  const interactionDoc = project.interaction_doc || null;
+
+  // Deep clone existing flow into a working copy
+  const flow = project.flow || { title: "交互流程图", description: "", nodes: [], edges: [] };
+  const workingFlow = {
+    title: flow.title || "交互流程图",
+    description: flow.description || "",
+    nodes: (flow.nodes || []).map(n => ({
+      id: n.id || "",
+      label: n.label || "",
+      screen_id: n.screen_id || "",
+      col: Number(n.col) || 0,
+      row: Number(n.row) || 0,
+    })),
+    edges: (flow.edges || []).map(e => ({
+      from: e.from || "",
+      to: e.to || "",
+      label: e.label || "",
+      type: e.type === "back" ? "back" : "forward",
+    })),
+  };
+
+  document.body.insertAdjacentHTML("beforeend", renderFlowEditorPanel(projectId));
+  bindFlowEditor(projectId, workingFlow, screens, interactionDoc);
+}
+
+function renderFlowEditorPanel(projectId) {
+  return `
+    <div class="manage-overlay" id="flow-editor-overlay">
+      <div class="manage-panel flow-editor-panel">
+        <div class="manage-panel-head">
+          <h2>流程图编辑 · ${escapeHtml(projectId)}</h2>
+          <button type="button" id="flow-editor-close">✕</button>
+        </div>
+        <div class="flow-editor-body">
+          <div class="flow-editor-meta">
+            <label class="manage-field">
+              <span class="manage-label">标题</span>
+              <input type="text" id="flow-meta-title" />
+            </label>
+            <label class="manage-field">
+              <span class="manage-label">描述</span>
+              <textarea id="flow-meta-description" rows="2"></textarea>
+            </label>
+          </div>
+
+          <div class="flow-editor-section">
+            <div class="flow-editor-section-head">
+              <h3>节点 (Nodes)</h3>
+              <button type="button" class="btn-outline" id="flow-add-node">+ 添加节点</button>
+            </div>
+            <div class="flow-editor-hint">每个节点对应一个界面 (screen)。col/row 是流程图中的网格位置 (从 0 开始)。</div>
+            <div class="flow-nodes-list" id="flow-nodes-list"></div>
+          </div>
+
+          <div class="flow-editor-section">
+            <div class="flow-editor-section-head">
+              <h3>连线 (Edges)</h3>
+              <button type="button" class="btn-outline" id="flow-add-edge">+ 添加连线</button>
+            </div>
+            <div class="flow-editor-hint">从一个节点到另一个节点的箭头。type=back 表示反向 / 返回连接。</div>
+            <div class="flow-edges-list" id="flow-edges-list"></div>
+          </div>
+        </div>
+        <div class="flow-editor-foot">
+          <button type="button" id="flow-editor-cancel">取消</button>
+          <button type="button" class="primary" id="flow-editor-save">保存并应用</button>
+          <span class="manage-status" id="flow-editor-status"></span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function bindFlowEditor(projectId, flow, screens, interactionDoc) {
+  const overlay = document.getElementById("flow-editor-overlay");
+  if (!overlay) return;
+
+  const titleInput = overlay.querySelector("#flow-meta-title");
+  const descInput  = overlay.querySelector("#flow-meta-description");
+  titleInput.value = flow.title || "";
+  descInput.value  = flow.description || "";
+
+  // Build options for screen selector
+  const screenOptions = [
+    { value: "", label: "(无对应界面)" },
+    ...screens.map(s => ({ value: s.id, label: `${s.id} — ${s.title || s.relative_path || ""}` })),
+  ];
+  if (interactionDoc) {
+    screenOptions.push({ value: interactionDoc.id, label: `${interactionDoc.id} — 交互文档` });
+  }
+
+  const close = () => overlay.remove();
+
+  function renderNodeRow(node, index) {
+    const nodeOpts = screenOptions.map(o =>
+      `<option value="${escapeHtml(o.value)}" ${node.screen_id === o.value ? "selected" : ""}>${escapeHtml(o.label)}</option>`
+    ).join("");
+    return `
+      <div class="flow-editor-row" data-row-kind="node" data-row-index="${index}">
+        <div class="flow-editor-cell">
+          <span class="flow-editor-cell-label">id</span>
+          <input type="text" data-field="id" value="${escapeHtml(node.id)}" placeholder="prep" />
+        </div>
+        <div class="flow-editor-cell">
+          <span class="flow-editor-cell-label">label</span>
+          <input type="text" data-field="label" value="${escapeHtml(node.label)}" placeholder="战前准备" />
+        </div>
+        <div class="flow-editor-cell flow-editor-cell-wide">
+          <span class="flow-editor-cell-label">screen</span>
+          <select data-field="screen_id">${nodeOpts}</select>
+        </div>
+        <div class="flow-editor-cell flow-editor-cell-narrow">
+          <span class="flow-editor-cell-label">col</span>
+          <input type="number" data-field="col" value="${node.col}" min="0" />
+        </div>
+        <div class="flow-editor-cell flow-editor-cell-narrow">
+          <span class="flow-editor-cell-label">row</span>
+          <input type="number" data-field="row" value="${node.row}" min="0" />
+        </div>
+        <button type="button" class="flow-editor-row-del" data-row-del="node" data-row-index="${index}" title="删除节点">✕</button>
+      </div>
+    `;
+  }
+
+  function renderEdgeRow(edge, index, currentNodes) {
+    const nodeOpts = (id) => [{ value: "", label: "(选择节点)" }, ...currentNodes.map(n => ({ value: n.id, label: n.id || "(空 id)" }))]
+      .map(o => `<option value="${escapeHtml(o.value)}" ${id === o.value ? "selected" : ""}>${escapeHtml(o.label)}</option>`).join("");
+    return `
+      <div class="flow-editor-row" data-row-kind="edge" data-row-index="${index}">
+        <div class="flow-editor-cell flow-editor-cell-wide">
+          <span class="flow-editor-cell-label">from</span>
+          <select data-field="from">${nodeOpts(edge.from)}</select>
+        </div>
+        <div class="flow-editor-cell flow-editor-cell-wide">
+          <span class="flow-editor-cell-label">to</span>
+          <select data-field="to">${nodeOpts(edge.to)}</select>
+        </div>
+        <div class="flow-editor-cell">
+          <span class="flow-editor-cell-label">label</span>
+          <input type="text" data-field="label" value="${escapeHtml(edge.label)}" placeholder="点击..." />
+        </div>
+        <div class="flow-editor-cell flow-editor-cell-narrow">
+          <span class="flow-editor-cell-label">type</span>
+          <select data-field="type">
+            <option value="forward" ${edge.type !== "back" ? "selected" : ""}>正向</option>
+            <option value="back" ${edge.type === "back" ? "selected" : ""}>back</option>
+          </select>
+        </div>
+        <button type="button" class="flow-editor-row-del" data-row-del="edge" data-row-index="${index}" title="删除连线">✕</button>
+      </div>
+    `;
+  }
+
+  function renderAll() {
+    const nodesList = overlay.querySelector("#flow-nodes-list");
+    const edgesList = overlay.querySelector("#flow-edges-list");
+    nodesList.innerHTML = flow.nodes.map((n, i) => renderNodeRow(n, i)).join("") || `<div class="flow-editor-empty">暂无节点, 点上方 + 添加节点</div>`;
+    edgesList.innerHTML = flow.edges.map((e, i) => renderEdgeRow(e, i, flow.nodes)).join("") || `<div class="flow-editor-empty">暂无连线, 点上方 + 添加连线</div>`;
+    bindRowEvents();
+  }
+
+  function bindRowEvents() {
+    overlay.querySelectorAll('.flow-editor-row[data-row-kind="node"]').forEach((row) => {
+      const idx = Number(row.dataset.rowIndex);
+      row.querySelectorAll('input, select').forEach((inp) => {
+        inp.addEventListener('input', () => {
+          const f = inp.dataset.field;
+          const v = inp.value;
+          if (!flow.nodes[idx]) return;
+          if (f === "col" || f === "row") flow.nodes[idx][f] = Number(v) || 0;
+          else flow.nodes[idx][f] = v;
+          // If id changed, edges referencing the old id stay broken — just re-render to refresh selectors
+          if (f === "id") renderAll();
+        });
+      });
+    });
+    overlay.querySelectorAll('.flow-editor-row[data-row-kind="edge"]').forEach((row) => {
+      const idx = Number(row.dataset.rowIndex);
+      row.querySelectorAll('input, select').forEach((inp) => {
+        inp.addEventListener('input', () => {
+          const f = inp.dataset.field;
+          if (!flow.edges[idx]) return;
+          flow.edges[idx][f] = inp.value;
+        });
+      });
+    });
+    overlay.querySelectorAll('[data-row-del]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const kind = btn.dataset.rowDel;
+        const idx = Number(btn.dataset.rowIndex);
+        if (kind === "node") flow.nodes.splice(idx, 1);
+        else flow.edges.splice(idx, 1);
+        renderAll();
+      });
+    });
+  }
+
+  overlay.querySelector("#flow-editor-close").addEventListener("click", close);
+  overlay.querySelector("#flow-editor-cancel").addEventListener("click", close);
+
+  overlay.querySelector("#flow-add-node").addEventListener("click", () => {
+    // Suggest a unique id like node-1, node-2, ...
+    const used = new Set(flow.nodes.map(n => n.id));
+    let i = flow.nodes.length + 1;
+    let candidate;
+    do { candidate = `node-${i++}`; } while (used.has(candidate));
+    const maxRow = flow.nodes.reduce((m, n) => Math.max(m, n.row || 0), -1);
+    flow.nodes.push({ id: candidate, label: candidate, screen_id: "", col: 0, row: maxRow + 1 });
+    renderAll();
+  });
+
+  overlay.querySelector("#flow-add-edge").addEventListener("click", () => {
+    flow.edges.push({ from: "", to: "", label: "", type: "forward" });
+    renderAll();
+  });
+
+  titleInput.addEventListener("input", () => { flow.title = titleInput.value; });
+  descInput.addEventListener("input", () => { flow.description = descInput.value; });
+
+  overlay.querySelector("#flow-editor-save").addEventListener("click", async () => {
+    const status = overlay.querySelector("#flow-editor-status");
+    const saveBtn = overlay.querySelector("#flow-editor-save");
+
+    // Client-side validation
+    const ids = flow.nodes.map(n => (n.id || "").trim()).filter(Boolean);
+    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+    if (dupes.length) {
+      status.textContent = "节点 id 重复: " + Array.from(new Set(dupes)).join(", ");
+      return;
+    }
+    const idSet = new Set(ids);
+    const orphanEdges = flow.edges.filter(e => (e.from && !idSet.has(e.from)) || (e.to && !idSet.has(e.to)));
+    if (orphanEdges.length) {
+      status.textContent = "存在指向不存在节点的连线, 请先修复";
+      return;
+    }
+
+    saveBtn.disabled = true;
+    status.textContent = "保存中…";
+    try {
+      const res = await fetch("/api/update-flow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project_id: projectId, flow }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed");
+      await reloadSiteData();
+      close();
+      render();
+      bustAllImages();
+    } catch (err) {
+      status.textContent = "保存失败: " + err.message;
+      saveBtn.disabled = false;
+    }
+  });
+
+  renderAll();
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────
