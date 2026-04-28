@@ -2146,14 +2146,14 @@ function renderEditorToolbar() {
         <div class="editor-toolbar-note">
           ${state.editMode
             ? (state.manageMode
-                ? "编辑模式已开启:点击文字或图片即可修改。图片修改可点「保存到源文件」写回磁盘并自动重建。"
+                ? "编辑模式已开启:点击文字或图片即可修改。改完点「保存全部到源文件」把文字 + 图片一起写回磁盘, 然后到 Fork 里 commit + push 即可。"
                 : "编辑模式已开启:点击文字或图片即可修改。修改仅保存在当前浏览器,可导出 JSON。")
             : "当前为浏览模式。点击「开启编辑」后可直接修改文字和图片。"}
         </div>
       </div>
       <div class="editor-toolbar-actions">
         <button type="button" id="editor-toggle" class="${state.editMode ? "primary" : ""}">${state.editMode ? "退出编辑" : "开启编辑"}</button>
-        ${state.editMode && state.manageMode ? `<button type="button" id="editor-save-to-source" class="primary" title="把本浏览器内对图片的修改写回源文件并重建站点">保存到源文件</button>` : ""}
+        ${state.editMode && state.manageMode ? `<button type="button" id="editor-save-to-source" class="primary" title="把本浏览器内的所有修改 (文字 + 图片) 写回源文件并重建站点, 之后即可在 Fork 里 commit + push">保存全部到源文件</button>` : ""}
         <button type="button" id="editor-export">导出修改</button>
         <button type="button" id="editor-import-trigger">导入修改</button>
         <button type="button" id="editor-reset">清空修改</button>
@@ -3390,19 +3390,40 @@ function collectImageOverrideTasks(overrides, baseData) {
 }
 
 async function saveOverridesToSource(btn) {
-  const tasks = collectImageOverrideTasks(state.overrides, state.baseData);
-  if (!tasks.length) {
-    alert("当前没有待保存的图片修改。编辑模式下点击图片替换后再保存。");
+  const imageTasks = collectImageOverrideTasks(state.overrides, state.baseData);
+  const hasOverrides = state.overrides && Object.keys(state.overrides).length > 0;
+
+  if (!imageTasks.length && !hasOverrides) {
+    alert("当前没有待保存的修改。在编辑模式下改文字或图片后再保存。");
     return;
   }
 
   const originalLabel = btn.textContent;
   btn.disabled = true;
   const errors = [];
+  let textApplied = 0;
+  let textSkipped = 0;
 
-  for (let i = 0; i < tasks.length; i += 1) {
-    const t = tasks[i];
-    btn.textContent = `保存中 (${i + 1}/${tasks.length})…`;
+  // 1. Save text overrides (and any path-based src edits) in one call
+  try {
+    btn.textContent = "保存文字…";
+    const res = await fetch("/api/save-overrides", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ overrides: state.overrides }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+    textApplied = Number(json.applied) || 0;
+    textSkipped = (Number(json.skipped_image_data) || 0) + (Number(json.skipped_orphan) || 0);
+  } catch (err) {
+    errors.push(`文字保存: ${err.message}`);
+  }
+
+  // 2. Save image overrides via the existing /api/replace-image flow
+  for (let i = 0; i < imageTasks.length; i += 1) {
+    const t = imageTasks[i];
+    btn.textContent = `保存图片 (${i + 1}/${imageTasks.length})…`;
     try {
       const blob = await (await fetch(t.dataUrl)).blob();
       const fd = new FormData();
@@ -3412,13 +3433,18 @@ async function saveOverridesToSource(btn) {
       const res = await fetch("/api/replace-image", { method: "POST", body: fd });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
-      deleteByPath(state.overrides, t.overridePath);
     } catch (err) {
-      errors.push(`${t.overridePath}: ${err.message}`);
+      errors.push(`图片 ${t.relativePath}: ${err.message}`);
     }
   }
 
-  saveOverrides();
+  // 3. Clear local overrides — source files are now the truth
+  if (!errors.length) {
+    state.overrides = {};
+    saveOverrides();
+  }
+
+  // 4. Reload site-data + re-render
   try {
     await reloadSiteData();
     render();
@@ -3430,11 +3456,17 @@ async function saveOverridesToSource(btn) {
   btn.disabled = false;
   btn.textContent = originalLabel;
 
-  const ok = tasks.length - errors.length;
+  const summary = [];
+  if (textApplied) summary.push(`${textApplied} 处文字`);
+  if (imageTasks.length - errors.filter(e => e.startsWith("图片")).length > 0) {
+    summary.push(`${imageTasks.length} 张图片`);
+  }
   if (errors.length) {
-    alert(`已保存 ${ok}/${tasks.length},部分失败:\\n${errors.join("\\n")}`);
+    alert(`保存部分成功 — ${summary.join(", ") || "无变更"} 已写入。失败项:\\n${errors.join("\\n")}`);
+  } else if (summary.length) {
+    alert(`✓ ${summary.join(" + ")} 已写回源文件, 站点已重建。\\n现在可在 Fork 里 commit + push。`);
   } else {
-    alert(`✓ ${ok} 张图片已写回源文件,站点已重建。`);
+    alert("没有需要保存的修改。");
   }
 }
 

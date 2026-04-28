@@ -316,6 +316,227 @@ def add_project_screen(
     return {"ok": True, "project_id": project_id, "item": new_entry, "file": target.name}
 
 
+def _deep_set(target: Any, dotted: str, value: Any) -> None:
+    """Set a dotted-path value inside nested dicts / lists, creating
+    containers as needed. Numeric path parts target list indices, others
+    target dict keys."""
+    parts = dotted.split(".")
+    cur = target
+    for i, part in enumerate(parts[:-1]):
+        next_part = parts[i + 1]
+        next_is_idx = next_part.isdigit()
+        if isinstance(cur, list):
+            idx = int(part)
+            while len(cur) <= idx:
+                cur.append({})
+            if not isinstance(cur[idx], (dict, list)):
+                cur[idx] = [] if next_is_idx else {}
+            cur = cur[idx]
+        else:
+            if part not in cur or not isinstance(cur[part], (dict, list)):
+                cur[part] = [] if next_is_idx else {}
+            cur = cur[part]
+    last = parts[-1]
+    if isinstance(cur, list):
+        idx = int(last)
+        while len(cur) <= idx:
+            cur.append(None)
+        cur[idx] = value
+    else:
+        cur[last] = value
+
+
+# Top-level project entry fields that live in projects.index.json
+_PROJECT_INDEX_FIELDS = {"id", "path", "title", "subtitle", "summary", "tags", "labels"}
+
+# Override `screens.<n>.<field>` corresponds to `items.<n>.<field>` in site.meta.json
+_RESOURCE_FIELDS_FILE_MAP = {
+    "interaction_doc.src": ("interaction_doc.file", "interaction_doc"),
+    "card_cover.src": ("card_cover", None),
+    "cover.src": ("cover", None),
+}
+
+
+def _strip_asset_prefix(value: str, project_id: str) -> str:
+    """Convert 'assets/<project_id>/<rel>' (or '/assets/...') to '<rel>'.
+    Leaves anything else untouched (data: URLs, http URLs, raw filenames)."""
+    if not isinstance(value, str):
+        return value
+    v = value.lstrip("./")
+    prefix = f"assets/{project_id}/"
+    if v.startswith(prefix):
+        return v[len(prefix):]
+    return value
+
+
+def apply_text_overrides(
+    input_dir: Path,
+    overrides: dict[str, Any],
+) -> dict[str, Any]:
+    """Walk a nested override tree and dispatch each leaf to the correct
+    source file (projects.index.json or per-project site.meta.json).
+
+    Returns:
+      {
+        "ok": True,
+        "applied": int,                # text leaves written
+        "skipped_image_data": int,     # data: URL leaves left for image API
+        "skipped_orphan": int,         # entries pointing at deleted projects
+        "files_modified": [paths]
+      }
+    """
+    if not isinstance(overrides, dict):
+        raise ValueError("overrides must be an object")
+
+    index_path = input_dir / "projects.index.json"
+    index = read_json(index_path) if index_path.exists() else {"projects": []}
+    project_entries = index.get("projects", [])
+
+    metas: dict[Path, dict[str, Any]] = {}
+
+    def get_meta_for_project(idx: int):
+        if idx < 0 or idx >= len(project_entries):
+            return None, None
+        entry = project_entries[idx]
+        project_path = entry.get("path") or entry.get("id")
+        if not project_path:
+            return None, None
+        project_dir = (input_dir / project_path).resolve()
+        meta_path = _locate_project_meta(project_dir)
+        if meta_path not in metas:
+            metas[meta_path] = read_json(meta_path) if meta_path.exists() else {}
+        return meta_path, metas[meta_path]
+
+    leaves: list[tuple[str, Any]] = []
+
+    def walk(obj: Any, path: str) -> None:
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                walk(v, f"{path}.{k}" if path else k)
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                if v is None:
+                    continue
+                walk(v, f"{path}.{i}")
+        else:
+            leaves.append((path, obj))
+
+    walk(overrides, "")
+
+    applied = 0
+    skipped_image = 0
+    skipped_orphan = 0
+
+    for path, value in leaves:
+        # Skip non-scalar leftovers
+        if not isinstance(value, (str, int, float, bool)) and value is not None:
+            continue
+
+        # Image data: URL — caller handles via /api/replace-image
+        if isinstance(value, str) and value.startswith("data:") and path.endswith(".src"):
+            skipped_image += 1
+            continue
+
+        if path.startswith("site."):
+            sub = path[len("site."):]
+            _deep_set(index, sub, value)
+            applied += 1
+            continue
+
+        if not path.startswith("projects."):
+            continue
+
+        rest_parts = path.split(".", 2)
+        if len(rest_parts) < 3 or not rest_parts[1].isdigit():
+            continue
+        proj_idx = int(rest_parts[1])
+        rest = rest_parts[2]
+
+        # Skip overrides for projects that no longer exist
+        if proj_idx >= len(project_entries):
+            skipped_orphan += 1
+            continue
+
+        first_token = rest.split(".")[0]
+        project_id = project_entries[proj_idx].get("id", "")
+
+        # Path-based src edits (cover/card_cover/interaction_doc/screens/prototype):
+        # convert "assets/<project_id>/<rel>" -> "<rel>"
+        normalized_value: Any = value
+        if path.endswith(".src") and isinstance(value, str) and not value.startswith("data:"):
+            normalized_value = _strip_asset_prefix(value, project_id)
+
+        # 1) Top-level project entry fields → projects.index.json
+        if first_token in _PROJECT_INDEX_FIELDS:
+            _deep_set(index, f"projects.{proj_idx}.{rest}", value)
+            applied += 1
+            continue
+
+        # 2) Resource src overrides (cover/card_cover/interaction_doc) →
+        #    write the resolved relative filename to the source meta file.
+        meta_path, meta = get_meta_for_project(proj_idx)
+        if meta_path is None or meta is None:
+            skipped_orphan += 1
+            continue
+
+        if rest in _RESOURCE_FIELDS_FILE_MAP:
+            target_field, _ = _RESOURCE_FIELDS_FILE_MAP[rest]
+            _deep_set(meta, target_field, normalized_value)
+            applied += 1
+            continue
+
+        # 3) screens.<n>.<field> → items.<n>.<field>; src path-based →
+        #    items.<n>.file
+        if rest.startswith("screens."):
+            screen_rest = rest[len("screens."):]  # e.g. "2.hover_title" or "2.src"
+            tokens = screen_rest.split(".", 1)
+            if len(tokens) >= 1 and tokens[0].isdigit():
+                screen_idx = tokens[0]
+                tail = tokens[1] if len(tokens) > 1 else ""
+                if tail == "src":
+                    _deep_set(meta, f"items.{screen_idx}.file", normalized_value)
+                else:
+                    _deep_set(meta, f"items.{screen_idx}.{tail}" if tail else f"items.{screen_idx}", value)
+                applied += 1
+                continue
+
+        # 4) interaction_doc.<field> / flow.<field> / prototype.<field> /
+        #    labels.<key> — direct mapping to site.meta.json
+        if rest.startswith(("interaction_doc.", "flow.", "prototype.", "labels.")):
+            # Special: prototype.scenes.<n>.src -> prototype.scenes.<n>.file
+            if rest.endswith(".src") and rest.startswith("prototype.scenes."):
+                rest_no_src = rest[: -len(".src")]
+                _deep_set(meta, f"{rest_no_src}.file", normalized_value)
+            else:
+                _deep_set(meta, rest, value)
+            applied += 1
+            continue
+
+        # Unknown field — skip silently to avoid corrupting unknown structures
+        # (could be an ad-hoc field a user added; safer not to write blindly)
+
+    # Persist modified files
+    files_modified: list[str] = []
+    if applied:
+        index_path.write_text(
+            json.dumps(index, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        files_modified.append(str(index_path))
+        for meta_path, meta in metas.items():
+            meta_path.write_text(
+                json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            files_modified.append(str(meta_path))
+
+    return {
+        "ok": True,
+        "applied": applied,
+        "skipped_image_data": skipped_image,
+        "skipped_orphan": skipped_orphan,
+        "files_modified": files_modified,
+    }
+
+
 def update_project_flow(
     input_dir: Path,
     project_id: str,
@@ -492,6 +713,7 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
                 "/api/add-screen": self._handle_add_screen,
                 "/api/remove-screen": self._handle_remove_screen,
                 "/api/update-flow": self._handle_update_flow,
+                "/api/save-overrides": self._handle_save_overrides,
                 "/api/rebuild": self._handle_rebuild,
             }
             fn = handlers.get(clean_path)
@@ -625,6 +847,28 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
                     hover_description=fields.get("hover_description", ""),
                 )
                 self._rebuild()
+                self.send_json(result)
+            except Exception as exc:  # noqa: BLE001
+                self.send_json({"error": str(exc)}, 500)
+
+        def _handle_save_overrides(self) -> None:
+            body = self.read_body()
+            try:
+                data = json.loads(body)
+            except Exception:
+                self.send_json({"error": "Invalid JSON"}, 400)
+                return
+            overrides = data.get("overrides")
+            if overrides is None:
+                # Allow the bare overrides object as the body too
+                overrides = data
+            if not isinstance(overrides, dict):
+                self.send_json({"error": "overrides must be an object"}, 400)
+                return
+            try:
+                result = apply_text_overrides(input_dir, overrides)
+                if result.get("applied"):
+                    self._rebuild()
                 self.send_json(result)
             except Exception as exc:  # noqa: BLE001
                 self.send_json({"error": str(exc)}, 500)

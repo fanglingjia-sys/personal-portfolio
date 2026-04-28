@@ -5,7 +5,12 @@
   "owner": "Fangling Jia",
   "role": "UX Designer · Game UI",
   "bio": "游戏活动向 UI/UX 与交互说明整理。",
-  "all_tags": ["小游戏", "活动UI", "猜色", "交互文档"],
+  "all_tags": [
+    "小游戏",
+    "活动UI",
+    "猜色",
+    "交互文档"
+  ],
   "interaction_doc": {
     "file": "交互文档.jpg",
     "title": "猜色小游戏 · 交互文档",
@@ -16,19 +21,75 @@
     "title": "交互流程图",
     "description": "主流程：待操作 → 操作中 → 成功或失败；失败后酱料留在桌上形成错误猜测历史，再返回主界面继续挑战。",
     "nodes": [
-      { "id": "main",    "label": "主界面\n待操作",     "screen_id": "1", "col": 0, "row": 0 },
-      { "id": "drag",    "label": "操作中",           "screen_id": "2", "col": 1, "row": 0 },
-      { "id": "success", "label": "挑战成功",         "screen_id": "4", "col": 2, "row": 0 },
-      { "id": "fail",    "label": "挑战失败",         "screen_id": "5", "col": 2, "row": 1 },
-      { "id": "history", "label": "错误历史\n酱料上桌", "screen_id": "6", "col": 3, "row": 1 }
+      {
+        "id": "main",
+        "label": "主界面\n待操作",
+        "screen_id": "1",
+        "col": 0,
+        "row": 0
+      },
+      {
+        "id": "drag",
+        "label": "操作中",
+        "screen_id": "2",
+        "col": 1,
+        "row": 0
+      },
+      {
+        "id": "success",
+        "label": "挑战成功",
+        "screen_id": "4",
+        "col": 2,
+        "row": 0
+      },
+      {
+        "id": "fail",
+        "label": "挑战失败",
+        "screen_id": "5",
+        "col": 2,
+        "row": 1
+      },
+      {
+        "id": "history",
+        "label": "错误历史\n酱料上桌",
+        "screen_id": "6",
+        "col": 3,
+        "row": 1
+      }
     ],
     "edges": [
-      { "from": "main",    "to": "drag",    "label": "开始操作" },
-      { "from": "drag",    "to": "success", "label": "全部正确" },
-      { "from": "drag",    "to": "fail",    "label": "存在错误" },
-      { "from": "success", "to": "main",    "label": "下一关",  "type": "back" },
-      { "from": "fail",    "to": "history", "label": "酱料上桌\n记录错误" },
-      { "from": "history", "to": "main",    "label": "再次挑战", "type": "back" }
+      {
+        "from": "main",
+        "to": "drag",
+        "label": "开始操作"
+      },
+      {
+        "from": "drag",
+        "to": "success",
+        "label": "全部正确"
+      },
+      {
+        "from": "drag",
+        "to": "fail",
+        "label": "存在错误"
+      },
+      {
+        "from": "success",
+        "to": "main",
+        "label": "下一关",
+        "type": "back"
+      },
+      {
+        "from": "fail",
+        "to": "history",
+        "label": "酱料上桌\n记录错误"
+      },
+      {
+        "from": "history",
+        "to": "main",
+        "label": "再次挑战",
+        "type": "back"
+      }
     ]
   },
   "items": [
@@ -67,5 +128,7 @@
       "hover_title": "酱料上桌 · 错误历史",
       "hover_description": "挑战失败后，本次猜错的酱料会出现在桌面上，作为本轮的错误猜测历史记录，便于玩家对照复盘；之后可返回主界面再次挑战。"
     }
-  ]
+  ],
+  "card_cover": "2.png",
+  "cover": "1.png"
 }
