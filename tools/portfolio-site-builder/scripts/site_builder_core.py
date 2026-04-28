@@ -2451,9 +2451,12 @@ function render() {
     ? state.data.projects.findIndex((project) => project && project.id === state.currentProjectId)
     : -1;
   const project = projectIndex >= 0 ? state.data.projects[projectIndex] : null;
-  app.classList.toggle("edit-mode", state.editMode);
+  // Edit mode UI only shows when management server is reachable (local dev).
+  // Public GitHub Pages deploy gets no /api/status -> manageMode=false -> no toolbar.
+  app.classList.toggle("edit-mode", state.editMode && state.manageMode);
   try {
-    app.innerHTML = `${renderEditorToolbar()}${project ? renderProject(project, projectIndex) : renderHome(state.data)}`;
+    const toolbar = state.manageMode ? renderEditorToolbar() : "";
+    app.innerHTML = `${toolbar}${project ? renderProject(project, projectIndex) : renderHome(state.data)}`;
   } catch (err) {
     console.error("render failed:", err);
     const stack = (err && (err.stack || err.message)) || String(err);
