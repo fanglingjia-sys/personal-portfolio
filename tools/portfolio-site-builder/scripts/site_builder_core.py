@@ -760,10 +760,61 @@ body {
   cursor: pointer;
   white-space: nowrap;
   transition: transform 0.15s, box-shadow 0.15s;
+  z-index: 2;
+}
+
+/* Pulsing ripple — visual cue that this spot is interactive.
+   Two staggered rings expand and fade outward. */
+.proto-hotspot::before,
+.proto-hotspot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(94, 234, 212, 0.6);
+  pointer-events: none;
+  z-index: -1;
+  animation: proto-hotspot-pulse 2.4s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
+}
+
+.proto-hotspot::after {
+  animation-delay: 1.2s;
+}
+
+.proto-hotspot:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  box-shadow: 0 4px 18px rgba(94,234,212,0.35);
+}
+
+/* Once a hotspot is selected (clicked), stop pulsing — it's been "discovered". */
+.proto-hotspot.active::before,
+.proto-hotspot.active::after,
+.proto-hotspot.visited::before,
+.proto-hotspot.visited::after {
+  animation: none;
+  opacity: 0;
 }
 
 .proto-hotspot.active {
   outline: 3px solid rgba(124, 92, 255, 0.28);
+}
+
+@keyframes proto-hotspot-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+    border-width: 2px;
+  }
+  70% {
+    transform: scale(2.1);
+    opacity: 0;
+    border-width: 1px;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+    border-width: 1px;
+  }
 }
 
 /* Navigation hotspot – shows edge label + arrow */
@@ -781,6 +832,13 @@ body {
   letter-spacing: 0.03em;
   backdrop-filter: blur(6px);
   box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.proto-hotspot-nav::before,
+.proto-hotspot-nav::after {
+  /* Nav hotspots get a softer, color-matched glow */
+  inset: -2px;
+  border-color: rgba(94, 234, 212, 0.55);
 }
 
 .proto-hotspot-nav:hover {
