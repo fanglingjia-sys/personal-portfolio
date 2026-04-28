@@ -501,12 +501,225 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  cursor: zoom-in;
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .screen-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+}
+
+.screen-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.screen-zoom-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(11, 16, 32, 0.7);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  backdrop-filter: blur(4px);
+  z-index: 3;
+}
+
+.screen-card:hover .screen-zoom-badge,
+.screen-card:focus-visible .screen-zoom-badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Edit mode reserves clicks for inline editing — hide the badge there */
+.app.edit-mode .screen-zoom-badge {
+  display: none;
+}
+
+.app.edit-mode .screen-card {
+  cursor: default;
+}
+
+/* ── Screen lightbox ───────────────────────────────────────── */
+
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.86);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  animation: lightbox-fade-in 160ms ease;
+}
+
+@keyframes lightbox-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.lightbox-content {
+  display: flex;
+  gap: 24px;
+  width: min(1280px, 100%);
+  max-height: calc(100vh - 64px);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+
+.lightbox-image-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(0,0,0,0.5);
+  border-radius: 12px;
+}
+
+.lightbox-image-wrap img {
+  max-width: 100%;
+  max-height: calc(100vh - 120px);
+  object-fit: contain;
+  display: block;
+}
+
+.lightbox-info {
+  flex: 0 0 360px;
+  max-width: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 4px;
+}
+
+.lightbox-section {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.lightbox-title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.lightbox-subtitle {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-top: -8px;
+}
+
+.lightbox-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.lightbox-block h4 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.lightbox-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lightbox-notes {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+
+.lightbox-counter {
+  margin-top: auto;
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 0;
+  background: rgba(11, 16, 32, 0.7);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background 0.15s;
+}
+.lightbox-close:hover { background: rgba(255, 80, 80, 0.6); }
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 64px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(11, 16, 32, 0.55);
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background 0.15s;
+}
+.lightbox-nav:hover { background: rgba(124, 92, 255, 0.6); }
+.lightbox-nav-prev { left: 18px; }
+.lightbox-nav-next { right: 18px; }
+
+@media (max-width: 880px) {
+  .lightbox-content {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+  .lightbox-info {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
+  .lightbox-image-wrap img {
+    max-height: 50vh;
+  }
 }
 
 .screen-image {
@@ -1636,6 +1849,7 @@ JS_TEMPLATE = """const state = {
   currentProjectId: null,
   currentSceneIndex: 0,
   activeHotspotIndex: 0,
+  lightboxScreenIndex: 0,
 };
 
 const app = document.getElementById("app");
@@ -2235,7 +2449,8 @@ function renderScreens(project, projectIndex) {
           const notes  = Array.isArray(screen.notes)  ? screen.notes  : [];
           const canManage = state.editMode && state.manageMode;
           return `
-          <article class="panel screen-card">
+          <article class="panel screen-card" data-screen-index="${screenIndex}" tabindex="0">
+            <span class="screen-zoom-badge" aria-hidden="true">⤢</span>
             ${canManage ? `<button type="button" class="manage-delete-btn screen-delete-btn" data-remove-screen="${escapeHtml(screen.relative_path || "")}" title="删除此界面">✕</button>` : ""}
             <div class="screen-image">
               <img src="${screen.src}" alt="${escapeHtml(screen.title)}"
@@ -2628,6 +2843,119 @@ function render() {
       }
     });
   });
+
+  // Click on screen card → open lightbox (only when not in edit mode,
+  // since edit mode reserves clicks for inline image / text editing).
+  document.querySelectorAll(".screen-card[data-screen-index]").forEach((card) => {
+    card.addEventListener("click", (e) => {
+      if (state.editMode) return;
+      // Don't fire when clicking the manage delete button (it's inside the card)
+      if (e.target.closest(".manage-delete-btn")) return;
+      const idx = Number(card.dataset.screenIndex);
+      openScreenLightbox(idx);
+    });
+    card.addEventListener("keydown", (e) => {
+      if (state.editMode) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const idx = Number(card.dataset.screenIndex);
+        openScreenLightbox(idx);
+      }
+    });
+  });
+}
+
+// ── Screen Lightbox ──────────────────────────────────────────────────────
+
+function openScreenLightbox(screenIndex) {
+  const project = (state.data?.projects || []).find(p => p.id === state.currentProjectId);
+  if (!project || !Array.isArray(project.screens) || !project.screens.length) return;
+  state.lightboxScreenIndex = Math.max(0, Math.min(screenIndex, project.screens.length - 1));
+  if (!document.getElementById("screen-lightbox-overlay")) {
+    document.body.insertAdjacentHTML("beforeend", renderScreenLightbox(project));
+    bindScreenLightbox(project);
+  } else {
+    refreshScreenLightbox(project);
+  }
+}
+
+function renderScreenLightbox(project) {
+  const idx = state.lightboxScreenIndex || 0;
+  const screen = project.screens[idx];
+  if (!screen) return "";
+  const title = screen.hover_title || screen.title || "";
+  const subtitle = screen.title && screen.title !== title ? screen.title : "";
+  const desc  = screen.hover_description || screen.summary || "";
+  const states = Array.isArray(screen.states) ? screen.states : [];
+  const notes  = Array.isArray(screen.notes)  ? screen.notes  : [];
+  const total = project.screens.length;
+  return `
+    <div class="lightbox-overlay" id="screen-lightbox-overlay">
+      <button type="button" class="lightbox-close" id="lightbox-close" title="关闭 (ESC)">✕</button>
+      <button type="button" class="lightbox-nav lightbox-nav-prev" id="lightbox-prev" title="上一张 (←)">‹</button>
+      <button type="button" class="lightbox-nav lightbox-nav-next" id="lightbox-next" title="下一张 (→)">›</button>
+      <div class="lightbox-content" id="lightbox-content">
+        <div class="lightbox-image-wrap">
+          <img id="lightbox-image" src="${escapeHtml(screen.src)}" alt="${escapeHtml(screen.title || "")}" />
+        </div>
+        <aside class="lightbox-info">
+          ${screen.section ? `<div class="lightbox-section">${escapeHtml(screen.section)}</div>` : ""}
+          <h2 class="lightbox-title">${escapeHtml(title)}</h2>
+          ${subtitle ? `<div class="lightbox-subtitle">${escapeHtml(subtitle)}</div>` : ""}
+          ${desc ? `<p class="lightbox-desc">${escapeHtml(desc)}</p>` : ""}
+          ${states.length ? `
+            <div class="lightbox-block">
+              <h4>状态</h4>
+              <div class="lightbox-chips">${states.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}</div>
+            </div>` : ""}
+          ${notes.length ? `
+            <div class="lightbox-block">
+              <h4>备注</h4>
+              <ul class="lightbox-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
+            </div>` : ""}
+          <div class="lightbox-counter">${idx + 1} / ${total}</div>
+        </aside>
+      </div>
+    </div>
+  `;
+}
+
+function refreshScreenLightbox(project) {
+  const overlay = document.getElementById("screen-lightbox-overlay");
+  if (!overlay) return;
+  const html = renderScreenLightbox(project);
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  const next = tmp.firstElementChild;
+  if (!next) return;
+  overlay.replaceWith(next);
+  bindScreenLightbox(project);
+}
+
+function bindScreenLightbox(project) {
+  const overlay = document.getElementById("screen-lightbox-overlay");
+  if (!overlay) return;
+
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const navTo = (delta) => {
+    const total = project.screens.length;
+    state.lightboxScreenIndex = ((state.lightboxScreenIndex + delta) % total + total) % total;
+    refreshScreenLightbox(project);
+  };
+  const onKey = (e) => {
+    if (e.key === "Escape") { close(); }
+    else if (e.key === "ArrowLeft") { navTo(-1); }
+    else if (e.key === "ArrowRight") { navTo(1); }
+  };
+
+  overlay.querySelector("#lightbox-close").addEventListener("click", close);
+  overlay.querySelector("#lightbox-prev").addEventListener("click", () => navTo(-1));
+  overlay.querySelector("#lightbox-next").addEventListener("click", () => navTo(1));
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  document.addEventListener("keydown", onKey);
 }
 
 function applyHash() {
