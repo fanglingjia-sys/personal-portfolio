@@ -2021,6 +2021,17 @@ function rerenderPrototypeOnly() {
   tmp.innerHTML = html;
   const next = tmp.firstElementChild;
   if (!next) return;
+
+  // If the scene image src is unchanged (e.g. clicking an info hotspot
+  // that doesn't change the active scene), keep the already-loaded <img>
+  // element. The browser otherwise creates a fresh node which causes a
+  // brief flash even when the file is cached.
+  const oldImg = existing.querySelector(".proto-stage > img");
+  const newImg = next.querySelector(".proto-stage > img");
+  if (oldImg && newImg && oldImg.getAttribute("src") === newImg.getAttribute("src")) {
+    newImg.replaceWith(oldImg);
+  }
+
   existing.replaceWith(next);
   bindPrototypeEvents();
 }

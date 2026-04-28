@@ -457,8 +457,23 @@ def make_management_handler(input_dir: Path, output_dir: Path, args: Any) -> typ
             self.end_headers()
 
         def end_headers(self) -> None:
-            # Prevent browser caching of all responses so rebuilt files are always fresh
-            self.send_header("Cache-Control", "no-store")
+            # Static rebuild artifacts (HTML / CSS / JS / JSON) must never be
+            # cached so a freshly rebuilt site shows up immediately.
+            #
+            # Asset images, on the other hand, should be cached briefly: when
+            # a user navigates between prototype scenes we must NOT refetch
+            # the same image on every click — that's what was causing the
+            # visible flash. After an image is replaced via /api/replace-image
+            # the client side calls bustAllImages() which appends ?v=<ts> to
+            # every <img>, busting the cache for the new bytes.
+            req_path = (self.path or "").split("?")[0].lower()
+            is_asset = req_path.startswith("/assets/") or req_path.endswith((
+                ".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg",
+            ))
+            if is_asset:
+                self.send_header("Cache-Control", "public, max-age=300")
+            else:
+                self.send_header("Cache-Control", "no-store")
             super().end_headers()
 
         def do_GET(self) -> None:  # type: ignore[override]
