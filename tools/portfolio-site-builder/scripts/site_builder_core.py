@@ -1930,12 +1930,58 @@ function setProject(projectId) {
 function setScene(index) {
   state.currentSceneIndex = index;
   state.activeHotspotIndex = 0;
-  render();
+  rerenderPrototypeOnly();
 }
 
 function setHotspot(index) {
   state.activeHotspotIndex = index;
-  render();
+  rerenderPrototypeOnly();
+}
+
+// Partial DOM update: replace only the prototype section instead of the
+// whole page. Avoids the visible flash that came with full render() calls.
+function rerenderPrototypeOnly() {
+  const existing = document.getElementById("prototype-section");
+  if (!existing) {
+    render();
+    return;
+  }
+  if (!state.currentProjectId || !state.data) {
+    render();
+    return;
+  }
+  const projectIndex = (state.data.projects || []).findIndex(
+    (p) => p && p.id === state.currentProjectId
+  );
+  if (projectIndex < 0) {
+    render();
+    return;
+  }
+  const project = state.data.projects[projectIndex];
+  const html = renderPrototype(project, projectIndex);
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  const next = tmp.firstElementChild;
+  if (!next) return;
+  existing.replaceWith(next);
+  bindPrototypeEvents();
+}
+
+function bindPrototypeEvents() {
+  document.querySelectorAll("#prototype-section [data-scene-index]").forEach((node) => {
+    node.addEventListener("click", () => setScene(Number(node.getAttribute("data-scene-index"))));
+  });
+  document.querySelectorAll("#prototype-section [data-hotspot-index]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const idx = Number(node.getAttribute("data-hotspot-index"));
+      const gotoAttr = node.getAttribute("data-goto-scene");
+      if (gotoAttr !== null && gotoAttr !== "") {
+        setScene(Number(gotoAttr));
+      } else {
+        setHotspot(idx);
+      }
+    });
+  });
 }
 
 function getCurrentScene(project) {
@@ -2305,7 +2351,7 @@ function renderPrototype(project, projectIndex) {
   const protoEnabled = Boolean(state.data.site.prototype_enabled) || Boolean(project.prototype?.enabled);
   if (!protoEnabled) {
     return `
-      <section class="section panel">
+      <section class="section panel" id="prototype-section">
         <div class="section-head">
           <div>
             <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.prototype_kicker">${escapeHtml(labels.prototype_kicker || "Prototype")}</div>
@@ -2319,7 +2365,7 @@ function renderPrototype(project, projectIndex) {
 
   if (!hasPrototype(project)) {
     return `
-      <section class="section panel">
+      <section class="section panel" id="prototype-section">
         <div class="section-head">
           <div>
             <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.prototype_kicker">${escapeHtml(labels.prototype_kicker || "Prototype")}</div>
@@ -2336,7 +2382,7 @@ function renderPrototype(project, projectIndex) {
   const activeHotspot = hotspots[state.activeHotspotIndex] || null;
 
   return `
-    <section class="section panel">
+    <section class="section panel" id="prototype-section">
       <div class="section-head">
         <div>
           <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.prototype_kicker">${escapeHtml(labels.prototype_kicker || "Prototype")}</div>
