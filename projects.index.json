@@ -5,7 +5,15 @@
   "owner": "Fangling Jia",
   "role": "UX / UI Designer",
   "bio": "游戏与活动向界面设计、交互文档整理、可演示流程与界面说明。以下为近期项目条目。",
-  "all_tags": ["UX", "UI", "交互文档", "活动玩法", "小游戏", "流程图", "原型演示"],
+  "all_tags": [
+    "UX",
+    "UI",
+    "交互文档",
+    "活动玩法",
+    "小游戏",
+    "流程图",
+    "原型演示"
+  ],
   "projects": [
     {
       "id": "color-guess-game",
@@ -13,13 +21,6 @@
       "title": "猜色小游戏",
       "subtitle": "Color Guess · 活动界面",
       "summary": "活动界面、交互流程、失败后的错误历史(酱料上桌)与可点击原型。"
-    },
-    {
-      "id": "k6-secret",
-      "path": "K6Secret",
-      "title": "K6 Secret",
-      "subtitle": "活动界面 · 交互文档",
-      "summary": "K6 Secret 活动界面与交互流程整理,含 7 张核心界面。"
     }
   ]
 }

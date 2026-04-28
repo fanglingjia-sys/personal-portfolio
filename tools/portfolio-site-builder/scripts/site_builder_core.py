@@ -1649,9 +1649,10 @@ function applyNested(target, source) {
 function refreshData() {
   state.data = cloneData(state.baseData);
   applyNested(state.data, state.overrides);
-  // Defensive: strip any null / non-object entries introduced by stale overrides
+  // Defensive: drop any project entry that lacks an id (phantom from stale
+  // localStorage overrides whose source project was deleted).
   if (Array.isArray(state.data?.projects)) {
-    state.data.projects = state.data.projects.filter(p => p && typeof p === "object");
+    state.data.projects = state.data.projects.filter(p => p && typeof p === "object" && p.id);
   }
   document.title = state.data.site?.title || "Project Hub";
   if (state.data.site?.theme?.accent) {
@@ -2842,6 +2843,9 @@ function bindManagePanel() {
 async function handleRemoveProject(projectId) {
   if (!confirm(`确认删除项目"${projectId}"？此操作不可撤销（仅从站点索引移除，不删除源文件）。`)) return;
   try {
+    // Capture index BEFORE removal so we can prune overrides for the same slot
+    const oldIndex = (state.baseData?.projects || []).findIndex(p => p && p.id === projectId);
+
     const res = await fetch("/api/remove-project", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2849,11 +2853,49 @@ async function handleRemoveProject(projectId) {
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || "Failed");
+
+    // Prune overrides for the removed slot AND any stale slot whose id no longer
+    // matches a real project, so phantom cards never accumulate.
+    pruneOverridesForRemoved(projectId, oldIndex);
+
     await reloadSiteData();
     render();
   } catch (err) {
     alert("删除失败：" + err.message);
   }
+}
+
+// Remove override entries that point at a project that no longer exists.
+function pruneOverridesForRemoved(removedId, removedIndex) {
+  const projOverrides = state.overrides && state.overrides.projects;
+  if (!projOverrides) return;
+  let changed = false;
+
+  if (Array.isArray(projOverrides)) {
+    if (removedIndex >= 0 && removedIndex < projOverrides.length) {
+      delete projOverrides[removedIndex];
+      changed = true;
+    }
+    // Also drop any sparse entry that doesn't match a still-living project
+    const liveIds = new Set((state.baseData?.projects || []).filter(p => p && p.id !== removedId).map(p => p.id));
+    projOverrides.forEach((entry, i) => {
+      // We only know it's stale if base no longer has a project at index i with a matching id.
+      // Conservative: if the override has nothing left in it after pruning, drop it.
+      if (entry && typeof entry === "object" && Object.keys(entry).length === 0) {
+        delete projOverrides[i];
+        changed = true;
+      }
+    });
+  } else if (projOverrides && typeof projOverrides === "object") {
+    Object.keys(projOverrides).forEach((k) => {
+      if (Number(k) === removedIndex) {
+        delete projOverrides[k];
+        changed = true;
+      }
+    });
+  }
+
+  if (changed) saveOverrides();
 }
 
 // Force all images inside #app to refetch (defeats browser cache after replacement)
