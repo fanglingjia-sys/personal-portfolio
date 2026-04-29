@@ -21,6 +21,13 @@
       "title": "备餐大挑战",
       "subtitle": "运营活动-小游戏",
       "summary": ""
+    },
+    {
+      "id": "bingo-rewards",
+      "path": "Bingo",
+      "title": "宾果赢好礼",
+      "subtitle": "节日累充活动 · Bingo 返利",
+      "summary": "通过抽取棋格累计连线、达成 Bingo 解锁黄金棋盘, 配合自选机会和兑换商店的累充活动玩法。"
     }
   ]
 }
