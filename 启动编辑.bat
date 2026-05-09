@@ -26,6 +26,18 @@ if not exist "%SCRIPT%" (
     exit /b 1
 )
 
+rem Auto-install imageio-ffmpeg the first time (used by video compression).
+rem Skips silently if already installed; only ~30MB download on first run.
+python -c "import imageio_ffmpeg" 2>NUL
+if errorlevel 1 (
+    echo Installing video toolchain (imageio-ffmpeg, one-time, ~30MB)...
+    python -m pip install --quiet --disable-pip-version-check imageio-ffmpeg
+    if errorlevel 1 (
+        echo [WARN] imageio-ffmpeg install failed - video compression will not work,
+        echo        but the editor will still launch normally.
+    )
+)
+
 echo.
 echo ========================================
 echo  Portfolio Editor Server

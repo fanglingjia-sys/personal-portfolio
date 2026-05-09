@@ -183,5 +183,15 @@
   ],
   "prototype": {
     "intro": "宾果赢好礼 · 交互演示。点击场景下方热区按钮可走完一遍完整循环 (抽取 → 翻开 → Bingo → 黄金棋盘) 以及自选 / 兑换两条副线。"
-  }
+  },
+  "videos": [
+    {
+      "file": "videos/bingo-feature-demo.mp4",
+      "title": "Bingo 完整功能演示",
+      "caption": "完整走一遍核心循环: 抽取 → 翻开 → 达成 Bingo → 黄金棋盘进阶, 以及自选机会和兑换商店两条副线的实际操作。",
+      "section": "功能录屏",
+      "duration": "2:01",
+      "poster": "videos/bingo-feature-demo-poster.jpg"
+    }
+  ]
 }
