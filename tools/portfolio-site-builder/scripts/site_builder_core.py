@@ -17,6 +17,7 @@ from typing import Any
 
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov", ".m4v"}
 IGNORE_DIR_NAMES = {"_portfolio_site", "__pycache__"}
 DEFAULT_LABELS = {
     "home_eyebrow": "Project Hub",
@@ -495,6 +496,140 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 18px;
+}
+
+/* ── Video module ─────────────────────────────────────────── */
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.video-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  position: relative;
+}
+
+.video-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+}
+
+.video-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.video-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.video-thumb img,
+.video-thumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-thumb-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none;
+  transition: background 160ms;
+}
+
+.video-card:hover .video-thumb-shade {
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.4) 100%);
+}
+
+.video-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(124, 92, 255, 0.85);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  pointer-events: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.video-card:hover .video-play-icon {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: var(--accent);
+}
+
+.video-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 11px;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.video-meta {
+  padding: 14px 16px 16px;
+}
+
+.video-section {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin-bottom: 4px;
+}
+
+.video-meta h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.video-meta p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Video lightbox tweaks (sit on top of generic .lightbox-overlay rules) */
+.video-lightbox-content {
+  flex-direction: row;
+}
+.video-stage {
+  background: #000;
+}
+.video-stage video {
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 120px);
+  object-fit: contain;
+}
+
+@media (max-width: 880px) {
+  .video-lightbox-content {
+    flex-direction: column;
+  }
 }
 
 .screen-card {
@@ -1850,6 +1985,7 @@ JS_TEMPLATE = """const state = {
   currentSceneIndex: 0,
   activeHotspotIndex: 0,
   lightboxScreenIndex: 0,
+  lightboxVideoIndex: 0,
 };
 
 const app = document.getElementById("app");
@@ -2534,6 +2670,140 @@ function renderFlow(project, projectIndex) {
   `;
 }
 
+// ── Videos section ──────────────────────────────────────────────────────
+function renderVideos(project, projectIndex) {
+  const labels = getLabels(state.data.site, project);
+  const videos = Array.isArray(project.videos) ? project.videos : [];
+  const canEdit = state.editMode && state.manageMode;
+
+  if (!videos.length && !canEdit) return "";
+
+  const head = `
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Videos</div>
+          <h2 class="section-title">演示视频</h2>
+          <p class="muted">功能录屏 · 点击卡片可全屏播放, 高画质 + 流畅滚动条。</p>
+        </div>
+      </div>
+  `;
+
+  if (!videos.length) {
+    return `
+      <section class="section panel">
+        ${head}
+        <div class="empty">当前项目还没有演示视频, 在 site.meta.json 的 videos[] 中加入条目即可。</div>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="section panel">
+      ${head}
+      <div class="video-grid">
+        ${videos.map((video, vIndex) => {
+          const posterSrc = video.poster?.src || "";
+          const caption = video.caption || "";
+          const section = video.section || "";
+          return `
+            <article class="panel video-card" data-video-index="${vIndex}" tabindex="0">
+              <div class="video-thumb">
+                ${posterSrc
+                  ? `<img src="${escapeHtml(posterSrc)}" alt="${escapeHtml(video.title || "")}" />`
+                  : `<video src="${escapeHtml(video.src)}" preload="metadata" muted playsinline></video>`}
+                <div class="video-thumb-shade"></div>
+                <span class="video-play-icon" aria-hidden="true">▶</span>
+                ${video.duration ? `<span class="video-duration">${escapeHtml(video.duration)}</span>` : ""}
+              </div>
+              <div class="video-meta">
+                ${section ? `<div class="video-section">${escapeHtml(section)}</div>` : ""}
+                <h4>${escapeHtml(video.title || "")}</h4>
+                ${caption ? `<p class="muted">${escapeHtml(caption)}</p>` : ""}
+              </div>
+            </article>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function openVideoLightbox(videoIndex) {
+  const project = (state.data?.projects || []).find(p => p.id === state.currentProjectId);
+  if (!project) return;
+  const videos = Array.isArray(project.videos) ? project.videos : [];
+  if (!videos.length) return;
+  state.lightboxVideoIndex = Math.max(0, Math.min(videoIndex, videos.length - 1));
+  if (!document.getElementById("video-lightbox-overlay")) {
+    document.body.insertAdjacentHTML("beforeend", renderVideoLightbox(project));
+    bindVideoLightbox(project);
+  }
+}
+
+function renderVideoLightbox(project) {
+  const idx = state.lightboxVideoIndex || 0;
+  const video = project.videos[idx];
+  if (!video) return "";
+  const total = project.videos.length;
+  const caption = video.caption || "";
+  return `
+    <div class="lightbox-overlay video-lightbox" id="video-lightbox-overlay">
+      <button type="button" class="lightbox-close" id="video-lb-close" title="关闭 (ESC)">✕</button>
+      <button type="button" class="lightbox-nav lightbox-nav-prev" id="video-lb-prev" title="上一段 (←)">‹</button>
+      <button type="button" class="lightbox-nav lightbox-nav-next" id="video-lb-next" title="下一段 (→)">›</button>
+      <div class="lightbox-content video-lightbox-content">
+        <div class="lightbox-image-wrap video-stage">
+          <video id="video-lb-player" src="${escapeHtml(video.src)}" controls autoplay playsinline preload="auto"
+                 ${video.poster?.src ? `poster="${escapeHtml(video.poster.src)}"` : ""}>
+            <source src="${escapeHtml(video.src)}" type="${escapeHtml(video.mime || "video/mp4")}">
+          </video>
+        </div>
+        <aside class="lightbox-info">
+          ${video.section ? `<div class="lightbox-section">${escapeHtml(video.section)}</div>` : ""}
+          <h2 class="lightbox-title">${escapeHtml(video.title || "")}</h2>
+          ${caption ? `<p class="lightbox-desc">${escapeHtml(caption)}</p>` : ""}
+          <div class="lightbox-counter">${idx + 1} / ${total}</div>
+        </aside>
+      </div>
+    </div>
+  `;
+}
+
+function bindVideoLightbox(project) {
+  const overlay = document.getElementById("video-lightbox-overlay");
+  if (!overlay) return;
+  const close = () => {
+    const player = overlay.querySelector("#video-lb-player");
+    if (player) { try { player.pause(); } catch {} }
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const navTo = (delta) => {
+    const total = project.videos.length;
+    state.lightboxVideoIndex = ((state.lightboxVideoIndex + delta) % total + total) % total;
+    const html = renderVideoLightbox(project);
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    const next = tmp.firstElementChild;
+    if (next) {
+      overlay.replaceWith(next);
+      bindVideoLightbox(project);
+    }
+  };
+  const onKey = (e) => {
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft") navTo(-1);
+    else if (e.key === "ArrowRight") navTo(1);
+  };
+  overlay.querySelector("#video-lb-close").addEventListener("click", close);
+  overlay.querySelector("#video-lb-prev").addEventListener("click", () => navTo(-1));
+  overlay.querySelector("#video-lb-next").addEventListener("click", () => navTo(1));
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  document.addEventListener("keydown", onKey);
+}
+
 function drawFlowArrows(projectIndex, flow) {
   if (!flow?.nodes?.length || !flow?.edges?.length) return;
   const container = document.getElementById(`flow-${projectIndex}`);
@@ -2766,8 +3036,8 @@ function renderProject(project, projectIndex) {
       ${isSectionVisible(project.id, "interaction_doc") ? renderInteractionDoc(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "screens")         ? renderScreens(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "flow")            ? renderFlow(project, projectIndex) : ""}
+      ${isSectionVisible(project.id, "videos")          ? renderVideos(project, projectIndex) : ""}
       ${renderCustomSections(project.id, projectIndex)}
-      ${isSectionVisible(project.id, "prototype")       ? renderPrototype(project, projectIndex) : ""}
     </div>
   `;
 }
@@ -2860,6 +3130,21 @@ function render() {
         e.preventDefault();
         const idx = Number(card.dataset.screenIndex);
         openScreenLightbox(idx);
+      }
+    });
+  });
+
+  // Click / keyboard on a video card → open video lightbox
+  document.querySelectorAll(".video-card[data-video-index]").forEach((card) => {
+    card.addEventListener("click", () => {
+      if (state.editMode) return;
+      openVideoLightbox(Number(card.dataset.videoIndex));
+    });
+    card.addEventListener("keydown", (e) => {
+      if (state.editMode) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openVideoLightbox(Number(card.dataset.videoIndex));
       }
     });
   });
@@ -2969,7 +3254,7 @@ const BUILTIN_SECTIONS = [
   { id: "interaction_doc", label: "交互文档",  icon: "📄" },
   { id: "screens",         label: "单独界面",  icon: "🖼" },
   { id: "flow",            label: "流程图",    icon: "🔀" },
-  { id: "prototype",       label: "交互原型",  icon: "▶" },
+  { id: "videos",          label: "演示视频",  icon: "▶" },
 ];
 
 const SECTION_CFG_KEY = "portfolio_section_cfg_v1";
@@ -4142,6 +4427,57 @@ def build_media_asset(
     }
 
 
+_VIDEO_MIME = {
+    ".mp4": "video/mp4",
+    ".m4v": "video/mp4",
+    ".webm": "video/webm",
+    ".mov": "video/quicktime",
+}
+
+
+def build_video_item(
+    entry: dict[str, Any],
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any] | None:
+    """Build a single video entry. `entry` shape:
+       { "file": "videos/x.mp4", "title": "...", "caption": "...", "poster": "..." }
+    """
+    file_value = entry.get("file") if isinstance(entry, dict) else None
+    if not file_value:
+        return None
+    try:
+        source_path, relative_path = resolve_source_path(project_dir, file_value)
+    except SystemExit:
+        return None
+    if source_path.suffix.lower() not in VIDEO_EXTENSIONS:
+        return None
+    poster_value = entry.get("poster")
+    poster_data: dict[str, Any] | None = None
+    if poster_value:
+        try:
+            p_src, p_rel = resolve_source_path(project_dir, poster_value)
+            poster_data = {
+                "relative_path": p_rel,
+                "src": copy_asset(p_src, project_dir, output_dir, asset_prefix, cache),
+            }
+        except SystemExit:
+            poster_data = None
+    return {
+        "id": entry.get("id") or Path(relative_path).stem,
+        "relative_path": relative_path,
+        "title": entry.get("title") or title_from_stem(source_path.stem),
+        "caption": entry.get("caption", ""),
+        "section": entry.get("section", ""),
+        "duration": entry.get("duration", ""),
+        "mime": _VIDEO_MIME.get(source_path.suffix.lower(), "video/mp4"),
+        "poster": poster_data,
+        "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+    }
+
+
 def build_proto_hotspots(hotspots: Any) -> list[dict[str, Any]]:
     if not isinstance(hotspots, list):
         return []
@@ -4438,6 +4774,15 @@ def build_project(
     summary = (index_entry or {}).get("summary") or manifest.get("description") or manifest.get("summary", "")
     labels = merge_labels(manifest.get("labels"), (index_entry or {}).get("labels"))
 
+    # Build videos[] (new module replacing prototype)
+    videos_meta = manifest.get("videos")
+    videos: list[dict[str, Any]] = []
+    if isinstance(videos_meta, list):
+        for v_entry in videos_meta:
+            built = build_video_item(v_entry, project_dir, output_dir, asset_prefix, cache)
+            if built:
+                videos.append(built)
+
     return {
         "id": project_id,
         "title": title,
@@ -4449,6 +4794,7 @@ def build_project(
         "card_cover": card_cover,
         "interaction_doc": interaction_doc,
         "screens": screens,
+        "videos": videos,
         "flow": flow_data,
         "prototype": {
             "enabled": effective_prototype_enabled,

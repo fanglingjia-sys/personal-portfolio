@@ -1,6 +1,6 @@
 ---
 name: portfolio-site-builder
-description: Build a multi-project visual hub website from image folders and interaction documents. Use when the user asks to generate a项目总览页 with multiple project cards, enter a具体项目内容页, show交互文档 first, show single screens with hover descriptions, or optionally enable a可演示的交互原型 module only when explicitly requested.
+description: Build a multi-project visual hub website from image folders, interaction documents, and feature demo videos. Use when the user asks to generate a项目总览页 with multiple project cards, enter a具体项目内容页, show交互文档 first, show single screens with hover descriptions, render an interactive flow diagram, or attach feature demo videos.
 ---
 
 # Project Hub Site Builder
@@ -10,19 +10,19 @@ description: Build a multi-project visual hub website from image folders and int
 Use this skill to generate a static website with two layers:
 
 - Project hub homepage: shows multiple project cards
-- Project detail page: shows interaction document, single screens with hover descriptions, and an optional prototype section
+- Project detail page: shows interaction document, single screens, flow diagram, and feature demo videos
 
-The prototype section is off by default.
 Website text and image content should be edited through `projects.index.json` and `site.meta.json`, not by changing template code.
 
 ## Default Behavior
 
-- Treat the site as a visual hub first, not a prototype first
+- Treat the site as a visual hub first
 - Homepage shows multiple project cards when `projects.index.json` is present
-- Project detail shows:
-  - interaction document first
-  - single screens second
-  - dynamic prototype last, only when explicitly enabled
+- Project detail renders sections in this order:
+  - interaction document
+  - single screens (with hover descriptions; click any thumbnail to open a fullscreen lightbox)
+  - flow diagram (interactive node graph derived from `flow.nodes` / `flow.edges` in site.meta.json)
+  - demo videos (compressed feature recordings — fullscreen lightbox playback with prev/next nav)
 
 ## Ask First
 
@@ -33,14 +33,14 @@ Before generating:
    - or a root folder containing multiple projects
 2. Ask whether the user wants a multi-project homepage now.
 3. Ask whether the interaction document file is already available.
-4. Ask whether the prototype module should stay off or be enabled.
+4. Ask whether feature demo videos are available; if so, where the source files are and which project they belong to.
 5. Ask whether a local preview URL should be started.
 
 If the user does not care about details, use these defaults:
 
 - Homepage: on when `projects.index.json` exists
 - Interaction document: use explicit metadata only
-- Prototype module: off
+- Demo videos: skip the section if no `videos[]` configured
 - Preview: yes
 - Port: `8123`
 
@@ -52,10 +52,41 @@ If the user does not care about details, use these defaults:
 4. Render project detail sections in this order:
    - interaction document
    - single screens with hover descriptions
-   - optional prototype module
-5. Prefer updating metadata fields such as `title`, `description`, `labels`, `hero_image`, `interaction_doc.file`, and `items[].file` when the user asks to customize text or images.
-6. Only pass `--enable-prototype` when the user explicitly asks for a playable / demo-style / interactive prototype.
-7. If requested, start the local preview server.
+   - flow diagram
+   - demo videos (when `videos[]` populated)
+5. Prefer updating metadata fields such as `title`, `description`, `labels`, `hero_image`, `interaction_doc.file`, `items[].file`, and `videos[].file` when the user asks to customize text, images, or videos.
+6. If requested, start the local preview server.
+
+## Demo Videos
+
+When the user wants to attach feature recordings:
+
+1. Place source video files anywhere on disk; the skill will compress them
+   on the way into the project folder.
+2. Compress with ffmpeg using these defaults (visually-lossless for UI
+   recordings, web-friendly file sizes):
+   - codec: H.264 (libx264)
+   - container: mp4 with `-movflags +faststart`
+   - quality: CRF 23 (drop to CRF 25 if file size matters more)
+   - max resolution: 1920x1080 (preserve aspect ratio)
+   - audio: 128k AAC if there is narration; strip with `-an` if silent
+3. Save the compressed mp4 under `<project>/videos/<short-name>.mp4`.
+4. Add a `videos[]` array to `site.meta.json`:
+   ```json
+   {
+     "videos": [
+       {
+         "file": "videos/draw-demo.mp4",
+         "title": "Bingo 抽取动效",
+         "caption": "完整抽取 → 翻开 → Bingo 反馈循环",
+         "section": "核心循环",
+         "duration": "0:24",
+         "poster": "videos/draw-demo-poster.jpg"
+       }
+     ]
+   }
+   ```
+5. `poster` is optional; when provided, use a still frame (`ffmpeg -ss <t> -frames:v 1`) to give the card a sharp thumbnail. Without a poster, the frontend uses the video's first decoded frame.
 
 ## Creating a New Project — MUST Read Interaction Document First
 
