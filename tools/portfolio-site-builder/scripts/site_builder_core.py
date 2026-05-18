@@ -2654,23 +2654,6 @@ function renderHome(data) {
           ${role  ? `<div class="hub-role" data-edit-path="site.role">${escapeHtml(role)}</div>` : ""}
           ${bio   ? `<p class="hub-bio" data-edit-path="site.bio">${escapeHtml(bio)}</p>` : ""}
           ${tagCloud}
-          <div class="hub-stats">
-            <div class="hub-stat">
-              <span class="hub-stat-num">${totalProjects}</span>
-              <span class="hub-stat-lbl">${escapeHtml(labels.stat_project_count || "项目")}</span>
-            </div>
-            <div class="hub-stat-divider"></div>
-            <div class="hub-stat">
-              <span class="hub-stat-num">${totalScreens}</span>
-              <span class="hub-stat-lbl">${escapeHtml(labels.stat_screen_count || "界面")}</span>
-            </div>
-            ${totalDocs > 0 ? `
-            <div class="hub-stat-divider"></div>
-            <div class="hub-stat">
-              <span class="hub-stat-num">${totalDocs}</span>
-              <span class="hub-stat-lbl">${escapeHtml(labels.stat_doc_count || "交互文档")}</span>
-            </div>` : ""}
-          </div>
         </div>
         ${heroImg ? `
         <div class="hub-hero-right">
