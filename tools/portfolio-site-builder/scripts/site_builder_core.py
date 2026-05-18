@@ -677,6 +677,90 @@ body {
   transform: translateY(0);
 }
 
+.screen-variant-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.85);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Lightbox variants strip ──────────────────────────────── */
+
+.lightbox-variants {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px;
+  background: rgba(2, 6, 23, 0.75);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+.lightbox-image-wrap {
+  position: relative;
+}
+
+.lightbox-variant-btn {
+  flex: 0 0 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text);
+  transition: border-color 120ms, background 120ms;
+}
+
+.lightbox-variant-btn img {
+  width: 100%;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+}
+
+.lightbox-variant-btn span {
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lightbox-variant-btn:hover {
+  background: rgba(124, 92, 255, 0.12);
+  border-color: rgba(124, 92, 255, 0.4);
+}
+
+.lightbox-variant-btn.active {
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.18);
+}
+
+.lightbox-group-counter {
+  font-size: 12px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+
 /* Edit mode reserves clicks for inline editing — hide the badge there */
 .app.edit-mode .screen-zoom-badge {
   display: none;
@@ -1985,6 +2069,7 @@ JS_TEMPLATE = """const state = {
   currentSceneIndex: 0,
   activeHotspotIndex: 0,
   lightboxScreenIndex: 0,
+  lightboxVariantIndex: 0,
   lightboxVideoIndex: 0,
 };
 
@@ -2554,7 +2639,18 @@ function renderInteractionDoc(project, projectIndex) {
 
 function renderScreens(project, projectIndex) {
   const labels = getLabels(state.data.site, project);
-  if (!Array.isArray(project.screens) || !project.screens.length) {
+  const allScreens = Array.isArray(project.screens) ? project.screens : [];
+  // Build a map from parent id -> array of child variant items
+  const variantsByParent = {};
+  allScreens.forEach((s) => {
+    if (s && s.parent) {
+      (variantsByParent[s.parent] = variantsByParent[s.parent] || []).push(s);
+    }
+  });
+  // Cards only show top-level screens (those without a `parent` field)
+  const topLevel = allScreens.filter((s) => s && !s.parent);
+
+  if (!topLevel.length) {
     return `
       <section class="section panel">
         <div class="section-head">
@@ -2574,24 +2670,26 @@ function renderScreens(project, projectIndex) {
         <div>
           <div class="section-kicker" data-edit-path="projects.${projectIndex}.labels.screens_kicker">${escapeHtml(labels.screens_kicker || "Screens")}</div>
           <h2 class="section-title" data-edit-path="projects.${projectIndex}.labels.screens_title">${escapeHtml(labels.screens_title || "单独界面")}</h2>
-          <p class="muted" data-edit-path="projects.${projectIndex}.labels.screens_description">${escapeHtml(labels.screens_description || "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。")}</p>
+          <p class="muted" data-edit-path="projects.${projectIndex}.labels.screens_description">${escapeHtml(labels.screens_description || "点击卡片查看大图; 同一界面的多个状态会以子标签形式集中在大图视图里。")}</p>
         </div>
       </div>
       <div class="screen-grid">
-        ${project.screens.map((screen, screenIndex) => {
+        ${topLevel.map((screen, topIndex) => {
           const title = screen.title || screen.hover_title || "";
           const notes = Array.isArray(screen.notes) ? screen.notes : [];
+          const variantCount = (variantsByParent[screen.id] || []).length;
           const canManage = state.editMode && state.manageMode;
           return `
-          <article class="panel screen-card" data-screen-index="${screenIndex}" tabindex="0">
+          <article class="panel screen-card" data-screen-index="${topIndex}" tabindex="0">
             <span class="screen-zoom-badge" aria-hidden="true">⤢</span>
+            ${variantCount > 0 ? `<span class="screen-variant-badge" title="${variantCount + 1} 个状态">+${variantCount} 状态</span>` : ""}
             ${canManage ? `<button type="button" class="manage-delete-btn screen-delete-btn" data-remove-screen="${escapeHtml(screen.relative_path || "")}" title="删除此界面">✕</button>` : ""}
             <div class="screen-image">
               <img src="${screen.src}" alt="${escapeHtml(screen.title)}"
-                   data-image-path="projects.${projectIndex}.screens.${screenIndex}.src" />
+                   data-image-path="projects.${projectIndex}.screens.${topIndex}.src" />
             </div>
             <div class="screen-desc">
-              <h4 data-edit-path="projects.${projectIndex}.screens.${screenIndex}.title">${escapeHtml(title)}</h4>
+              <h4 data-edit-path="projects.${projectIndex}.screens.${topIndex}.title">${escapeHtml(title)}</h4>
               ${notes.length ? `<ul class="screen-desc-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>` : ""}
             </div>
           </article>`;
@@ -3030,7 +3128,6 @@ function renderProject(project, projectIndex) {
       </header>
       ${isSectionVisible(project.id, "interaction_doc") ? renderInteractionDoc(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "screens")         ? renderScreens(project, projectIndex) : ""}
-      ${isSectionVisible(project.id, "flow")            ? renderFlow(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "videos")          ? renderVideos(project, projectIndex) : ""}
       ${renderCustomSections(project.id, projectIndex)}
     </div>
@@ -3147,10 +3244,13 @@ function render() {
 
 // ── Screen Lightbox ──────────────────────────────────────────────────────
 
-function openScreenLightbox(screenIndex) {
+function openScreenLightbox(topLevelIndex) {
   const project = (state.data?.projects || []).find(p => p.id === state.currentProjectId);
   if (!project || !Array.isArray(project.screens) || !project.screens.length) return;
-  state.lightboxScreenIndex = Math.max(0, Math.min(screenIndex, project.screens.length - 1));
+  const topLevel = project.screens.filter(s => s && !s.parent);
+  if (!topLevel.length) return;
+  state.lightboxScreenIndex = Math.max(0, Math.min(topLevelIndex, topLevel.length - 1));
+  state.lightboxVariantIndex = 0;
   if (!document.getElementById("screen-lightbox-overlay")) {
     document.body.insertAdjacentHTML("beforeend", renderScreenLightbox(project));
     bindScreenLightbox(project);
@@ -3160,20 +3260,35 @@ function openScreenLightbox(screenIndex) {
 }
 
 function renderScreenLightbox(project) {
-  const idx = state.lightboxScreenIndex || 0;
-  const screen = project.screens[idx];
-  if (!screen) return "";
-  const title = screen.title || screen.hover_title || "";
-  const notes = Array.isArray(screen.notes) ? screen.notes : [];
-  const total = project.screens.length;
+  const allScreens = Array.isArray(project.screens) ? project.screens : [];
+  const topLevel = allScreens.filter((s) => s && !s.parent);
+  const parentIdx = Math.max(0, Math.min(state.lightboxScreenIndex || 0, topLevel.length - 1));
+  const parent = topLevel[parentIdx];
+  if (!parent) return "";
+  const variants = allScreens.filter((s) => s && s.parent === parent.id);
+  const group = [parent, ...variants];
+  const variantIdx = Math.max(0, Math.min(state.lightboxVariantIndex || 0, group.length - 1));
+  const current = group[variantIdx];
+  const title = current.title || current.hover_title || "";
+  const notes = Array.isArray(current.notes) ? current.notes : [];
+  const total = topLevel.length;
   return `
     <div class="lightbox-overlay" id="screen-lightbox-overlay">
       <button type="button" class="lightbox-close" id="lightbox-close" title="关闭 (ESC)">✕</button>
-      <button type="button" class="lightbox-nav lightbox-nav-prev" id="lightbox-prev" title="上一张 (←)">‹</button>
-      <button type="button" class="lightbox-nav lightbox-nav-next" id="lightbox-next" title="下一张 (→)">›</button>
+      <button type="button" class="lightbox-nav lightbox-nav-prev" id="lightbox-prev" title="上一组 (←)">‹</button>
+      <button type="button" class="lightbox-nav lightbox-nav-next" id="lightbox-next" title="下一组 (→)">›</button>
       <div class="lightbox-content" id="lightbox-content">
         <div class="lightbox-image-wrap">
-          <img id="lightbox-image" src="${escapeHtml(screen.src)}" alt="${escapeHtml(screen.title || "")}" />
+          <img id="lightbox-image" src="${escapeHtml(current.src)}" alt="${escapeHtml(current.title || "")}" />
+          ${group.length > 1 ? `
+            <div class="lightbox-variants">
+              ${group.map((item, i) => `
+                <button type="button" class="lightbox-variant-btn ${i === variantIdx ? "active" : ""}" data-variant-index="${i}" title="${escapeHtml(item.title || "")}">
+                  <img src="${escapeHtml(item.src)}" alt="" />
+                  <span>${escapeHtml(item.title || "")}</span>
+                </button>
+              `).join("")}
+            </div>` : ""}
         </div>
         <aside class="lightbox-info">
           <h2 class="lightbox-title">${escapeHtml(title)}</h2>
@@ -3182,7 +3297,8 @@ function renderScreenLightbox(project) {
               <h4>备注</h4>
               <ul class="lightbox-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
             </div>` : ""}
-          <div class="lightbox-counter">${idx + 1} / ${total}</div>
+          ${group.length > 1 ? `<div class="lightbox-group-counter">状态 ${variantIdx + 1} / ${group.length}</div>` : ""}
+          <div class="lightbox-counter">界面 ${parentIdx + 1} / ${total}</div>
         </aside>
       </div>
     </div>
@@ -3205,13 +3321,16 @@ function bindScreenLightbox(project) {
   const overlay = document.getElementById("screen-lightbox-overlay");
   if (!overlay) return;
 
+  const topLevel = (project.screens || []).filter(s => s && !s.parent);
+
   const close = () => {
     overlay.remove();
     document.removeEventListener("keydown", onKey);
   };
   const navTo = (delta) => {
-    const total = project.screens.length;
+    const total = topLevel.length || 1;
     state.lightboxScreenIndex = ((state.lightboxScreenIndex + delta) % total + total) % total;
+    state.lightboxVariantIndex = 0;
     refreshScreenLightbox(project);
   };
   const onKey = (e) => {
@@ -3225,6 +3344,15 @@ function bindScreenLightbox(project) {
   overlay.querySelector("#lightbox-next").addEventListener("click", () => navTo(1));
   overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
   document.addEventListener("keydown", onKey);
+
+  // Variant thumbnail strip
+  overlay.querySelectorAll(".lightbox-variant-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      state.lightboxVariantIndex = Number(btn.dataset.variantIndex) || 0;
+      refreshScreenLightbox(project);
+    });
+  });
 }
 
 function applyHash() {
@@ -3237,7 +3365,6 @@ function applyHash() {
 const BUILTIN_SECTIONS = [
   { id: "interaction_doc", label: "交互文档",  icon: "📄" },
   { id: "screens",         label: "单独界面",  icon: "🖼" },
-  { id: "flow",            label: "流程图",    icon: "🔀" },
   { id: "videos",          label: "演示视频",  icon: "▶" },
 ];
 
@@ -4388,6 +4515,7 @@ def build_item(
         "doc_refs": listify(entry.get("doc_refs")),
         "hover_title": entry.get("hover_title", ""),
         "hover_description": entry.get("hover_description", ""),
+        "parent": entry.get("parent") or None,
         "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
     }
 

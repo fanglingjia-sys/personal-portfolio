@@ -70,6 +70,7 @@
     {
       "file": "抽取中.png",
       "id": "抽取中",
+      "parent": "普通棋盘",
       "title": "抽取中 · 滚动动画",
       "section": "核心循环",
       "hover_title": "抽取动画进行中",
@@ -83,6 +84,7 @@
     {
       "file": "抽取选中.png",
       "id": "抽取选中",
+      "parent": "普通棋盘",
       "title": "抽取选中 · 全局展示",
       "section": "核心循环",
       "hover_title": "随机命中后的全棋盘预览",
@@ -96,6 +98,7 @@
     {
       "file": "抽取完.png",
       "id": "抽取完",
+      "parent": "普通棋盘",
       "title": "抽取完 · 翻开棋格",
       "section": "核心循环",
       "hover_title": "棋格翻开后状态",
@@ -105,6 +108,7 @@
     {
       "file": "bingo动画.png",
       "id": "bingo动画",
+      "parent": "普通棋盘",
       "title": "Bingo 动画",
       "section": "反馈动画",
       "hover_title": "达成连线的庆祝瞬间",
@@ -118,6 +122,7 @@
     {
       "file": "bingo达成cheng.png",
       "id": "bingo达成cheng",
+      "parent": "普通棋盘",
       "title": "Bingo 达成 · 高亮线",
       "section": "反馈动画",
       "hover_title": "整条 Bingo 线高亮",
@@ -144,6 +149,7 @@
     {
       "file": "自选机会提示.png",
       "id": "自选机会提示",
+      "parent": "自选机会",
       "title": "自选机会 · 触发提示",
       "section": "副线 · 自选机会",
       "hover_title": "恭喜触发自选格机会",
