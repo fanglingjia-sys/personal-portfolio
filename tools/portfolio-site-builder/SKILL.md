@@ -18,6 +18,9 @@ Website text and image content should be edited through `projects.index.json` an
 
 - Treat the site as a visual hub first
 - Homepage shows multiple project cards when `projects.index.json` is present
+- **New projects are inserted at index 0 in `projects.index.json`** so the
+  most recent work appears first on the home page. The `/api/add-project`
+  endpoint and any direct edits should follow this convention.
 - Project detail renders sections in this order:
   - interaction document
   - single screens (with hover descriptions; click any thumbnail to open a fullscreen lightbox)
@@ -63,13 +66,17 @@ When the user wants to attach feature recordings:
 
 1. Place source video files anywhere on disk; the skill will compress them
    on the way into the project folder.
-2. Compress with ffmpeg using these defaults (visually-lossless for UI
-   recordings, web-friendly file sizes):
-   - codec: H.264 (libx264)
-   - container: mp4 with `-movflags +faststart`
-   - quality: CRF 23 (drop to CRF 25 if file size matters more)
-   - max resolution: 1920x1080 (preserve aspect ratio)
-   - audio: 128k AAC if there is narration; strip with `-an` if silent
+2. Compress with ffmpeg targeting **~5 MB per video** so the repo stays
+   small and GitHub Pages loads quickly. Use 2-pass H.264:
+   - codec: H.264 (libx264) preset slow, container: mp4 + `-movflags +faststart`
+   - resolution: scale to `960:-2` (≈540p) — readable for screen
+     recordings, far smaller than 720p+
+   - bitrate: target total ≈ `5 MiB × 8 × 0.92 / duration_sec ÷ 1000` kbps;
+     subtract 64 (audio) for video bitrate; floor at 120k for short clips
+   - audio: 64k AAC mono/stereo if there is narration; strip with `-an`
+     if silent
+   - Run two passes via `-pass 1 -an -f null` then `-pass 2 -movflags +faststart`
+     so the average bitrate hits the target precisely
 3. Save the compressed mp4 under `<project>/videos/<short-name>.mp4`.
 4. Add a `videos[]` array to `site.meta.json`:
    ```json

@@ -207,7 +207,8 @@ def create_project(
         "title": title,
         "summary": description or subtitle,
     }
-    index.setdefault("projects", []).append(entry)
+    # Newest project goes first on the home page
+    index.setdefault("projects", []).insert(0, entry)
     write_index(input_dir, index)
     return entry
 

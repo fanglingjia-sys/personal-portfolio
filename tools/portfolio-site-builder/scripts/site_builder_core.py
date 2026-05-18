@@ -1115,6 +1115,102 @@ body {
   overflow: hidden;
 }
 
+.doc-zoom-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(11, 16, 32, 0.78);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  transition: transform 120ms, background 120ms;
+}
+
+.doc-zoom-btn:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+.doc-image img {
+  cursor: zoom-in;
+}
+
+/* ── Interaction doc lightbox (long image viewer) ─────────── */
+
+.doc-lightbox {
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+.doc-lb-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(11, 16, 32, 0.85);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+.doc-lb-btn {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms;
+  min-width: 32px;
+}
+
+.doc-lb-btn:hover {
+  background: var(--accent);
+}
+
+.doc-lb-zoom-pct {
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;
+  min-width: 70px;
+  text-align: center;
+}
+
+.doc-lb-scroll {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: 80px 24px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.doc-lb-scroll img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: zoom-out;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  border-radius: 8px;
+  user-select: none;
+}
+
 .doc-image-wrap .doc-image {
   max-height: 480px;
   overflow: hidden;
@@ -2617,8 +2713,9 @@ function renderInteractionDoc(project, projectIndex) {
       </div>
       <div class="doc-layout">
         <div class="doc-image-wrap" id="doc-wrap-${projectIndex}">
+          <button type="button" class="doc-zoom-btn" data-doc-zoom="${escapeHtml(project.id)}" title="点击放大查看完整文档">⤢ 查看大图</button>
           <div class="doc-image">
-            <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" />
+            <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" data-doc-zoom="${escapeHtml(project.id)}" />
           </div>
           <div class="doc-expand-bar">
             <button type="button" class="doc-expand-btn" onclick="(function(){var w=document.getElementById('doc-wrap-${projectIndex}');w&&w.classList.toggle('expanded')})()">展开查看完整文档 ▼</button>
@@ -3240,6 +3337,121 @@ function render() {
       }
     });
   });
+
+  // Click on the interaction doc image or its zoom button → open doc lightbox
+  document.querySelectorAll("[data-doc-zoom]").forEach((node) => {
+    node.addEventListener("click", (e) => {
+      if (state.editMode) return;
+      const pid = node.dataset.docZoom;
+      if (pid) openDocLightbox(pid);
+    });
+  });
+}
+
+// ── Interaction Doc Lightbox ─────────────────────────────────────────────
+
+function openDocLightbox(projectId) {
+  const project = (state.data?.projects || []).find(p => p.id === projectId);
+  if (!project?.interaction_doc?.src) return;
+  if (document.getElementById("doc-lightbox-overlay")) return;
+  document.body.insertAdjacentHTML("beforeend", renderDocLightbox(project));
+  bindDocLightbox(project);
+}
+
+function renderDocLightbox(project) {
+  const doc = project.interaction_doc;
+  return `
+    <div class="lightbox-overlay doc-lightbox" id="doc-lightbox-overlay" data-zoom="fit">
+      <button type="button" class="lightbox-close" id="doc-lb-close" title="关闭 (ESC)">✕</button>
+      <div class="doc-lb-toolbar">
+        <button type="button" class="doc-lb-btn" data-zoom-action="out" title="缩小">−</button>
+        <span class="doc-lb-zoom-pct" id="doc-lb-zoom-pct">适应宽度</span>
+        <button type="button" class="doc-lb-btn" data-zoom-action="in" title="放大">+</button>
+        <button type="button" class="doc-lb-btn" data-zoom-action="fit" title="适应宽度">适应</button>
+        <button type="button" class="doc-lb-btn" data-zoom-action="actual" title="原始尺寸">1:1</button>
+      </div>
+      <div class="doc-lb-scroll" id="doc-lb-scroll">
+        <img id="doc-lb-img" src="${escapeHtml(doc.src)}" alt="${escapeHtml(doc.title || "交互文档")}" />
+      </div>
+    </div>
+  `;
+}
+
+function bindDocLightbox(project) {
+  const overlay = document.getElementById("doc-lightbox-overlay");
+  if (!overlay) return;
+  const img = overlay.querySelector("#doc-lb-img");
+  const scroll = overlay.querySelector("#doc-lb-scroll");
+  const pctLabel = overlay.querySelector("#doc-lb-zoom-pct");
+
+  // Zoom state: stored as a multiplier (1.0 = natural / actual size).
+  // "fit" mode uses width: 100% via CSS class.
+  let zoom = 1;
+  let mode = "fit"; // "fit" or "free"
+
+  const applyZoom = () => {
+    if (mode === "fit") {
+      img.style.width = "100%";
+      img.style.maxWidth = "100%";
+      img.style.height = "auto";
+      pctLabel.textContent = "适应宽度";
+    } else {
+      img.style.maxWidth = "none";
+      img.style.width = (img.naturalWidth * zoom) + "px";
+      img.style.height = "auto";
+      pctLabel.textContent = Math.round(zoom * 100) + "%";
+    }
+  };
+
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const onKey = (e) => {
+    if (e.key === "Escape") close();
+    else if (e.key === "+" || e.key === "=") { mode = "free"; zoom = Math.min(zoom * 1.25, 4); applyZoom(); }
+    else if (e.key === "-" || e.key === "_") { mode = "free"; zoom = Math.max(zoom / 1.25, 0.25); applyZoom(); }
+    else if (e.key === "0") { mode = "fit"; applyZoom(); }
+    else if (e.key === "1") { mode = "free"; zoom = 1; applyZoom(); }
+  };
+
+  overlay.querySelector("#doc-lb-close").addEventListener("click", close);
+  overlay.addEventListener("click", (e) => {
+    // Close only when clicking the dim backdrop, not the image / toolbar
+    if (e.target === overlay) close();
+  });
+
+  overlay.querySelectorAll("[data-zoom-action]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const action = btn.dataset.zoomAction;
+      if (action === "in") { mode = "free"; zoom = Math.min(zoom * 1.25, 4); }
+      else if (action === "out") { mode = "free"; zoom = Math.max(zoom / 1.25, 0.25); }
+      else if (action === "fit") { mode = "fit"; }
+      else if (action === "actual") { mode = "free"; zoom = 1; }
+      applyZoom();
+    });
+  });
+
+  // Click image to toggle between fit and 100% (handy for long docs)
+  img.addEventListener("click", () => {
+    if (mode === "fit") { mode = "free"; zoom = 1; }
+    else { mode = "fit"; }
+    applyZoom();
+  });
+
+  // Mouse wheel + ctrl to zoom
+  scroll.addEventListener("wheel", (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    mode = "free";
+    if (e.deltaY < 0) zoom = Math.min(zoom * 1.1, 4);
+    else zoom = Math.max(zoom / 1.1, 0.25);
+    applyZoom();
+  }, { passive: false });
+
+  document.addEventListener("keydown", onKey);
+  applyZoom();
 }
 
 // ── Screen Lightbox ──────────────────────────────────────────────────────

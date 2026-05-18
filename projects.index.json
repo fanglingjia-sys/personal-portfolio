@@ -16,11 +16,11 @@
   ],
   "projects": [
     {
-      "id": "color-guess-game",
-      "path": "Color_Guess_Game",
-      "title": "备餐大挑战",
-      "subtitle": "运营活动-小游戏",
-      "summary": ""
+      "id": "fishing-game",
+      "path": "Fishing",
+      "title": "欢乐钓鱼",
+      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
+      "summary": "钓鱼主玩法 + 三档渔市订单 + 图鉴 / 海螺道具 / 每日目标的完整循环, 含二期优化对比。"
     },
     {
       "id": "bingo-rewards",
@@ -30,11 +30,11 @@
       "summary": "通过抽取棋格累计连线、达成 Bingo 解锁黄金棋盘, 配合自选机会和兑换商店的累充活动玩法。"
     },
     {
-      "id": "fishing-game",
-      "path": "Fishing",
-      "title": "欢乐钓鱼",
-      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
-      "summary": "钓鱼主玩法 + 三档渔市订单 + 图鉴 / 海螺道具 / 每日目标的完整循环, 含二期优化对比。"
+      "id": "color-guess-game",
+      "path": "Color_Guess_Game",
+      "title": "备餐大挑战",
+      "subtitle": "运营活动-小游戏",
+      "summary": ""
     }
   ]
 }
