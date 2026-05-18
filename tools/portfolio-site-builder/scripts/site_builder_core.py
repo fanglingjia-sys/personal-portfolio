@@ -3317,6 +3317,56 @@ function refreshScreenLightbox(project) {
   bindScreenLightbox(project);
 }
 
+// Surgical update for variant switching inside the same parent — avoids
+// the flash from full overlay replacement. Only the image src, info
+// panel contents, and active class on the variant strip change.
+function updateLightboxVariantInPlace(project) {
+  const overlay = document.getElementById("screen-lightbox-overlay");
+  if (!overlay) return;
+  const allScreens = Array.isArray(project.screens) ? project.screens : [];
+  const topLevel = allScreens.filter((s) => s && !s.parent);
+  const parentIdx = Math.max(0, Math.min(state.lightboxScreenIndex || 0, topLevel.length - 1));
+  const parent = topLevel[parentIdx];
+  if (!parent) return;
+  const variants = allScreens.filter((s) => s && s.parent === parent.id);
+  const group = [parent, ...variants];
+  const variantIdx = Math.max(0, Math.min(state.lightboxVariantIndex || 0, group.length - 1));
+  const current = group[variantIdx];
+  if (!current) return;
+
+  // Swap image src in place (browser reuses the <img> element, only the
+  // bytes change — and assets serve with max-age=300 so cached hits are
+  // instant). Setting alt updates a11y too.
+  const img = overlay.querySelector("#lightbox-image");
+  if (img) {
+    if (img.getAttribute("src") !== current.src) img.setAttribute("src", current.src);
+    img.setAttribute("alt", current.title || "");
+  }
+
+  // Refresh just the info panel (title + notes + counters)
+  const info = overlay.querySelector(".lightbox-info");
+  if (info) {
+    const title = current.title || current.hover_title || "";
+    const notes = Array.isArray(current.notes) ? current.notes : [];
+    const total = topLevel.length;
+    info.innerHTML = `
+      <h2 class="lightbox-title">${escapeHtml(title)}</h2>
+      ${notes.length ? `
+        <div class="lightbox-block">
+          <h4>备注</h4>
+          <ul class="lightbox-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
+        </div>` : ""}
+      ${group.length > 1 ? `<div class="lightbox-group-counter">状态 ${variantIdx + 1} / ${group.length}</div>` : ""}
+      <div class="lightbox-counter">界面 ${parentIdx + 1} / ${total}</div>
+    `;
+  }
+
+  // Toggle active class on variant strip buttons
+  overlay.querySelectorAll(".lightbox-variant-btn").forEach((btn, i) => {
+    btn.classList.toggle("active", i === variantIdx);
+  });
+}
+
 function bindScreenLightbox(project) {
   const overlay = document.getElementById("screen-lightbox-overlay");
   if (!overlay) return;
@@ -3345,12 +3395,13 @@ function bindScreenLightbox(project) {
   overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
   document.addEventListener("keydown", onKey);
 
-  // Variant thumbnail strip
+  // Variant thumbnail strip — use a surgical update instead of full
+  // refresh to avoid the visible flash from rebuilding the overlay.
   overlay.querySelectorAll(".lightbox-variant-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       state.lightboxVariantIndex = Number(btn.dataset.variantIndex) || 0;
-      refreshScreenLightbox(project);
+      updateLightboxVariantInPlace(project);
     });
   });
 }
