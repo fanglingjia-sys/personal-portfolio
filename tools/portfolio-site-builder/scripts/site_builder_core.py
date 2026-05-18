@@ -3221,20 +3221,6 @@ function renderProject(project, projectIndex) {
           <h1 class="title" data-edit-path="projects.${projectIndex}.title">${escapeHtml(project.title)}</h1>
           ${project.subtitle ? `<p class="subtitle" data-edit-path="projects.${projectIndex}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
           ${project.summary ? `<p class="description" data-edit-path="projects.${projectIndex}.summary">${escapeHtml(project.summary)}</p>` : ""}
-          <div class="stats">
-            <div class="stat">
-              <span class="stat-value">${project.screens?.length || 0}</span>
-              <span class="stat-label" data-edit-path="projects.${projectIndex}.labels.stat_detail_screens">${escapeHtml(labels.stat_detail_screens || "界面数量")}</span>
-            </div>
-            <div class="stat">
-              <span class="stat-value">${project.interaction_doc ? 1 : 0}</span>
-              <span class="stat-label" data-edit-path="projects.${projectIndex}.labels.stat_detail_doc">${escapeHtml(labels.stat_detail_doc || "交互文档")}</span>
-            </div>
-            <div class="stat">
-              <span class="stat-value">${hasPrototype(project) ? project.prototype.scenes.length : 0}</span>
-              <span class="stat-label" data-edit-path="projects.${projectIndex}.labels.stat_detail_scenes">${escapeHtml(labels.stat_detail_scenes || "原型场景")}</span>
-            </div>
-          </div>
           ${renderTags(project.tags)}
         </section>
         <section class="panel hero-preview">
