@@ -2579,10 +2579,8 @@ function renderScreens(project, projectIndex) {
       </div>
       <div class="screen-grid">
         ${project.screens.map((screen, screenIndex) => {
-          const title = screen.hover_title || screen.title;
-          const desc  = screen.hover_description || screen.summary || "";
-          const states = Array.isArray(screen.states) ? screen.states : [];
-          const notes  = Array.isArray(screen.notes)  ? screen.notes  : [];
+          const title = screen.title || screen.hover_title || "";
+          const notes = Array.isArray(screen.notes) ? screen.notes : [];
           const canManage = state.editMode && state.manageMode;
           return `
           <article class="panel screen-card" data-screen-index="${screenIndex}" tabindex="0">
@@ -2593,10 +2591,7 @@ function renderScreens(project, projectIndex) {
                    data-image-path="projects.${projectIndex}.screens.${screenIndex}.src" />
             </div>
             <div class="screen-desc">
-              ${screen.section ? `<div class="screen-desc-section" data-edit-path="projects.${projectIndex}.screens.${screenIndex}.section">${escapeHtml(screen.section)}</div>` : ""}
-              <h4 data-edit-path="projects.${projectIndex}.screens.${screenIndex}.hover_title">${escapeHtml(title)}</h4>
-              ${desc ? `<p class="screen-desc-body" data-edit-path="projects.${projectIndex}.screens.${screenIndex}.hover_description">${escapeHtml(desc)}</p>` : ""}
-              ${states.length ? `<div class="screen-desc-chips">${states.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}</div>` : ""}
+              <h4 data-edit-path="projects.${projectIndex}.screens.${screenIndex}.title">${escapeHtml(title)}</h4>
               ${notes.length ? `<ul class="screen-desc-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>` : ""}
             </div>
           </article>`;
@@ -3168,11 +3163,8 @@ function renderScreenLightbox(project) {
   const idx = state.lightboxScreenIndex || 0;
   const screen = project.screens[idx];
   if (!screen) return "";
-  const title = screen.hover_title || screen.title || "";
-  const subtitle = screen.title && screen.title !== title ? screen.title : "";
-  const desc  = screen.hover_description || screen.summary || "";
-  const states = Array.isArray(screen.states) ? screen.states : [];
-  const notes  = Array.isArray(screen.notes)  ? screen.notes  : [];
+  const title = screen.title || screen.hover_title || "";
+  const notes = Array.isArray(screen.notes) ? screen.notes : [];
   const total = project.screens.length;
   return `
     <div class="lightbox-overlay" id="screen-lightbox-overlay">
@@ -3184,15 +3176,7 @@ function renderScreenLightbox(project) {
           <img id="lightbox-image" src="${escapeHtml(screen.src)}" alt="${escapeHtml(screen.title || "")}" />
         </div>
         <aside class="lightbox-info">
-          ${screen.section ? `<div class="lightbox-section">${escapeHtml(screen.section)}</div>` : ""}
           <h2 class="lightbox-title">${escapeHtml(title)}</h2>
-          ${subtitle ? `<div class="lightbox-subtitle">${escapeHtml(subtitle)}</div>` : ""}
-          ${desc ? `<p class="lightbox-desc">${escapeHtml(desc)}</p>` : ""}
-          ${states.length ? `
-            <div class="lightbox-block">
-              <h4>状态</h4>
-              <div class="lightbox-chips">${states.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}</div>
-            </div>` : ""}
           ${notes.length ? `
             <div class="lightbox-block">
               <h4>备注</h4>
