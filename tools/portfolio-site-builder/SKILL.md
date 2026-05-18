@@ -66,13 +66,14 @@ When the user wants to attach feature recordings:
 
 1. Place source video files anywhere on disk; the skill will compress them
    on the way into the project folder.
-2. Compress with ffmpeg targeting **~5 MB per video** so the repo stays
-   small and GitHub Pages loads quickly. Use 2-pass H.264:
+2. Compress with ffmpeg targeting **~8 MB per video** — that hits a
+   sweet spot where 720p UI demos stay crisp without smear / blocking
+   while still keeping the repo small. Use 2-pass H.264:
    - codec: H.264 (libx264) preset slow, container: mp4 + `-movflags +faststart`
-   - resolution: scale to `960:-2` (≈540p) — readable for screen
-     recordings, far smaller than 720p+
-   - bitrate: target total ≈ `5 MiB × 8 × 0.92 / duration_sec ÷ 1000` kbps;
-     subtract 64 (audio) for video bitrate; floor at 120k for short clips
+   - resolution: keep original (typically 1280x720). Only scale down when
+     the source is larger than 1080p
+   - bitrate: target total ≈ `8 MiB × 8 × 0.94 / duration_sec ÷ 1000` kbps;
+     subtract 64 (audio) for video bitrate; floor at 200k for short clips
    - audio: 64k AAC mono/stereo if there is narration; strip with `-an`
      if silent
    - Run two passes via `-pass 1 -an -f null` then `-pass 2 -movflags +faststart`

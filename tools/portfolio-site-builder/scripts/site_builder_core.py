@@ -1226,12 +1226,12 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 88px;
-  background: linear-gradient(to bottom, transparent, rgba(11,16,32,0.96));
+  height: 140px;
+  background: linear-gradient(to bottom, transparent, rgba(11,16,32,0.97) 65%);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 14px;
+  padding-bottom: 22px;
   pointer-events: none;
 }
 
@@ -1239,23 +1239,49 @@ body {
   display: none;
 }
 
+/* Collapse-bar shown only when expanded — gives a quick way back up */
+.doc-collapse-bar {
+  display: none;
+}
+
+.doc-image-wrap.expanded .doc-collapse-bar {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 6px;
+}
+
 .doc-expand-btn {
   pointer-events: all;
-  background: rgba(15,32,56,0.92);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: var(--text-soft);
-  padding: 7px 20px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  border: 0;
+  color: #04111f;
+  padding: 12px 28px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 700;
   font-family: inherit;
-  backdrop-filter: blur(6px);
-  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.03em;
+  box-shadow: 0 8px 24px rgba(124,92,255,0.35), 0 2px 6px rgba(0,0,0,0.25);
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
 }
 
 .doc-expand-btn:hover {
-  background: rgba(124,92,255,0.2);
-  color: var(--text);
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 28px rgba(124,92,255,0.5), 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.doc-expand-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.doc-expand-label {
+  line-height: 1;
 }
 
 .proto-layout {
@@ -2718,7 +2744,16 @@ function renderInteractionDoc(project, projectIndex) {
             <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" data-doc-zoom="${escapeHtml(project.id)}" />
           </div>
           <div class="doc-expand-bar">
-            <button type="button" class="doc-expand-btn" onclick="(function(){var w=document.getElementById('doc-wrap-${projectIndex}');w&&w.classList.toggle('expanded')})()">展开查看完整文档 ▼</button>
+            <button type="button" class="doc-expand-btn doc-expand-toggle" data-expand-toggle="${projectIndex}">
+              <span class="doc-expand-icon">▼</span>
+              <span class="doc-expand-label">展开查看完整文档</span>
+            </button>
+          </div>
+          <div class="doc-collapse-bar">
+            <button type="button" class="doc-expand-btn doc-expand-toggle" data-expand-toggle="${projectIndex}">
+              <span class="doc-expand-icon">▲</span>
+              <span class="doc-expand-label">收起文档</span>
+            </button>
           </div>
         </div>
         ${hasDocMeta ? `
@@ -3344,6 +3379,23 @@ function render() {
       if (state.editMode) return;
       const pid = node.dataset.docZoom;
       if (pid) openDocLightbox(pid);
+    });
+  });
+
+  // Expand / collapse the inline interaction doc preview
+  document.querySelectorAll("[data-expand-toggle]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const idx = btn.dataset.expandToggle;
+      const wrap = document.getElementById("doc-wrap-" + idx);
+      if (!wrap) return;
+      const willExpand = !wrap.classList.contains("expanded");
+      wrap.classList.toggle("expanded", willExpand);
+      // When collapsing, scroll the top edge of the doc back into view so
+      // the user doesn't end up stranded mid-section
+      if (!willExpand) {
+        wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   });
 }
