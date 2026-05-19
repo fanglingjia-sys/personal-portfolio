@@ -5130,7 +5130,29 @@ def build_project(
         or manifest.get("cover")
         or manifest.get("hero")
     )
+    # First, see if the explicit cover value matches a screen / interaction_doc
     cover = detect_cover_entry(explicit_detail_cover, screens, interaction_doc)
+    # If it doesn't match (e.g. user set `cover: "cover.png"` for a standalone
+    # cover image that isn't in items[]), fall back to building a fresh media
+    # asset so any file inside the project folder can be used as the detail
+    # cover — same flexibility card_cover already has.
+    cover_matched_item = (
+        explicit_detail_cover
+        and cover
+        and str(cover.get("relative_path") or "").replace("\\", "/")
+            == str(explicit_detail_cover).replace("\\", "/")
+    )
+    if explicit_detail_cover and not cover_matched_item:
+        standalone_cover = build_media_asset(
+            explicit_detail_cover,
+            f"{title_from_stem(project_dir.name)} cover",
+            project_dir,
+            output_dir,
+            asset_prefix,
+            cache,
+        )
+        if standalone_cover:
+            cover = standalone_cover
     card_cover = build_media_asset(
         (index_entry or {}).get("card_cover") or manifest.get("card_cover"),
         f"{title_from_stem(project_dir.name)} card cover",

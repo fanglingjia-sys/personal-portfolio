@@ -29,8 +29,8 @@
     ]
   },
   "hero": "钓鱼主界面.png",
-  "card_cover": "钓鱼主界面.png",
-  "cover": "钓鱼主界面.png",
+  "card_cover": "cover.png",
+  "cover": "cover.png",
   "items": [
     {
       "file": "钓鱼主界面.png",

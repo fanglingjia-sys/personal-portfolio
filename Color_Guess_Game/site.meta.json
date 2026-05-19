@@ -129,6 +129,6 @@
       "hover_description": "挑战失败后，本次猜错的酱料会出现在桌面上，作为本轮的错误猜测历史记录，便于玩家对照复盘；之后可返回主界面再次挑战。"
     }
   ],
-  "card_cover": "2.png",
-  "cover": "1.png"
+  "card_cover": "cover.png",
+  "cover": "cover.png"
 }
