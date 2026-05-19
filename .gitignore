@@ -14,3 +14,10 @@ Thumbs.db
 # Temp
 *.log
 *.tmp
+
+# Per-project backup of original (uncompressed) interaction docs; kept local
+# so the user can restore if needed, but excluded from git to keep the
+# repo small. To restore: copy .backup/交互文档.orig.jpg back over the
+# project's 交互文档.jpg.
+.backup/
+**/.backup/
