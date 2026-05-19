@@ -1191,24 +1191,43 @@ body {
   text-align: center;
 }
 
+.doc-lb-hint {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255,255,255,0.12);
+  font-size: 11px;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+
 .doc-lb-scroll {
   position: absolute;
   inset: 0;
-  overflow: auto;
-  padding: 80px 24px 24px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.doc-lb-scroll.dragging {
+  cursor: grabbing;
 }
 
 .doc-lb-scroll img {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
-  max-width: 100%;
+  max-width: none;
+  width: auto;
   height: auto;
-  cursor: zoom-out;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
-  border-radius: 8px;
+  transform-origin: 0 0;
   user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;            /* drag is handled by the stage */
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  border-radius: 4px;
+  will-change: transform;
 }
 
 .doc-image-wrap .doc-image {
@@ -3385,11 +3404,12 @@ function renderDocLightbox(project) {
     <div class="lightbox-overlay doc-lightbox" id="doc-lightbox-overlay" data-zoom="fit">
       <button type="button" class="lightbox-close" id="doc-lb-close" title="关闭 (ESC)">✕</button>
       <div class="doc-lb-toolbar">
-        <button type="button" class="doc-lb-btn" data-zoom-action="out" title="缩小">−</button>
+        <button type="button" class="doc-lb-btn" data-zoom-action="out" title="缩小 (-)">−</button>
         <span class="doc-lb-zoom-pct" id="doc-lb-zoom-pct">适应宽度</span>
-        <button type="button" class="doc-lb-btn" data-zoom-action="in" title="放大">+</button>
-        <button type="button" class="doc-lb-btn" data-zoom-action="fit" title="适应宽度">适应</button>
-        <button type="button" class="doc-lb-btn" data-zoom-action="actual" title="原始尺寸">1:1</button>
+        <button type="button" class="doc-lb-btn" data-zoom-action="in" title="放大 (+)">+</button>
+        <button type="button" class="doc-lb-btn" data-zoom-action="fit" title="适应宽度 (0)">适应</button>
+        <button type="button" class="doc-lb-btn" data-zoom-action="actual" title="原始尺寸 (1)">1:1</button>
+        <span class="doc-lb-hint">滚轮缩放 · 拖拽平移 · 双击切换</span>
       </div>
       <div class="doc-lb-scroll" id="doc-lb-scroll">
         <img id="doc-lb-img" src="${escapeHtml(doc.src)}" alt="${escapeHtml(doc.title || "交互文档")}" />
@@ -3402,77 +3422,249 @@ function bindDocLightbox(project) {
   const overlay = document.getElementById("doc-lightbox-overlay");
   if (!overlay) return;
   const img = overlay.querySelector("#doc-lb-img");
-  const scroll = overlay.querySelector("#doc-lb-scroll");
+  const stage = overlay.querySelector("#doc-lb-scroll");
   const pctLabel = overlay.querySelector("#doc-lb-zoom-pct");
 
-  // Zoom state: stored as a multiplier (1.0 = natural / actual size).
-  // "fit" mode uses width: 100% via CSS class.
-  let zoom = 1;
-  let mode = "fit"; // "fit" or "free"
+  // Transform-based pan / zoom engine. (tx, ty) is the offset in stage
+  // pixels from the stage's top-left to the image's top-left;
+  // scale multiplies the image's natural pixel size.
+  let scale = 1;
+  let tx = 0;
+  let ty = 0;
+  let fitScale = 1;
+  const MIN_SCALE = 0.1;
+  const MAX_SCALE = 8;
 
-  const applyZoom = () => {
-    if (mode === "fit") {
-      img.style.width = "100%";
-      img.style.maxWidth = "100%";
-      img.style.height = "auto";
-      pctLabel.textContent = "适应宽度";
-    } else {
-      img.style.maxWidth = "none";
-      img.style.width = (img.naturalWidth * zoom) + "px";
-      img.style.height = "auto";
-      pctLabel.textContent = Math.round(zoom * 100) + "%";
-    }
-  };
+  function apply() {
+    img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    img.style.transformOrigin = "0 0";
+    const isFitWidth = Math.abs(scale - fitScale) < 0.001;
+    pctLabel.textContent = isFitWidth ? "适应宽度" : `${Math.round((scale / fitScale) * 100)}%`;
+  }
 
-  const close = () => {
+  function computeFitScale() {
+    const stageW = stage.clientWidth;
+    if (!img.naturalWidth) return 1;
+    return stageW / img.naturalWidth;
+  }
+
+  function fit() {
+    fitScale = computeFitScale();
+    scale = fitScale;
+    tx = 0;
+    const imgH = img.naturalHeight * scale;
+    ty = imgH < stage.clientHeight ? (stage.clientHeight - imgH) / 2 : 0;
+    apply();
+  }
+
+  function actual() {
+    fitScale = computeFitScale();
+    const cx = stage.clientWidth / 2;
+    const cy = stage.clientHeight / 2;
+    zoomAt(cx, cy, 1 / scale); // first reset to scale=1 around center
+  }
+
+  function zoomAt(px, py, factor) {
+    const newScale = Math.max(MIN_SCALE, Math.min(scale * factor, MAX_SCALE));
+    if (newScale === scale) return;
+    // Convert the point in stage coords to image coords (pre-zoom)
+    const ix = (px - tx) / scale;
+    const iy = (py - ty) / scale;
+    scale = newScale;
+    // Keep that image point under the same stage point after zoom
+    tx = px - ix * scale;
+    ty = py - iy * scale;
+    apply();
+  }
+
+  function zoomCenter(factor) {
+    zoomAt(stage.clientWidth / 2, stage.clientHeight / 2, factor);
+  }
+
+  function close() {
     overlay.remove();
     document.removeEventListener("keydown", onKey);
-  };
-  const onKey = (e) => {
-    if (e.key === "Escape") close();
-    else if (e.key === "+" || e.key === "=") { mode = "free"; zoom = Math.min(zoom * 1.25, 4); applyZoom(); }
-    else if (e.key === "-" || e.key === "_") { mode = "free"; zoom = Math.max(zoom / 1.25, 0.25); applyZoom(); }
-    else if (e.key === "0") { mode = "fit"; applyZoom(); }
-    else if (e.key === "1") { mode = "free"; zoom = 1; applyZoom(); }
-  };
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mouseup", onMouseUp);
+  }
 
+  function onResize() {
+    // Re-fit if user was at fit scale; otherwise just refresh fitScale ref
+    const wasFit = Math.abs(scale - fitScale) < 0.001;
+    fitScale = computeFitScale();
+    if (wasFit) fit();
+    else apply();
+  }
+
+  function onKey(e) {
+    if (e.key === "Escape") return close();
+    if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomCenter(1.25); }
+    else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomCenter(1 / 1.25); }
+    else if (e.key === "0") { e.preventDefault(); fit(); }
+    else if (e.key === "1") { e.preventDefault(); actual(); }
+    else if (e.key === "ArrowUp")    { ty += 80; apply(); }
+    else if (e.key === "ArrowDown")  { ty -= 80; apply(); }
+    else if (e.key === "ArrowLeft")  { tx += 80; apply(); }
+    else if (e.key === "ArrowRight") { tx -= 80; apply(); }
+  }
+
+  // ── Drag-to-pan ──────────────────────────────────────────────
+  let dragging = false;
+  let dragStartX, dragStartY, dragStartTx, dragStartTy;
+  let dragMoved = false;
+
+  function onMouseDown(e) {
+    if (e.button !== 0) return;
+    if (e.target.closest(".doc-lb-toolbar") || e.target.closest(".lightbox-close")) return;
+    e.preventDefault();
+    dragging = true;
+    dragMoved = false;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragStartTx = tx;
+    dragStartTy = ty;
+    stage.classList.add("dragging");
+  }
+  function onMouseMove(e) {
+    if (!dragging) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+    tx = dragStartTx + dx;
+    ty = dragStartTy + dy;
+    apply();
+  }
+  function onMouseUp() {
+    if (!dragging) return;
+    dragging = false;
+    stage.classList.remove("dragging");
+  }
+
+  // ── Touch (pinch + drag) ─────────────────────────────────────
+  let touchStartDist = null;
+  let touchStartScale = 1;
+  let touchStartCenter = { x: 0, y: 0 };
+  let touchStartTx = 0, touchStartTy = 0;
+  let touchSingleStart = null;
+
+  function onTouchStart(e) {
+    if (e.touches.length === 2) {
+      const [a, b] = e.touches;
+      touchStartDist = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+      touchStartScale = scale;
+      const rect = stage.getBoundingClientRect();
+      touchStartCenter = {
+        x: (a.clientX + b.clientX) / 2 - rect.left,
+        y: (a.clientY + b.clientY) / 2 - rect.top,
+      };
+      touchStartTx = tx;
+      touchStartTy = ty;
+      touchSingleStart = null;
+    } else if (e.touches.length === 1) {
+      const t = e.touches[0];
+      touchSingleStart = { x: t.clientX, y: t.clientY, tx, ty };
+      touchStartDist = null;
+    }
+  }
+  function onTouchMove(e) {
+    if (e.touches.length === 2 && touchStartDist != null) {
+      e.preventDefault();
+      const [a, b] = e.touches;
+      const d = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+      const factor = d / touchStartDist;
+      const newScale = Math.max(MIN_SCALE, Math.min(touchStartScale * factor, MAX_SCALE));
+      // Anchor zoom at the initial midpoint of the two fingers
+      const px = touchStartCenter.x;
+      const py = touchStartCenter.y;
+      const ix = (px - touchStartTx) / touchStartScale;
+      const iy = (py - touchStartTy) / touchStartScale;
+      scale = newScale;
+      tx = px - ix * scale;
+      ty = py - iy * scale;
+      apply();
+    } else if (e.touches.length === 1 && touchSingleStart) {
+      e.preventDefault();
+      const t = e.touches[0];
+      tx = touchSingleStart.tx + (t.clientX - touchSingleStart.x);
+      ty = touchSingleStart.ty + (t.clientY - touchSingleStart.y);
+      apply();
+    }
+  }
+  function onTouchEnd(e) {
+    if (e.touches.length === 0) {
+      touchStartDist = null;
+      touchSingleStart = null;
+    }
+  }
+
+  // ── Wire DOM events ──────────────────────────────────────────
   overlay.querySelector("#doc-lb-close").addEventListener("click", close);
   overlay.addEventListener("click", (e) => {
-    // Close only when clicking the dim backdrop, not the image / toolbar
-    if (e.target === overlay) close();
+    // Close on backdrop click — but only if it's the overlay itself,
+    // not after a drag, and not when clicking toolbar / image
+    if (e.target === overlay && !dragMoved) close();
   });
 
   overlay.querySelectorAll("[data-zoom-action]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       const action = btn.dataset.zoomAction;
-      if (action === "in") { mode = "free"; zoom = Math.min(zoom * 1.25, 4); }
-      else if (action === "out") { mode = "free"; zoom = Math.max(zoom / 1.25, 0.25); }
-      else if (action === "fit") { mode = "fit"; }
-      else if (action === "actual") { mode = "free"; zoom = 1; }
-      applyZoom();
+      if (action === "in")        zoomCenter(1.25);
+      else if (action === "out")  zoomCenter(1 / 1.25);
+      else if (action === "fit")  fit();
+      else if (action === "actual") actual();
     });
   });
 
-  // Click image to toggle between fit and 100% (handy for long docs)
-  img.addEventListener("click", () => {
-    if (mode === "fit") { mode = "free"; zoom = 1; }
-    else { mode = "fit"; }
-    applyZoom();
-  });
-
-  // Mouse wheel + ctrl to zoom
-  scroll.addEventListener("wheel", (e) => {
-    if (!e.ctrlKey) return;
+  // Wheel zooms toward the cursor; Shift+wheel pans horizontally
+  stage.addEventListener("wheel", (e) => {
     e.preventDefault();
-    mode = "free";
-    if (e.deltaY < 0) zoom = Math.min(zoom * 1.1, 4);
-    else zoom = Math.max(zoom / 1.1, 0.25);
-    applyZoom();
+    if (e.shiftKey) {
+      // shift+wheel = horizontal pan, like spreadsheets / photoshop
+      tx -= e.deltaY;
+      apply();
+      return;
+    }
+    const rect = stage.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    zoomAt(px, py, factor);
   }, { passive: false });
 
+  stage.addEventListener("mousedown", onMouseDown);
+  window.addEventListener("mousemove", onMouseMove);
+  window.addEventListener("mouseup", onMouseUp);
+
+  stage.addEventListener("touchstart", onTouchStart, { passive: false });
+  stage.addEventListener("touchmove", onTouchMove, { passive: false });
+  stage.addEventListener("touchend", onTouchEnd);
+  stage.addEventListener("touchcancel", onTouchEnd);
+
+  // Double-click toggles fit ↔ 100% anchored at the click point
+  stage.addEventListener("dblclick", (e) => {
+    if (e.target.closest(".doc-lb-toolbar")) return;
+    const rect = stage.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const atFit = Math.abs(scale - fitScale) < 0.001;
+    if (atFit) {
+      zoomAt(px, py, 1 / fitScale);
+    } else {
+      fit();
+    }
+  });
+
   document.addEventListener("keydown", onKey);
-  applyZoom();
+  window.addEventListener("resize", onResize);
+
+  // Initial fit (depends on image being loaded for naturalWidth)
+  if (img.complete && img.naturalWidth) {
+    fit();
+  } else {
+    img.addEventListener("load", fit, { once: true });
+  }
 }
 
 // ── Screen Lightbox ──────────────────────────────────────────────────────
