@@ -355,6 +355,14 @@ body {
   box-shadow: var(--shadow);
 }
 
+/* Lock home-page card covers to a uniform 16:9 thumbnail regardless of
+   source dimensions so every project card visually aligns. */
+.project-cover img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -396,6 +404,12 @@ body {
 .project-card {
   overflow: hidden;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card .project-meta {
+  flex: 1 1 auto;
 }
 
 .project-card:hover {
