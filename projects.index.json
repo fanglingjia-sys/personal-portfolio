@@ -16,6 +16,13 @@
   ],
   "projects": [
     {
+      "id": "cloud-gacha",
+      "path": "CloudGacha",
+      "title": "云间寻宝",
+      "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
+      "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
+    },
+    {
       "id": "fishing-game",
       "path": "Fishing",
       "title": "欢乐钓鱼",
