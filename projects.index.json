@@ -14,31 +14,47 @@
     "流程图",
     "原型演示"
   ],
+  "categories": [
+    {
+      "id": "monetization",
+      "label": "商业化活动",
+      "description": "累充 / 累抽 / Gacha 等以视觉化进度驱动付费转化的活动设计。"
+    },
+    {
+      "id": "minigame",
+      "label": "运营小游戏",
+      "description": "活动期内嵌的互动小游戏, 以玩法循环和娱乐性为核心。"
+    }
+  ],
   "projects": [
     {
       "id": "cloud-gacha",
       "path": "CloudGacha",
+      "category": "monetization",
       "title": "云间寻宝",
       "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
       "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
     },
     {
-      "id": "fishing-game",
-      "path": "Fishing",
-      "title": "欢乐钓鱼",
-      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
-      "summary": "钓鱼主玩法 + 三档渔市订单 + 图鉴 / 海螺道具 / 每日目标的完整循环, 含二期优化对比。"
-    },
-    {
       "id": "bingo-rewards",
       "path": "Bingo",
+      "category": "monetization",
       "title": "宾果赢好礼",
       "subtitle": "节日累充活动 · Bingo 返利",
       "summary": "通过抽取棋格累计连线、达成 Bingo 解锁黄金棋盘, 配合自选机会和兑换商店的累充活动玩法。"
     },
     {
+      "id": "fishing-game",
+      "path": "Fishing",
+      "category": "minigame",
+      "title": "欢乐钓鱼",
+      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
+      "summary": "钓鱼主玩法 + 三档渔市订单 + 图鉴 / 海螺道具 / 每日目标的完整循环, 含二期优化对比。"
+    },
+    {
       "id": "color-guess-game",
       "path": "Color_Guess_Game",
+      "category": "minigame",
       "title": "备餐大挑战",
       "subtitle": "运营活动-小游戏",
       "summary": ""

@@ -401,6 +401,51 @@ body {
   gap: 20px;
 }
 
+/* Category grouping on home page */
+.project-category {
+  margin-top: 28px;
+}
+
+.project-category:first-child {
+  margin-top: 0;
+}
+
+.project-category-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.project-category-label {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  position: relative;
+  padding-left: 12px;
+}
+
+.project-category-label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+}
+
+.project-category-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
 .project-card {
   overflow: hidden;
   cursor: pointer;
@@ -2701,25 +2746,87 @@ function renderHome(data) {
           </div>
           ${state.manageMode ? `<button type="button" class="btn-outline" id="open-add-panel">+ 添加项目</button>` : ""}
         </div>
-        <div class="project-grid">
-          ${data.projects.map((project, index) => `
-            <article class="panel project-card" data-project-id="${project.id}">
-              ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="删除此项目">✕</button>` : ""}
-              <div class="project-cover">
-                ${project.card_cover ? `<img src="${project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${index}.card_cover.src" decoding="async" loading="lazy" />` : ""}
-              </div>
-              <div class="project-meta">
-                <h3 data-edit-path="projects.${index}.title">${escapeHtml(project.title)}</h3>
-                ${project.subtitle ? `<p class="muted" data-edit-path="projects.${index}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
-                ${project.summary ? `<p class="muted" data-edit-path="projects.${index}.summary">${escapeHtml(project.summary)}</p>` : ""}
-                ${renderTags(project.tags)}
-              </div>
-            </article>
-          `).join("")}
-        </div>
+        ${renderProjectGroups(data)}
       </section>
     </div>
   `;
+}
+
+// Render the home page project list as either:
+// - One grid per category (when site.categories is configured), or
+// - A single ungrouped grid (when no categories are defined)
+function renderProjectGroups(data) {
+  const projects = Array.isArray(data.projects) ? data.projects : [];
+  const categories = Array.isArray(data.site?.categories) ? data.site.categories : [];
+
+  const renderCard = (project, globalIndex) => `
+    <article class="panel project-card" data-project-id="${project.id}">
+      ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="删除此项目">✕</button>` : ""}
+      <div class="project-cover">
+        ${project.card_cover ? `<img src="${project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${globalIndex}.card_cover.src" decoding="async" loading="lazy" />` : ""}
+      </div>
+      <div class="project-meta">
+        <h3 data-edit-path="projects.${globalIndex}.title">${escapeHtml(project.title)}</h3>
+        ${project.subtitle ? `<p class="muted" data-edit-path="projects.${globalIndex}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
+        ${project.summary ? `<p class="muted" data-edit-path="projects.${globalIndex}.summary">${escapeHtml(project.summary)}</p>` : ""}
+        ${renderTags(project.tags)}
+      </div>
+    </article>
+  `;
+
+  // No categories configured → fall back to one grid
+  if (!categories.length) {
+    return `
+      <div class="project-grid">
+        ${projects.map((p, i) => renderCard(p, i)).join("")}
+      </div>
+    `;
+  }
+
+  // Build a map: category id -> [(project, globalIndex)]
+  const buckets = new Map();
+  categories.forEach((c) => buckets.set(c.id, []));
+  const uncategorized = [];
+  projects.forEach((p, i) => {
+    if (p.category && buckets.has(p.category)) {
+      buckets.get(p.category).push([p, i]);
+    } else {
+      uncategorized.push([p, i]);
+    }
+  });
+
+  const groups = categories
+    .filter((c) => buckets.get(c.id).length > 0)
+    .map((c) => {
+      const items = buckets.get(c.id);
+      return `
+        <div class="project-category">
+          <div class="project-category-head">
+            <h3 class="project-category-label">${escapeHtml(c.label)}</h3>
+            ${c.description ? `<p class="project-category-desc">${escapeHtml(c.description)}</p>` : ""}
+          </div>
+          <div class="project-grid">
+            ${items.map(([p, i]) => renderCard(p, i)).join("")}
+          </div>
+        </div>
+      `;
+    });
+
+  // Trailing "Other" group for any project missing / with unknown category
+  if (uncategorized.length) {
+    groups.push(`
+      <div class="project-category">
+        <div class="project-category-head">
+          <h3 class="project-category-label">其他</h3>
+        </div>
+        <div class="project-grid">
+          ${uncategorized.map(([p, i]) => renderCard(p, i)).join("")}
+        </div>
+      </div>
+    `);
+  }
+
+  return groups.join("");
 }
 
 function renderInteractionDoc(project, projectIndex) {
@@ -5407,8 +5514,15 @@ def build_project(
             if built:
                 videos.append(built)
 
+    category = (
+        str((index_entry or {}).get("category") or "").strip()
+        or str(manifest.get("category") or "").strip()
+        or None
+    )
+
     return {
         "id": project_id,
+        "category": category,
         "title": title,
         "subtitle": subtitle,
         "summary": summary,
@@ -5460,6 +5574,18 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
             for t in (p.get("tags") or []):
                 if t and t not in all_tags:
                     all_tags.append(t)
+        # Categories are optional. Pass through as-is; if absent, frontend
+        # renders all projects in a single ungrouped grid.
+        categories_meta = index_manifest.get("categories")
+        categories_clean: list[dict[str, Any]] = []
+        if isinstance(categories_meta, list):
+            for c in categories_meta:
+                if isinstance(c, dict) and c.get("id"):
+                    categories_clean.append({
+                        "id": str(c["id"]),
+                        "label": str(c.get("label") or c["id"]),
+                        "description": str(c.get("description") or ""),
+                    })
         return {
             "site": {
                 "title": args.title or index_manifest.get("title") or input_dir.name,
@@ -5472,6 +5598,7 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
                 "prototype_enabled": args.enable_prototype,
                 "labels": merge_labels(index_manifest.get("labels")),
                 "hero_image": site_hero_image,
+                "categories": categories_clean,
                 "theme": {
                     "accent": index_manifest.get("theme", {}).get("accent", "#7c5cff"),
                     "background": index_manifest.get("theme", {}).get("background", "#0b1020"),
