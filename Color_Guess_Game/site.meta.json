@@ -16,7 +16,7 @@
     "title": "猜色小游戏 · 交互文档",
     "summary": "总览交互流程、状态与反馈，具体以交互稿为准。"
   },
-  "hero": "1.png",
+  "hero": "1.jpg",
   "flow": {
     "title": "交互流程图",
     "description": "主流程：待操作 → 操作中 → 成功或失败；失败后酱料留在桌上形成错误猜测历史，再返回主界面继续挑战。",
@@ -94,41 +94,41 @@
   },
   "items": [
     {
-      "file": "1.png",
+      "file": "1.jpg",
       "title": "主界面 · 待操作",
       "section": "核心流程",
       "hover_title": "初始状态",
       "hover_description": "玩家进入后的主界面，等待开始操作。"
     },
     {
-      "file": "2.png",
+      "file": "2.jpg",
       "title": "主界面 · 操作中",
       "section": "核心流程",
       "hover_title": "进行中",
       "hover_description": "玩家进行猜测或拖拽等核心操作时的界面状态。"
     },
     {
-      "file": "4.png",
+      "file": "4.jpg",
       "title": "结果 · 成功",
       "section": "反馈",
       "hover_title": "挑战成功",
       "hover_description": "全部正确时的成功反馈与动效。"
     },
     {
-      "file": "5.png",
+      "file": "5.jpg",
       "title": "结果 · 失败",
       "section": "反馈",
       "hover_title": "挑战失败",
       "hover_description": "存在错误时的失败反馈；随后错误酱料会留在桌上，进入「错误历史」状态（见下一屏）。"
     },
     {
-      "file": "6.png",
+      "file": "6.jpg",
       "title": "失败后续 · 错误猜测历史",
       "section": "反馈",
       "hover_title": "酱料上桌 · 错误历史",
       "hover_description": "挑战失败后，本次猜错的酱料会出现在桌面上，作为本轮的错误猜测历史记录，便于玩家对照复盘；之后可返回主界面再次挑战。"
     }
   ],
-  "card_cover": "cover.png",
-  "cover": "cover.png"
+  "card_cover": "cover.jpg",
+  "cover": "cover.jpg"
 }

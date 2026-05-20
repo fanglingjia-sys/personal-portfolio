@@ -2676,7 +2676,7 @@ function renderHome(data) {
         </div>
         ${heroImg ? `
         <div class="hub-hero-right">
-          <img src="${heroImg.src}" alt="${escapeHtml(heroImg.title || owner || "portfolio")}" data-image-path="site.hero_image.src" />
+          <img src="${heroImg.src}" alt="${escapeHtml(heroImg.title || owner || "portfolio")}" data-image-path="site.hero_image.src" decoding="async" fetchpriority="high" />
         </div>` : ""}
       </header>
       <section class="section panel">
@@ -2692,7 +2692,7 @@ function renderHome(data) {
             <article class="panel project-card" data-project-id="${project.id}">
               ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="删除此项目">✕</button>` : ""}
               <div class="project-cover">
-                ${project.card_cover ? `<img src="${project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${index}.card_cover.src" />` : ""}
+                ${project.card_cover ? `<img src="${project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${index}.card_cover.src" decoding="async" loading="lazy" />` : ""}
               </div>
               <div class="project-meta">
                 <h3 data-edit-path="projects.${index}.title">${escapeHtml(project.title)}</h3>
@@ -2743,7 +2743,7 @@ function renderInteractionDoc(project, projectIndex) {
         <div class="doc-image-wrap" id="doc-wrap-${projectIndex}">
           <button type="button" class="doc-zoom-btn" data-doc-zoom="${escapeHtml(project.id)}" title="点击放大查看完整文档">⤢ 查看大图</button>
           <div class="doc-image">
-            <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" data-doc-zoom="${escapeHtml(project.id)}" />
+            <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" data-doc-zoom="${escapeHtml(project.id)}" loading="lazy" decoding="async" />
           </div>
           <div class="doc-expand-bar">
             <button type="button" class="doc-expand-btn doc-expand-toggle" data-expand-toggle="${projectIndex}">
@@ -2819,7 +2819,7 @@ function renderScreens(project, projectIndex) {
             ${variantCount > 0 ? `<span class="screen-variant-badge" title="${variantCount + 1} 个状态">+${variantCount} 状态</span>` : ""}
             ${canManage ? `<button type="button" class="manage-delete-btn screen-delete-btn" data-remove-screen="${escapeHtml(screen.relative_path || "")}" title="删除此界面">✕</button>` : ""}
             <div class="screen-image">
-              <img src="${screen.src}" alt="${escapeHtml(screen.title)}"
+              <img src="${screen.src}" alt="${escapeHtml(screen.title)}" loading="lazy" decoding="async"
                    data-image-path="projects.${projectIndex}.screens.${topIndex}.src" />
             </div>
             <div class="screen-desc">
@@ -2886,7 +2886,7 @@ function renderFlow(project, projectIndex) {
               <div class="flow-node" id="fnode-${projectIndex}-${escapeHtml(node.id)}"
                    style="grid-column:${(node.col||0)+1};grid-row:${(node.row||0)+1}">
                 ${screen
-                  ? `<img src="${screen.src}" alt="${escapeHtml(node.label)}" />`
+                  ? `<img src="${screen.src}" alt="${escapeHtml(node.label)}" loading="lazy" decoding="async" />`
                   : `<div class="flow-node-placeholder"></div>`}
                 <div class="flow-node-label">${escapeHtml(node.label)}</div>
               </div>`;
@@ -2936,8 +2936,8 @@ function renderVideos(project, projectIndex) {
             <article class="panel video-card" data-video-index="${vIndex}" tabindex="0">
               <div class="video-thumb">
                 ${posterSrc
-                  ? `<img src="${escapeHtml(posterSrc)}" alt="${escapeHtml(video.title || "")}" />`
-                  : `<video src="${escapeHtml(video.src)}" preload="metadata" muted playsinline></video>`}
+                  ? `<img src="${escapeHtml(posterSrc)}" alt="${escapeHtml(video.title || "")}" loading="lazy" decoding="async" />`
+                  : `<video src="${escapeHtml(video.src)}" preload="none" muted playsinline></video>`}
                 <div class="video-thumb-shade"></div>
                 <span class="video-play-icon" aria-hidden="true">▶</span>
                 ${video.duration ? `<span class="video-duration">${escapeHtml(video.duration)}</span>` : ""}
@@ -3176,7 +3176,7 @@ function renderPrototype(project, projectIndex) {
           <h3 data-edit-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.title">${escapeHtml(scene.title)}</h3>
           ${scene.summary ? `<p class="muted" data-edit-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.summary">${escapeHtml(scene.summary)}</p>` : ""}
           <div class="proto-stage">
-            <img src="${scene.src}" alt="${escapeHtml(scene.title)}" data-image-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.src" />
+            <img src="${scene.src}" alt="${escapeHtml(scene.title)}" data-image-path="projects.${projectIndex}.prototype.scenes.${state.currentSceneIndex}.src" loading="lazy" decoding="async" />
             ${hotspots.map((hotspot, index) => {
               const isNav = hotspot.goto_scene_index !== undefined && hotspot.goto_scene_index !== null;
               const label = escapeHtml(hotspot.label || hotspot.title || (isNav ? "→" : String(index + 1)));
@@ -3243,7 +3243,7 @@ function renderProject(project, projectIndex) {
           ${renderTags(project.tags)}
         </section>
         <section class="panel hero-preview">
-          ${project.cover ? `<img src="${project.cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${projectIndex}.cover.src" />` : ""}
+          ${project.cover ? `<img src="${project.cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${projectIndex}.cover.src" decoding="async" fetchpriority="high" />` : ""}
         </section>
       </header>
       ${isSectionVisible(project.id, "interaction_doc") ? renderInteractionDoc(project, projectIndex) : ""}
@@ -3709,7 +3709,7 @@ function renderScreenLightbox(project) {
             <div class="lightbox-variants">
               ${group.map((item, i) => `
                 <button type="button" class="lightbox-variant-btn ${i === variantIdx ? "active" : ""}" data-variant-index="${i}" title="${escapeHtml(item.title || "")}">
-                  <img src="${escapeHtml(item.src)}" alt="" />
+                  <img src="${escapeHtml(item.src)}" alt="" loading="lazy" decoding="async" />
                   <span>${escapeHtml(item.title || "")}</span>
                 </button>
               `).join("")}
