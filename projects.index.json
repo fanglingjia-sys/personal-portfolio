@@ -14,6 +14,11 @@
     "流程图",
     "原型演示"
   ],
+  "analytics": {
+    "cloudflare": {
+      "token": "b80171bd289d434bbb5f9bcf1a427344"
+    }
+  },
   "categories": [
     {
       "id": "monetization",

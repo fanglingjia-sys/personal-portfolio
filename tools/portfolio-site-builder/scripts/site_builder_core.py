@@ -69,6 +69,7 @@ HTML_TEMPLATE = """<!doctype html>
     <div class="loading">Loading site...</div>
   </div>
   <script src="./app.js"></script>
+__ANALYTICS_PLACEHOLDER__
 </body>
 </html>
 """
@@ -5599,6 +5600,7 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
                 "labels": merge_labels(index_manifest.get("labels")),
                 "hero_image": site_hero_image,
                 "categories": categories_clean,
+                "analytics": index_manifest.get("analytics") if isinstance(index_manifest.get("analytics"), dict) else None,
                 "theme": {
                     "accent": index_manifest.get("theme", {}).get("accent", "#7c5cff"),
                     "background": index_manifest.get("theme", {}).get("background", "#0b1020"),
@@ -5643,8 +5645,60 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
     }
 
 
+def _build_analytics_snippet(analytics_cfg: dict[str, Any] | None) -> str:
+    """Translate an `analytics` config block into HTML <script> tags.
+
+    Supported providers (all optional; missing config -> empty snippet):
+      - cloudflare: { "cloudflare": { "token": "<beacon-token>" } }
+      - google_analytics: { "google_analytics": { "id": "G-XXXXXX" } }
+      - goatcounter: { "goatcounter": { "code": "<your-code>" } }
+      - custom_html: a raw HTML string spliced verbatim (escape hatch)
+    """
+    if not isinstance(analytics_cfg, dict):
+        return ""
+    parts: list[str] = []
+
+    cf = analytics_cfg.get("cloudflare")
+    if isinstance(cf, dict) and cf.get("token"):
+        token = str(cf["token"]).replace('"', "")
+        parts.append(
+            "  <!-- Cloudflare Web Analytics -->\n"
+            f"  <script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
+            f"data-cf-beacon='{{\"token\": \"{token}\"}}'></script>\n"
+            "  <!-- End Cloudflare Web Analytics -->"
+        )
+
+    ga = analytics_cfg.get("google_analytics")
+    if isinstance(ga, dict) and ga.get("id"):
+        ga_id = str(ga["id"]).strip()
+        parts.append(
+            "  <!-- Google Analytics 4 -->\n"
+            f"  <script async src=\"https://www.googletagmanager.com/gtag/js?id={ga_id}\"></script>\n"
+            "  <script>window.dataLayer = window.dataLayer || [];"
+            "function gtag(){dataLayer.push(arguments);}gtag('js', new Date());"
+            f"gtag('config', '{ga_id}');</script>"
+        )
+
+    gc = analytics_cfg.get("goatcounter")
+    if isinstance(gc, dict) and gc.get("code"):
+        code = str(gc["code"]).strip()
+        parts.append(
+            "  <!-- GoatCounter -->\n"
+            f"  <script data-goatcounter=\"https://{code}.goatcounter.com/count\" "
+            "async src=\"//gc.zgo.at/count.js\"></script>"
+        )
+
+    custom = analytics_cfg.get("custom_html")
+    if isinstance(custom, str) and custom.strip():
+        parts.append("  " + custom.strip())
+
+    return "\n".join(parts)
+
+
 def write_site_files(output_dir: Path, data: dict[str, Any]) -> None:
-    (output_dir / "index.html").write_text(HTML_TEMPLATE, encoding="utf-8")
+    analytics_snippet = _build_analytics_snippet(data.get("site", {}).get("analytics"))
+    html = HTML_TEMPLATE.replace("__ANALYTICS_PLACEHOLDER__", analytics_snippet)
+    (output_dir / "index.html").write_text(html, encoding="utf-8")
     (output_dir / "styles.css").write_text(CSS_TEMPLATE, encoding="utf-8")
     (output_dir / "app.js").write_text(JS_TEMPLATE, encoding="utf-8")
     (output_dir / "site-data.json").write_text(
