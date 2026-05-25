@@ -96,6 +96,49 @@ When the user wants to attach feature recordings:
    ```
 5. `poster` is optional; when provided, use a still frame (`ffmpeg -ss <t> -frames:v 1`) to give the card a sharp thumbnail. Without a poster, the frontend uses the video's first decoded frame.
 
+## PDF / Document Portfolio
+
+For projects whose content is best delivered as a downloadable PDF
+(illustration sets, branding decks, print pieces — anything that
+doesn't fit the screen / video / interaction-doc structure), add a
+`pdf` field on `site.meta.json`:
+
+```json
+{
+  "title": "插画作品集",
+  "subtitle": "个人插画 · 角色设计",
+  "category": "other",
+  "card_cover": "cover.jpg",
+  "cover": "cover.jpg",
+  "pdf": {
+    "file": "portfolio.pdf",
+    "title": "完整插画作品集",
+    "description": "20+ 角色设计稿 + 配色方案。",
+    "page_count": 24
+  }
+}
+```
+
+Variants
+- Shorthand: `"pdf": "portfolio.pdf"` works too (auto-derives title
+  from filename)
+- Multiple PDFs: use `"pdfs": [ {...}, {...} ]` array instead
+
+Rendering
+- Project detail page gets a new "作品 PDF" section after videos
+- Each PDF renders as an `<object>` with native browser viewer fallback
+  to `<iframe>` to plain link, plus 「全屏查看」 / 「下载」 buttons
+- File size + page count display as chips
+- Section is added to BUILTIN_SECTIONS so users can toggle visibility
+  via 模块管理
+
+Size guideline
+- Aim for ≤ 10 MB per PDF for fast Pages load
+- For larger source PDFs, use `gs` (Ghostscript) or `pikepdf` to
+  re-encode at lower image quality before adding to the project
+- Card thumbnail comes from `card_cover` (same mechanism as other
+  project types); supply a `cover.jpg/png` alongside the PDF
+
 ## Creating a New Project — MUST Read Interaction Document First
 
 When generating `site.meta.json` for a **new** project (either first-time setup or when the user adds a new project folder), you MUST follow this protocol to produce accurate `flow` and `prototype` structures instead of empty placeholders:

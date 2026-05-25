@@ -18,6 +18,7 @@ from typing import Any
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov", ".m4v"}
+DOCUMENT_EXTENSIONS = {".pdf"}
 IGNORE_DIR_NAMES = {"_portfolio_site", "__pycache__"}
 DEFAULT_LABELS = {
     "home_eyebrow": "Project Hub",
@@ -652,6 +653,134 @@ h1, h2, h3, h4 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 18px;
+}
+
+/* ── PDF / Documents module ───────────────────────────────── */
+
+.pdf-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pdf-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pdf-meta {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.pdf-meta-text {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.pdf-meta-text h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+}
+
+.pdf-meta-text p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.pdf-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.pdf-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.14);
+  color: var(--text);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid rgba(124, 92, 255, 0.28);
+}
+
+.pdf-meta-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+  white-space: nowrap;
+}
+
+.pdf-btn:hover {
+  background: rgba(124, 92, 255, 0.16);
+  border-color: rgba(124, 92, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.pdf-btn-primary {
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+  color: #04111f;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.pdf-btn-primary:hover {
+  filter: brightness(1.06);
+  background: linear-gradient(135deg, var(--accent), #5eead4);
+}
+
+.pdf-embed {
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--panel-border);
+}
+
+.pdf-embed object,
+.pdf-embed iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  min-height: 720px;
+}
+
+@media (max-width: 720px) {
+  .pdf-meta {
+    flex-direction: column;
+  }
+  .pdf-meta-actions {
+    width: 100%;
+  }
+  .pdf-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .pdf-embed object,
+  .pdf-embed iframe {
+    min-height: 480px;
+  }
 }
 
 /* ── Video module ─────────────────────────────────────────── */
@@ -3115,6 +3244,71 @@ function renderFlow(project, projectIndex) {
   `;
 }
 
+// ── PDF / Documents section ──────────────────────────────────────────────
+function renderPdfs(project, projectIndex) {
+  const pdfs = Array.isArray(project.pdfs) ? project.pdfs : [];
+  const canEdit = state.editMode && state.manageMode;
+  if (!pdfs.length && !canEdit) return "";
+
+  const head = `
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Document</div>
+          <h2 class="section-title">作品 PDF</h2>
+          <p class="muted">嵌入查看完整 PDF, 或下载到本地高保真浏览。</p>
+        </div>
+      </div>
+  `;
+
+  if (!pdfs.length) {
+    return `
+      <section class="section panel">
+        ${head}
+        <div class="empty">在 site.meta.json 中加入 "pdf": "filename.pdf" 即可上架。</div>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="section panel">
+      ${head}
+      <div class="pdf-list">
+        ${pdfs.map((pdf, i) => {
+          const safeSrc = escapeHtml(pdf.src);
+          const sizeChip = pdf.size_label ? `<span class="pdf-chip">${escapeHtml(pdf.size_label)}</span>` : "";
+          const pagesChip = pdf.page_count ? `<span class="pdf-chip">${escapeHtml(String(pdf.page_count))} 页</span>` : "";
+          return `
+            <article class="panel pdf-card" data-pdf-index="${i}">
+              <div class="pdf-meta">
+                <div class="pdf-meta-text">
+                  <h3>${escapeHtml(pdf.title || "")}</h3>
+                  ${pdf.description ? `<p class="muted">${escapeHtml(pdf.description)}</p>` : ""}
+                  <div class="pdf-chips">${sizeChip}${pagesChip}</div>
+                </div>
+                <div class="pdf-meta-actions">
+                  <a class="pdf-btn pdf-btn-primary" href="${safeSrc}" target="_blank" rel="noopener" title="在新标签页全屏查看">
+                    <span>📖</span><span>全屏查看</span>
+                  </a>
+                  <a class="pdf-btn" href="${safeSrc}" download title="下载到本地">
+                    <span>⬇</span><span>下载</span>
+                  </a>
+                </div>
+              </div>
+              <div class="pdf-embed">
+                <object data="${safeSrc}#view=FitH&toolbar=1" type="application/pdf" width="100%" height="720">
+                  <iframe src="${safeSrc}" width="100%" height="720" loading="lazy"
+                          title="${escapeHtml(pdf.title || "PDF")}"></iframe>
+                  <p class="muted">浏览器无法嵌入预览 — <a href="${safeSrc}" target="_blank" rel="noopener">点击在新标签打开</a> 或 <a href="${safeSrc}" download>下载</a>。</p>
+                </object>
+              </div>
+            </article>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
 // ── Videos section ──────────────────────────────────────────────────────
 function renderVideos(project, projectIndex) {
   const labels = getLabels(state.data.site, project);
@@ -3467,6 +3661,7 @@ function renderProject(project, projectIndex) {
       ${isSectionVisible(project.id, "interaction_doc") ? renderInteractionDoc(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "screens")         ? renderScreens(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "videos")          ? renderVideos(project, projectIndex) : ""}
+      ${isSectionVisible(project.id, "pdfs")            ? renderPdfs(project, projectIndex) : ""}
       ${renderCustomSections(project.id, projectIndex)}
     </div>
   `;
@@ -4060,6 +4255,7 @@ const BUILTIN_SECTIONS = [
   { id: "interaction_doc", label: "交互文档",  icon: "📄" },
   { id: "screens",         label: "单独界面",  icon: "🖼" },
   { id: "videos",          label: "演示视频",  icon: "▶" },
+  { id: "pdfs",            label: "作品 PDF",  icon: "📑" },
 ];
 
 const SECTION_CFG_KEY = "portfolio_section_cfg_v1";
@@ -5241,6 +5437,49 @@ _VIDEO_MIME = {
 }
 
 
+def build_pdf_item(
+    entry: dict[str, Any] | str,
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any] | None:
+    """Build a single PDF entry. `entry` can be a plain string (filename)
+    or an object {file, title, description, page_count?}."""
+    if isinstance(entry, str):
+        entry = {"file": entry}
+    if not isinstance(entry, dict):
+        return None
+    file_value = entry.get("file")
+    if not file_value:
+        return None
+    try:
+        source_path, relative_path = resolve_source_path(project_dir, file_value)
+    except SystemExit:
+        return None
+    if source_path.suffix.lower() not in DOCUMENT_EXTENSIONS:
+        return None
+    size_bytes = source_path.stat().st_size
+    return {
+        "id": entry.get("id") or Path(relative_path).stem,
+        "relative_path": relative_path,
+        "title": entry.get("title") or title_from_stem(source_path.stem),
+        "description": entry.get("description", ""),
+        "page_count": entry.get("page_count") or None,
+        "size_bytes": size_bytes,
+        "size_label": _format_size(size_bytes),
+        "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+    }
+
+
+def _format_size(n: int) -> str:
+    if n < 1024:
+        return f"{n} B"
+    if n < 1024 * 1024:
+        return f"{n / 1024:.1f} KB"
+    return f"{n / 1024 / 1024:.1f} MB"
+
+
 def build_video_item(
     entry: dict[str, Any],
     project_dir: Path,
@@ -5611,6 +5850,21 @@ def build_project(
             if built:
                 videos.append(built)
 
+    # Build pdfs[] — supports either a single `pdf` field (most common)
+    # or a `pdfs` array for projects that include multiple downloadable docs
+    pdfs: list[dict[str, Any]] = []
+    single_pdf_meta = manifest.get("pdf")
+    if single_pdf_meta:
+        built = build_pdf_item(single_pdf_meta, project_dir, output_dir, asset_prefix, cache)
+        if built:
+            pdfs.append(built)
+    pdfs_meta = manifest.get("pdfs")
+    if isinstance(pdfs_meta, list):
+        for entry in pdfs_meta:
+            built = build_pdf_item(entry, project_dir, output_dir, asset_prefix, cache)
+            if built:
+                pdfs.append(built)
+
     category = (
         str((index_entry or {}).get("category") or "").strip()
         or str(manifest.get("category") or "").strip()
@@ -5630,6 +5884,7 @@ def build_project(
         "interaction_doc": interaction_doc,
         "screens": screens,
         "videos": videos,
+        "pdfs": pdfs,
         "flow": flow_data,
         "prototype": {
             "enabled": effective_prototype_enabled,
