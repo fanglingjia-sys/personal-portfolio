@@ -62,6 +62,9 @@ HTML_TEMPLATE = """<!doctype html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Project Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -90,16 +93,68 @@ CSS_TEMPLATE = """* {
   --accent-2: #2dd4bf;
   --shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
   --radius: 24px;
+  --font-body: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-display: "Manrope", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
 
 body {
   margin: 0;
-  font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-body);
   color: var(--text);
   background:
     radial-gradient(circle at top left, rgba(124, 92, 255, 0.18), transparent 28%),
     radial-gradient(circle at top right, rgba(45, 212, 191, 0.14), transparent 24%),
     var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Route all headlines + key display text through Manrope.
+   Chinese characters automatically fall back to PingFang SC / 微软雅黑
+   since Manrope only contains Latin glyphs. */
+h1, h2, h3, h4, h5, h6,
+.hub-owner,
+.title,
+.section-title,
+.project-meta h3,
+.lightbox-title,
+.video-meta h4,
+.project-category-label,
+.eyebrow,
+.section-kicker {
+  font-family: var(--font-display);
+}
+
+/* Tighten headlines and bump weight contrast against body copy */
+h1, h2, h3, h4 {
+  letter-spacing: -0.012em;
+  line-height: 1.18;
+}
+
+.hub-owner, .title {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.section-title {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.project-meta h3,
+.video-meta h4,
+.lightbox-title {
+  font-weight: 700;
+  letter-spacing: -0.012em;
+}
+
+/* Eyebrow / kicker get tracked-out caps treatment */
+.section-kicker,
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
 }
 
 .app {
@@ -452,15 +507,56 @@ body {
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  position: relative;
+  border: 1px solid var(--panel-border);
+  transition:
+    transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.3, 1),
+    border-color 0.3s ease;
 }
 
 .project-card .project-meta {
   flex: 1 1 auto;
 }
 
+/* Clip the cover so the inner image can scale beyond its box without
+   leaking outside the rounded card. */
+.project-card .project-cover {
+  overflow: hidden;
+}
+
+.project-card .project-cover img {
+  transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.3, 1);
+  will-change: transform;
+}
+
 .project-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(124, 92, 255, 0.35);
+  transform: translateY(-6px);
+  border-color: rgba(124, 92, 255, 0.55);
+  box-shadow:
+    0 22px 44px -14px rgba(124, 92, 255, 0.45),
+    0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.project-card:hover .project-cover img {
+  transform: scale(1.045);
+}
+
+/* Soft accent sweep that fades in from the top when hovered.
+   Pure CSS, no extra DOM. */
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(124, 92, 255, 0.08), transparent 35%);
+  transition: opacity 0.35s ease;
+}
+
+.project-card:hover::after {
+  opacity: 1;
 }
 
 .project-cover {
