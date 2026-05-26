@@ -5,17 +5,17 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# IMPORTANT for branch-based Pages deploy: workflow needs write access to
+# push the built site back to the `gh-pages` branch.
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,21 +31,19 @@ jobs:
             --enable-prototype \
             --output-dir dist
 
-      # NOTE: `actions/configure-pages` is intentionally NOT used here.
-      # GitHub's codeload.github.com kept returning 500 for that action's
-      # tarball (v5 + v4 both affected). Our site uses relative paths so
-      # the base-URL env vars that configure-pages normally sets aren't
-      # needed — upload-pages-artifact + deploy-pages work standalone.
-      - uses: actions/upload-pages-artifact@v3
+      # NOTE: The official actions/*-pages family was returning 500 from
+      # codeload.github.com when fetching their tarballs (2026-05-26).
+      # Switched to peaceiris/actions-gh-pages, which is served from a
+      # different release pipeline and is unaffected by that outage.
+      #
+      # IMPORTANT: After the first successful run, set the repo's
+      # Settings → Pages → Source to "Deploy from a branch" → "gh-pages"
+      # → "/ (root)" so GitHub serves what this action pushes.
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "deploy: ${{ github.event.head_commit.message }}"
