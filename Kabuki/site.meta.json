@@ -5,7 +5,13 @@
   "owner": "Fangling Jia",
   "role": "UX Designer",
   "bio": "Installation Art · Individual Project.",
-  "all_tags": ["Installation Art", "Wearable", "Cultural Critique", "Theatrical", "Sensors"],
+  "all_tags": [
+    "Installation Art",
+    "Wearable",
+    "Cultural Critique",
+    "Theatrical",
+    "Sensors"
+  ],
   "hero": "Page-1.jpg",
   "card_cover": "Page-1.jpg",
   "cover": "Page-1.jpg",
@@ -45,5 +51,12 @@
         "Outcome: 头部 / 前后舞台 / 弟子整体展示, 强反馈\"妻子被压低\"的瞬间"
       ]
     }
-  ]
+  ],
+  "display": {
+    "screens_layout": "inline",
+    "hide_sections": [
+      "interaction_doc"
+    ]
+  },
+  "showcase": []
 }

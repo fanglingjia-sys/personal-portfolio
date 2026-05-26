@@ -655,6 +655,178 @@ h1, h2, h3, h4 {
   gap: 18px;
 }
 
+/* ── Inline screen layout (poster-style projects) ─────────── */
+
+.screen-inline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.screen-inline-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 18px 18px 22px;
+  cursor: zoom-in;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.screen-inline-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124, 92, 255, 0.5);
+  box-shadow: 0 16px 36px -16px rgba(124, 92, 255, 0.35);
+}
+
+.screen-inline-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.screen-inline-image {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.35);
+}
+
+.screen-inline-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.screen-inline-card:hover .screen-inline-image img {
+  transform: scale(1.015);
+}
+
+.screen-inline-zoom {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(11, 16, 32, 0.75);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.screen-inline-card:hover .screen-inline-zoom,
+.screen-inline-card:focus-visible .screen-inline-zoom,
+.showcase-card:hover .screen-inline-zoom,
+.showcase-card:focus-visible .screen-inline-zoom {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.screen-inline-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.screen-inline-section {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.screen-inline-meta h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+}
+
+.screen-inline-notes {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+
+/* ── Showcase module (作品展示) ────────────────────────────── */
+
+.showcase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.showcase-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 16px 16px 20px;
+  cursor: zoom-in;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.showcase-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124, 92, 255, 0.5);
+  box-shadow: 0 16px 36px -16px rgba(124, 92, 255, 0.35);
+}
+
+.showcase-image {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.35);
+}
+
+.showcase-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.showcase-card:hover .showcase-image img {
+  transform: scale(1.015);
+}
+
+.showcase-meta {
+  padding: 0 6px;
+}
+
+.showcase-meta h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+}
+
+.showcase-meta p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 /* ── PDF / Documents module ───────────────────────────────── */
 
 .pdf-list {
@@ -2497,6 +2669,7 @@ JS_TEMPLATE = """const state = {
   lightboxScreenIndex: 0,
   lightboxVariantIndex: 0,
   lightboxVideoIndex: 0,
+  lightboxShowcaseIndex: 0,
 };
 
 const app = document.getElementById("app");
@@ -3119,6 +3292,16 @@ function renderInteractionDoc(project, projectIndex) {
 }
 
 function renderScreens(project, projectIndex) {
+  // Allow per-project layout override (default = "grid"; "inline" = each
+  // screen as a full-width block for poster-style art projects)
+  const layout = project.display?.screens_layout || "grid";
+  if (layout === "inline") {
+    return renderScreensInline(project, projectIndex);
+  }
+  return renderScreensGrid(project, projectIndex);
+}
+
+function renderScreensGrid(project, projectIndex) {
   const labels = getLabels(state.data.site, project);
   const allScreens = Array.isArray(project.screens) ? project.screens : [];
   // Build a map from parent id -> array of child variant items
@@ -3188,6 +3371,66 @@ function renderScreens(project, projectIndex) {
   `;
 }
 
+// Inline layout — each item rendered as a full-width block: large image
+// on top, optional section kicker + title + notes below. Reuses the
+// existing screen lightbox on click for max-zoom inspection.
+function renderScreensInline(project, projectIndex) {
+  const labels = getLabels(state.data.site, project);
+  const allScreens = Array.isArray(project.screens) ? project.screens : [];
+  // Inline layout treats every screen as a top-level showcase page; parent
+  // variants would be confusing here, so we still filter to top-level but
+  // include parented items as separate rows. (Poster-style projects
+  // typically don't use the parent grouping.)
+  const items = allScreens.filter((s) => s && !s.parent);
+
+  if (!items.length) {
+    return `
+      <section class="section panel">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Screens</div>
+            <h2 class="section-title">${escapeHtml(labels.screens_title || "单独界面")}</h2>
+          </div>
+        </div>
+        <div class="empty">当前项目还没有配置界面列表。</div>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="section panel">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Pages</div>
+          <h2 class="section-title">${escapeHtml(labels.screens_title || "单独界面")}</h2>
+          <p class="muted">每页完整展示, 点击图片可放大查看细节。</p>
+        </div>
+      </div>
+      <div class="screen-inline-list">
+        ${items.map((screen, topIndex) => {
+          const title = screen.title || screen.hover_title || "";
+          const section = screen.section || "";
+          const notes = Array.isArray(screen.notes) ? screen.notes : [];
+          return `
+            <article class="screen-inline-card" data-screen-index="${topIndex}" tabindex="0">
+              <div class="screen-inline-image">
+                <img src="${screen.src}" alt="${escapeHtml(screen.title || "")}"
+                     loading="lazy" decoding="async" />
+                <div class="screen-inline-zoom">⤢ 点击放大</div>
+              </div>
+              <div class="screen-inline-meta">
+                ${section ? `<div class="screen-inline-section">${escapeHtml(section)}</div>` : ""}
+                <h3>${escapeHtml(title)}</h3>
+                ${notes.length ? `<ul class="screen-inline-notes">${notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>` : ""}
+              </div>
+            </article>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderFlow(project, projectIndex) {
   const flow = project.flow;
   const canEdit = state.editMode && state.manageMode;
@@ -3242,6 +3485,127 @@ function renderFlow(project, projectIndex) {
       </div>
     </section>
   `;
+}
+
+// ── Showcase section (artwork gallery) ──────────────────────────────────
+function renderShowcase(project, projectIndex) {
+  const items = Array.isArray(project.showcase) ? project.showcase : [];
+  const canEdit = state.editMode && state.manageMode;
+  if (!items.length && !canEdit) return "";
+
+  const head = `
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Showcase</div>
+          <h2 class="section-title">作品展示</h2>
+          <p class="muted">完整作品集 — 点击放大查看细节, 配合说明阅读。</p>
+        </div>
+      </div>
+  `;
+
+  if (!items.length) {
+    return `
+      <section class="section panel">
+        ${head}
+        <div class="empty">在 site.meta.json 中添加 showcase[] 条目即可上架: { "file": "art.jpg", "title": "...", "description": "..." }</div>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="section panel">
+      ${head}
+      <div class="showcase-list">
+        ${items.map((it, i) => `
+          <article class="showcase-card" data-showcase-index="${i}" tabindex="0">
+            <div class="showcase-image">
+              <img src="${escapeHtml(it.src)}" alt="${escapeHtml(it.title || "")}"
+                   loading="lazy" decoding="async" />
+              <div class="screen-inline-zoom">⤢ 点击放大</div>
+            </div>
+            ${(it.title || it.description) ? `
+              <div class="showcase-meta">
+                ${it.title ? `<h3>${escapeHtml(it.title)}</h3>` : ""}
+                ${it.description ? `<p class="muted">${escapeHtml(it.description)}</p>` : ""}
+              </div>
+            ` : ""}
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function openShowcaseLightbox(idx) {
+  const project = (state.data?.projects || []).find(p => p.id === state.currentProjectId);
+  if (!project || !Array.isArray(project.showcase) || !project.showcase.length) return;
+  state.lightboxShowcaseIndex = Math.max(0, Math.min(idx, project.showcase.length - 1));
+  if (!document.getElementById("showcase-lightbox-overlay")) {
+    document.body.insertAdjacentHTML("beforeend", renderShowcaseLightbox(project));
+    bindShowcaseLightbox(project);
+  } else {
+    refreshShowcaseLightbox(project);
+  }
+}
+
+function renderShowcaseLightbox(project) {
+  const items = project.showcase;
+  const idx = Math.max(0, Math.min(state.lightboxShowcaseIndex || 0, items.length - 1));
+  const item = items[idx];
+  if (!item) return "";
+  return `
+    <div class="lightbox-overlay" id="showcase-lightbox-overlay">
+      <button type="button" class="lightbox-close" id="showcase-lb-close" title="关闭 (ESC)">✕</button>
+      <button type="button" class="lightbox-nav lightbox-nav-prev" id="showcase-lb-prev" title="上一张 (←)">‹</button>
+      <button type="button" class="lightbox-nav lightbox-nav-next" id="showcase-lb-next" title="下一张 (→)">›</button>
+      <div class="lightbox-content">
+        <div class="lightbox-image-wrap">
+          <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.title || "")}" />
+        </div>
+        <aside class="lightbox-info">
+          ${item.title ? `<h2 class="lightbox-title">${escapeHtml(item.title)}</h2>` : ""}
+          ${item.description ? `<p class="lightbox-desc">${escapeHtml(item.description)}</p>` : ""}
+          <div class="lightbox-counter">作品 ${idx + 1} / ${items.length}</div>
+        </aside>
+      </div>
+    </div>
+  `;
+}
+
+function refreshShowcaseLightbox(project) {
+  const overlay = document.getElementById("showcase-lightbox-overlay");
+  if (!overlay) return;
+  const html = renderShowcaseLightbox(project);
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  const next = tmp.firstElementChild;
+  if (!next) return;
+  overlay.replaceWith(next);
+  bindShowcaseLightbox(project);
+}
+
+function bindShowcaseLightbox(project) {
+  const overlay = document.getElementById("showcase-lightbox-overlay");
+  if (!overlay) return;
+  const total = project.showcase.length;
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+  };
+  const navTo = (delta) => {
+    state.lightboxShowcaseIndex = ((state.lightboxShowcaseIndex + delta) % total + total) % total;
+    refreshShowcaseLightbox(project);
+  };
+  const onKey = (e) => {
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft") navTo(-1);
+    else if (e.key === "ArrowRight") navTo(1);
+  };
+  overlay.querySelector("#showcase-lb-close").addEventListener("click", close);
+  overlay.querySelector("#showcase-lb-prev").addEventListener("click", () => navTo(-1));
+  overlay.querySelector("#showcase-lb-next").addEventListener("click", () => navTo(1));
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  document.addEventListener("keydown", onKey);
 }
 
 // ── PDF / Documents section ──────────────────────────────────────────────
@@ -3662,6 +4026,7 @@ function renderProject(project, projectIndex) {
       ${isSectionVisible(project.id, "screens")         ? renderScreens(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "videos")          ? renderVideos(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "pdfs")            ? renderPdfs(project, projectIndex) : ""}
+      ${isSectionVisible(project.id, "showcase")        ? renderShowcase(project, projectIndex) : ""}
       ${renderCustomSections(project.id, projectIndex)}
     </div>
   `;
@@ -3739,12 +4104,12 @@ function render() {
     });
   });
 
-  // Click on screen card → open lightbox (only when not in edit mode,
-  // since edit mode reserves clicks for inline image / text editing).
-  document.querySelectorAll(".screen-card[data-screen-index]").forEach((card) => {
+  // Click on screen card (grid OR inline) → open screen lightbox
+  // (only when not in edit mode, since edit mode reserves clicks for
+  // inline image / text editing).
+  document.querySelectorAll(".screen-card[data-screen-index], .screen-inline-card[data-screen-index]").forEach((card) => {
     card.addEventListener("click", (e) => {
       if (state.editMode) return;
-      // Don't fire when clicking the manage delete button (it's inside the card)
       if (e.target.closest(".manage-delete-btn")) return;
       const idx = Number(card.dataset.screenIndex);
       openScreenLightbox(idx);
@@ -3755,6 +4120,21 @@ function render() {
         e.preventDefault();
         const idx = Number(card.dataset.screenIndex);
         openScreenLightbox(idx);
+      }
+    });
+  });
+
+  // Click on showcase card → open showcase lightbox
+  document.querySelectorAll(".showcase-card[data-showcase-index]").forEach((card) => {
+    card.addEventListener("click", () => {
+      if (state.editMode) return;
+      openShowcaseLightbox(Number(card.dataset.showcaseIndex));
+    });
+    card.addEventListener("keydown", (e) => {
+      if (state.editMode) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openShowcaseLightbox(Number(card.dataset.showcaseIndex));
       }
     });
   });
@@ -4256,6 +4636,7 @@ const BUILTIN_SECTIONS = [
   { id: "screens",         label: "单独界面",  icon: "🖼" },
   { id: "videos",          label: "演示视频",  icon: "▶" },
   { id: "pdfs",            label: "作品 PDF",  icon: "📑" },
+  { id: "showcase",        label: "作品展示",  icon: "🎨" },
 ];
 
 const SECTION_CFG_KEY = "portfolio_section_cfg_v1";
@@ -4279,6 +4660,12 @@ function getProjectCfg(projectId) {
 }
 
 function isSectionVisible(projectId, sectionId) {
+  // Per-project meta hide takes hard priority — used by non-game projects
+  // to permanently turn off modules that don't apply (e.g. interaction_doc
+  // on installation-art projects).
+  const project = (state.data?.projects || []).find(p => p && p.id === projectId);
+  const hide = project?.display?.hide_sections;
+  if (Array.isArray(hide) && hide.includes(sectionId)) return false;
   return getProjectCfg(projectId).visible[sectionId] !== false;
 }
 
@@ -5437,6 +5824,33 @@ _VIDEO_MIME = {
 }
 
 
+def build_showcase_item(
+    entry: dict[str, Any],
+    project_dir: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+) -> dict[str, Any] | None:
+    """Build a single 作品展示 item. Same image-handling as build_item but
+    intentionally minimal metadata — these are "show the artwork, say a
+    sentence" entries, not state-tagged UI screenshots."""
+    if not isinstance(entry, dict) or not entry.get("file"):
+        return None
+    try:
+        source_path, relative_path = resolve_source_path(project_dir, entry["file"])
+    except SystemExit:
+        return None
+    if source_path.suffix.lower() not in IMAGE_EXTENSIONS:
+        return None
+    return {
+        "id": entry.get("id") or Path(relative_path).stem,
+        "relative_path": relative_path,
+        "title": entry.get("title") or "",
+        "description": entry.get("description", ""),
+        "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
+    }
+
+
 def build_pdf_item(
     entry: dict[str, Any] | str,
     project_dir: Path,
@@ -5865,6 +6279,20 @@ def build_project(
             if built:
                 pdfs.append(built)
 
+    # Build showcase[] — extra "作品展示" gallery for projects whose primary
+    # deliverable is an artwork series rather than UI screens
+    showcase: list[dict[str, Any]] = []
+    showcase_meta = manifest.get("showcase")
+    if isinstance(showcase_meta, list):
+        for entry in showcase_meta:
+            built = build_showcase_item(entry, project_dir, output_dir, asset_prefix, cache)
+            if built:
+                showcase.append(built)
+
+    # Pass per-project display config (hide_sections / screens_layout etc.)
+    # straight through to site-data.json so the client can read it
+    display_meta = manifest.get("display") if isinstance(manifest.get("display"), dict) else {}
+
     category = (
         str((index_entry or {}).get("category") or "").strip()
         or str(manifest.get("category") or "").strip()
@@ -5885,6 +6313,8 @@ def build_project(
         "screens": screens,
         "videos": videos,
         "pdfs": pdfs,
+        "showcase": showcase,
+        "display": display_meta,
         "flow": flow_data,
         "prototype": {
             "enabled": effective_prototype_enabled,

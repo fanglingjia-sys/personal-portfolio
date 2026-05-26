@@ -5,7 +5,13 @@
   "owner": "Fangling Jia",
   "role": "UX Designer",
   "bio": "Sensory / Interactive / Lighting / Sound · Installation Design.",
-  "all_tags": ["Sensory Design", "Interactive Space", "Lighting", "Sound Design", "Wearable"],
+  "all_tags": [
+    "Sensory Design",
+    "Interactive Space",
+    "Lighting",
+    "Sound Design",
+    "Wearable"
+  ],
   "hero": "Page-1.jpg",
   "card_cover": "Page-1.jpg",
   "cover": "Page-1.jpg",
@@ -58,5 +64,12 @@
         "Data presentation area: 用户的探索范围反向映射成光的图案"
       ]
     }
-  ]
+  ],
+  "display": {
+    "screens_layout": "inline",
+    "hide_sections": [
+      "interaction_doc"
+    ]
+  },
+  "showcase": []
 }

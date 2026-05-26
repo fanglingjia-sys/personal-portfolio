@@ -5,7 +5,13 @@
   "owner": "Fangling Jia",
   "role": "UX Designer",
   "bio": "Cooperation Project · Service / UX / Space / Graphic Design.",
-  "all_tags": ["Service Design", "Space Design", "Storytelling", "Game Spatial", "Cooperative"],
+  "all_tags": [
+    "Service Design",
+    "Space Design",
+    "Storytelling",
+    "Game Spatial",
+    "Cooperative"
+  ],
   "hero": "Page-1.jpg",
   "card_cover": "Page-1.jpg",
   "cover": "Page-1.jpg",
@@ -46,5 +52,12 @@
         "SECTION DRAWING: 完整空间剖面 + 球幕主穹顶的轴测呈现"
       ]
     }
-  ]
+  ],
+  "display": {
+    "screens_layout": "inline",
+    "hide_sections": [
+      "interaction_doc"
+    ]
+  },
+  "showcase": []
 }
