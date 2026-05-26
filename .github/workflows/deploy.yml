@@ -5,8 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# IMPORTANT for branch-based Pages deploy: workflow needs write access to
-# push the built site back to the `gh-pages` branch.
 permissions:
   contents: write
 
@@ -31,19 +29,26 @@ jobs:
             --enable-prototype \
             --output-dir dist
 
-      # NOTE: The official actions/*-pages family was returning 500 from
-      # codeload.github.com when fetching their tarballs (2026-05-26).
-      # Switched to peaceiris/actions-gh-pages, which is served from a
-      # different release pipeline and is unaffected by that outage.
-      #
-      # IMPORTANT: After the first successful run, set the repo's
-      # Settings → Pages → Source to "Deploy from a branch" → "gh-pages"
-      # → "/ (root)" so GitHub serves what this action pushes.
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          force_orphan: true
-          commit_message: "deploy: ${{ github.event.head_commit.message }}"
+      # codeload.github.com kept 500-ing for every actions/*-pages and
+      # third-party gh-pages action tarball (2026-05-26 outage).
+      # Plan D: no external Pages action — just commit ./dist to a
+      # gh-pages branch using plain git + the auto-provided GITHUB_TOKEN.
+      # This only needs the runner's pre-installed git binary.
+      - name: Publish ./dist to gh-pages branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          set -euo pipefail
+          cd dist
+          touch .nojekyll
+          git init -b gh-pages
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "deploy: ${COMMIT_MSG%%$'\n'*}"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git"
+          # force-push as orphan: gh-pages branch always reflects the
+          # latest build, no history accumulation
+          git push --force origin gh-pages
