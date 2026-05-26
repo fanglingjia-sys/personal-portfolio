@@ -31,10 +31,11 @@ jobs:
             --enable-prototype \
             --output-dir dist
 
-      # Pinned to v4 (v5 archive download was throwing
-      # codeload.github.com 500 errors on 2026-05-26)
-      - uses: actions/configure-pages@v4
-
+      # NOTE: `actions/configure-pages` is intentionally NOT used here.
+      # GitHub's codeload.github.com kept returning 500 for that action's
+      # tarball (v5 + v4 both affected). Our site uses relative paths so
+      # the base-URL env vars that configure-pages normally sets aren't
+      # needed — upload-pages-artifact + deploy-pages work standalone.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
