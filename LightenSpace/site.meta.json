@@ -1,0 +1,62 @@
+{
+  "title": "LIGHTEN SPACE · 点亮空间",
+  "subtitle": "可穿戴交互 · 感官扩展空间设计",
+  "description": "针对成年人想象力萎缩的问题, 设计了一组\"听觉增强耳机 + 三角形 inspiration 玻璃罩 + 光感装置\"的可穿戴空间体验。佩戴耳机的用户在不同时段进入\"盲区\"空间, 听到平日忽略的声音, 玻璃罩内被点亮的物件唤起被遗忘的灵感瞬间, 把空间转化为感官扩展的画布。",
+  "owner": "Fangling Jia",
+  "role": "UX Designer",
+  "bio": "Sensory / Interactive / Lighting / Sound · Installation Design.",
+  "all_tags": ["Sensory Design", "Interactive Space", "Lighting", "Sound Design", "Wearable"],
+  "hero": "Page-1.jpg",
+  "card_cover": "Page-1.jpg",
+  "cover": "Page-1.jpg",
+  "items": [
+    {
+      "file": "Page-1.jpg",
+      "id": "page-1",
+      "title": "概念与背景",
+      "section": "Concept",
+      "notes": [
+        "LIGHTEN SPACE: 以 Inspiration Garden 三角棱锥空间作为视觉锚",
+        "How did our imagination disappear?: 从婴儿到成年的内因脑发育 + 外因社会环境双线分析",
+        "Internal cause: 神经发育速率随年龄递减",
+        "External cause: 从开放探索到\"标准答案\" 教育系统的过度压抑"
+      ]
+    },
+    {
+      "file": "Page-2.jpg",
+      "id": "page-2",
+      "title": "调研 · 用户 · 草图",
+      "section": "Research & Sketches",
+      "notes": [
+        "Experiment + Interview: 不同年龄段对\"想象力\"的具体反馈数据",
+        "Data analysis: Cognitive imitation vs Concept-and-enthusiasm 的对比模型",
+        "Persona PEGGY (29 yrs old): 痛点、需求与触发想象力的具体场景",
+        "Sketch 1-3: 从\"耳机\"到\"光感盒\"再到\"空间装置\"的递进草图"
+      ]
+    },
+    {
+      "file": "Page-3.jpg",
+      "id": "page-3",
+      "title": "原型 · 技术 · 故事板",
+      "section": "Prototype & Tech",
+      "notes": [
+        "Prototype test: plan 1 (耳机) + plan 2 (光感盒) 两版方案的对照测试",
+        "Further observation: morning / noon / evening 三段时间内\"盲区\"声音差异",
+        "Technology analysis: Tri-color light strip + Human-infrared sensor 控制方案",
+        "Storyboard: 进入 → 戴耳机 → 走向玻璃罩 → 点亮 → 听到隐藏声音 的完整脚本"
+      ]
+    },
+    {
+      "file": "Page-4.jpg",
+      "id": "page-4",
+      "title": "交互流 · 空间布局",
+      "section": "Interactive Flow",
+      "notes": [
+        "全天色温变化: morning 白 → noon 橙 → evening 红橙 → night 蓝",
+        "Closed Triangular Prism: 进入棱锥后的耳机触发流程",
+        "Perception exploration area: 走入玻璃罩集群, 物体随触摸点亮",
+        "Data presentation area: 用户的探索范围反向映射成光的图案"
+      ]
+    }
+  ]
+}

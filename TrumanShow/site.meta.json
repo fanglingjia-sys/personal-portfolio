@@ -1,0 +1,50 @@
+{
+  "title": "楚门的世界",
+  "subtitle": "游戏空间交互 · Service / Space / Graphic Design",
+  "description": "受电影《楚门的世界》启发的服务设计 + 空间设计项目。围绕\"被操纵的人生\"与\"思维边界\"展开调研, 通过空间叙事和角色路径推动玩家从固化思维 (Fixed Mindset) 向批判性思维 (Critical Thinking) 转换。完整覆盖灵感来源、空间生成、剧本叙事、互动场景与最终输出。",
+  "owner": "Fangling Jia",
+  "role": "UX Designer",
+  "bio": "Cooperation Project · Service / UX / Space / Graphic Design.",
+  "all_tags": ["Service Design", "Space Design", "Storytelling", "Game Spatial", "Cooperative"],
+  "hero": "Page-1.jpg",
+  "card_cover": "Page-1.jpg",
+  "cover": "Page-1.jpg",
+  "items": [
+    {
+      "file": "Page-1.jpg",
+      "id": "page-1",
+      "title": "灵感来源与调研",
+      "section": "Inspiration & Research",
+      "notes": [
+        "Source of Inspiration: 关于\"被操纵的人生\"与\"思维边界\"的来源整理",
+        "Film Review + Interview: 对核心电影《楚门的世界》场景与用户访谈拆解",
+        "Conclusion: 锁定从 Fixed Mindset 走向 Critical Thinking 的设计目标",
+        "底部 Time Out 角色卡: 展示项目里出现的关键 NPC 与他们的关系"
+      ]
+    },
+    {
+      "file": "Page-2.jpg",
+      "id": "page-2",
+      "title": "空间生成 · 剧本 · 互动场景",
+      "section": "Storyworld",
+      "notes": [
+        "Spatial Sequence + Storyboard: 8 段空间节点的镜头化拆解",
+        "Space Generation: 从形态、材质到光照的渐进式生成示意",
+        "Script + Roadmap: 玩家进入→ 体验→ 离开的剧本与路径图",
+        "Interactive Scenario: Game-Over / Take-the-clues / Find-the-truman 的五幕互动流"
+      ]
+    },
+    {
+      "file": "Page-3.jpg",
+      "id": "page-3",
+      "title": "体验输出 · 物理模型 · 剖面",
+      "section": "Outcome",
+      "notes": [
+        "GAME OVER / TIME OUT: 失败结局 — 卡片上的 Marlon / Meryl / Christof 反映固化思维型 NPC",
+        "YOU NAILED IT! Truman: 成功结局, 玩家拿到自己的成长路径卡",
+        "PHYSICAL MODEL: Dome / Bar / Ball Pit / Campus / Basement 多空间实体模型",
+        "SECTION DRAWING: 完整空间剖面 + 球幕主穹顶的轴测呈现"
+      ]
+    }
+  ]
+}
