@@ -31,7 +31,9 @@ jobs:
             --enable-prototype \
             --output-dir dist
 
-      - uses: actions/configure-pages@v5
+      # Pinned to v4 (v5 archive download was throwing
+      # codeload.github.com 500 errors on 2026-05-26)
+      - uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
