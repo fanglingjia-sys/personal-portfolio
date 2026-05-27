@@ -3162,7 +3162,7 @@ function renderProjectGroups(data) {
     <article class="panel project-card" data-project-id="${project.id}">
       ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="删除此项目">✕</button>` : ""}
       <div class="project-cover">
-        ${project.card_cover ? `<img src="${project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${globalIndex}.card_cover.src" decoding="async" loading="lazy" />` : ""}
+        ${project.card_cover ? `<img src="${project.card_cover.thumb || project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${globalIndex}.card_cover.src" decoding="async" loading="lazy" />` : ""}
       </div>
       <div class="project-meta">
         <h3 data-edit-path="projects.${globalIndex}.title">${escapeHtml(project.title)}</h3>
@@ -5741,6 +5741,53 @@ def copy_asset(
     return public_path
 
 
+def make_thumb_asset(
+    source_path: Path,
+    output_dir: Path,
+    asset_prefix: str,
+    cache: dict[str, str],
+    max_width: int = 760,
+    quality: int = 82,
+) -> str | None:
+    """Generate a downscaled JPEG thumbnail next to the full asset and return
+    its public path. Used for home-page card covers so the grid doesn't pull
+    full 1920px+ images for a ~300px thumbnail. Falls back to None (caller
+    then uses the full src) if Pillow is unavailable or the image can't be
+    opened."""
+    cache_key = "thumb::" + str(source_path.resolve())
+    if cache_key in cache:
+        return cache[cache_key]
+    try:
+        from PIL import Image
+        Image.MAX_IMAGE_PIXELS = None
+    except Exception:
+        return None
+    try:
+        with Image.open(source_path) as im:
+            if im.width <= max_width:
+                # Already small enough — no separate thumb needed
+                return None
+            ratio = max_width / im.width
+            new_size = (max_width, max(1, round(im.height * ratio)))
+            if im.mode in ("RGBA", "LA", "P"):
+                bg = Image.new("RGB", im.size, (11, 16, 32))
+                im_rgb = im.convert("RGBA")
+                bg.paste(im_rgb, mask=im_rgb.split()[3] if im_rgb.mode == "RGBA" else None)
+                im = bg
+            elif im.mode != "RGB":
+                im = im.convert("RGB")
+            thumb = im.resize(new_size, Image.LANCZOS)
+            stem = source_path.stem
+            target = output_dir / "assets" / asset_prefix / f"{stem}-thumb.jpg"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            thumb.save(target, "JPEG", quality=quality, optimize=True, progressive=True)
+            public_path = target.relative_to(output_dir).as_posix()
+            cache[cache_key] = public_path
+            return public_path
+    except Exception:
+        return None
+
+
 def resolve_source_path(project_dir: Path, file_value: str) -> tuple[Path, str]:
     candidate = Path(file_value)
     source_path = (
@@ -5804,16 +5851,22 @@ def build_media_asset(
     output_dir: Path,
     asset_prefix: str,
     cache: dict[str, str],
+    make_thumb: bool = False,
 ) -> dict[str, Any] | None:
     if not file_value:
         return None
     source_path, relative_path = resolve_source_path(project_dir, file_value)
-    return {
+    asset: dict[str, Any] = {
         "id": Path(relative_path).stem,
         "relative_path": relative_path,
         "title": title,
         "src": copy_asset(source_path, project_dir, output_dir, asset_prefix, cache),
     }
+    if make_thumb:
+        thumb = make_thumb_asset(source_path, output_dir, asset_prefix, cache)
+        if thumb:
+            asset["thumb"] = thumb
+    return asset
 
 
 _VIDEO_MIME = {
@@ -6223,6 +6276,7 @@ def build_project(
         output_dir,
         asset_prefix,
         cache,
+        make_thumb=True,
     ) or cover
     prototype_meta = manifest.get("prototype")
     if not isinstance(prototype_meta, dict):
