@@ -1152,22 +1152,24 @@ h1, h2, h3, h4 {
 
 /* ── Lightbox variants strip ──────────────────────────────── */
 
+.lightbox-stage {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
 .lightbox-variants {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
+  flex: 0 0 auto;
   display: flex;
   gap: 8px;
   overflow-x: auto;
   padding: 8px;
-  background: rgba(2, 6, 23, 0.75);
+  background: rgba(2, 6, 23, 0.65);
+  border: 1px solid rgba(124, 92, 255, 0.18);
   border-radius: 10px;
-  backdrop-filter: blur(8px);
-}
-
-.lightbox-image-wrap {
-  position: relative;
 }
 
 .lightbox-variant-btn {
@@ -1262,6 +1264,7 @@ h1, h2, h3, h4 {
 .lightbox-image-wrap {
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1272,7 +1275,9 @@ h1, h2, h3, h4 {
 
 .lightbox-image-wrap img {
   max-width: 100%;
-  max-height: calc(100vh - 120px);
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   display: block;
 }
@@ -1393,8 +1398,11 @@ h1, h2, h3, h4 {
     flex: 1 1 auto;
     max-width: 100%;
   }
-  .lightbox-image-wrap img {
-    max-height: 50vh;
+  .lightbox-stage {
+    min-height: 50vh;
+  }
+  .lightbox-image-wrap {
+    min-height: 40vh;
   }
 }
 
@@ -4496,8 +4504,10 @@ function renderScreenLightbox(project) {
       <button type="button" class="lightbox-nav lightbox-nav-prev" id="lightbox-prev" title="上一组 (←)">‹</button>
       <button type="button" class="lightbox-nav lightbox-nav-next" id="lightbox-next" title="下一组 (→)">›</button>
       <div class="lightbox-content" id="lightbox-content">
-        <div class="lightbox-image-wrap">
-          <img id="lightbox-image" src="${escapeHtml(current.src)}" alt="${escapeHtml(current.title || "")}" />
+        <div class="lightbox-stage">
+          <div class="lightbox-image-wrap">
+            <img id="lightbox-image" src="${escapeHtml(current.src)}" alt="${escapeHtml(current.title || "")}" />
+          </div>
           ${group.length > 1 ? `
             <div class="lightbox-variants">
               ${group.map((item, i) => `
