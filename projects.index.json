@@ -83,6 +83,14 @@
       "summary": "工坊 4 大功能(洗炼 / 合成 / 分解 / 共鸣)的完整系统设计, 把单件装备的属性养成做成可持续投入的长线闭环。"
     },
     {
+      "id": "k6-secret",
+      "path": "K6Secret",
+      "category": "system-gameplay",
+      "title": "K6 秘境玩法",
+      "subtitle": "KvK6 · 秘境副本 + 战斗 HUD + 战利品保险箱",
+      "summary": "战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内 HUD(悬赏榜 / 技能 / 背包 / 战利品对比 / 宝藏)的完整玩法链路, 保险箱锁定收益死亡不掉落。"
+    },
+    {
       "id": "truman-show",
       "path": "TrumanShow",
       "category": "other-works",

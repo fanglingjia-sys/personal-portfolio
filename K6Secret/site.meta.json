@@ -1,223 +1,197 @@
 {
   "title": "K6 秘境玩法",
-  "subtitle": "KVK6 Secret Realm · 活动界面 + 战斗流程",
-  "description": "秘境副本活动的完整交互流程: 战前准备(选将+装备+保险箱) → 进入副本战斗 → 奖励结算返回。",
+  "subtitle": "KVK6 Secret Realm · 准备 → 战斗 → 战利品/保险箱",
+  "description": "K6 秘境副本的完整玩法链路: 战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内HUD(悬赏榜 / 技能弹窗 / 背包 / 战利品对比 / 宝藏领取) → 通过保险箱锁定收益, 死亡不掉落。",
   "owner": "Fangling Jia",
   "role": "UX Designer",
-  "bio": "K6 秘境活动的界面与交互流程整理。",
+  "bio": "K6 秘境活动: 准备界面 + 局内战斗 HUD + 战利品系统的完整交互设计。",
   "all_tags": [
-    "活动UI",
+    "系统玩法",
     "秘境副本",
-    "战斗流程",
+    "战斗HUD",
     "装备购买",
-    "保险箱"
+    "保险箱",
+    "悬赏榜"
   ],
   "interaction_doc": {
     "file": "交互文档.jpg",
     "title": "KVK6 秘境玩法 · 交互总览",
-    "summary": "涵盖战前准备(英雄选择 / 装备购买 / 保险箱升级)、副本战斗、结算反馈等完整交互链路。",
+    "summary": "覆盖战前准备(英雄选择 / 装备购买 / 保险箱升级)+ 局内战斗 HUD + 战利品 / 宝藏 / 保险箱锁定的完整链路。",
     "notes": [
       "战前准备是核心枢纽, 英雄 / 装备 / 保险箱三条支线都从这里展开",
-      "秘境战斗是唯一的玩法场景, 其余均为准备与结算界面",
-      "战斗结束后可回到战前准备继续挑战下一层"
+      "局内 HUD 集成悬赏榜 + 技能弹窗 + 背包面板, 战利品与宝藏可一键放进保险箱",
+      "保险箱内的物资不会因为死亡而掉落, 是核心收益锁定机制"
     ],
-    "states": [
-      "准备",
-      "战斗",
-      "结算"
-    ]
+    "states": ["准备", "战斗", "战利品", "结算"]
   },
-  "hero": "1.jpg",
-  "flow": {
-    "title": "秘境玩法 · 交互流程图",
-    "description": "主枢纽「战前准备」连接三条准备支线(英雄 / 装备 / 保险箱), 全部就绪后点「开始挑战」进入副本战斗, 战斗结束回到准备界面。",
-    "nodes": [
-      {
-        "id": "prep",
-        "label": "战前准备\n初始",
-        "screen_id": "1",
-        "col": 0,
-        "row": 1
-      },
-      {
-        "id": "hero_select",
-        "label": "英雄选择",
-        "screen_id": "2",
-        "col": 1,
-        "row": 0
-      },
-      {
-        "id": "prep_selected",
-        "label": "战前准备\n已选将",
-        "screen_id": "3",
-        "col": 2,
-        "row": 1
-      },
-      {
-        "id": "equip_buy",
-        "label": "精密应急包\n购买装备",
-        "screen_id": "5",
-        "col": 3,
-        "row": 0
-      },
-      {
-        "id": "safe_upgrade",
-        "label": "保险箱升级",
-        "screen_id": "7",
-        "col": 1,
-        "row": 2
-      },
-      {
-        "id": "prep_ready",
-        "label": "战前准备\n就绪",
-        "screen_id": "4",
-        "col": 4,
-        "row": 1
-      },
-      {
-        "id": "battle",
-        "label": "秘境战斗",
-        "screen_id": "6",
-        "col": 5,
-        "row": 1
-      }
-    ],
-    "edges": [
-      {
-        "from": "prep",
-        "to": "hero_select",
-        "label": "点击英雄位"
-      },
-      {
-        "from": "hero_select",
-        "to": "prep_selected",
-        "label": "选定主将 / 副将"
-      },
-      {
-        "from": "prep_selected",
-        "to": "equip_buy",
-        "label": "点击装备位"
-      },
-      {
-        "from": "equip_buy",
-        "to": "prep_ready",
-        "label": "确认购买"
-      },
-      {
-        "from": "prep",
-        "to": "safe_upgrade",
-        "label": "点击保险箱"
-      },
-      {
-        "from": "safe_upgrade",
-        "to": "prep",
-        "label": "升级后返回",
-        "type": "back"
-      },
-      {
-        "from": "prep_ready",
-        "to": "battle",
-        "label": "开始挑战"
-      },
-      {
-        "from": "battle",
-        "to": "prep",
-        "label": "战斗完成",
-        "type": "back"
-      }
-    ]
-  },
+  "hero": "prep-hub.jpg",
+  "card_cover": "ingame-main.jpg",
+  "cover": "prep-hub.jpg",
   "items": [
     {
-      "file": "1.jpg",
-      "id": "1",
-      "title": "战前准备 · 初始状态",
-      "section": "核心枢纽",
-      "hover_title": "战前准备主界面",
-      "hover_description": "秘境玩法的主枢纽。包含英雄卡位、装备槽、背包资源、保险箱、战斗增益、开始挑战按钮。从这里可以进入英雄选择、装备购买、保险箱升级三条准备支线。",
-      "states": [
-        "初始",
-        "未选将",
-        "未购装"
-      ],
+      "file": "prep-hub.jpg",
+      "id": "prep-hub",
+      "title": "战前准备 · 主枢纽",
+      "section": "战前 · 准备",
       "notes": [
-        "顶部横向背包显示本次可携带资源",
-        "左侧 1 级保险箱表示当前默认保护额度",
-        "右上角资源 200 为当前货币"
+        "中央展示主将 / 副将(巴泽尔 Lv.9, 四星), 左下角 I 级保险箱表示当前默认保护额度",
+        "右侧 4 格背包显示本次可携带资源(1×4 + 3×4×3), 装备槽分胸甲 / 头部 / 治疗包 / 探测仪",
+        "左上角入口「战斗增益」可获得持续 24h 增益, 右上 200 货币 + 「开始挑战」CTA",
+        "三条准备支线全部从这里展开"
       ]
     },
     {
-      "file": "2.jpg",
-      "id": "2",
+      "file": "hero-select.jpg",
+      "id": "hero-select",
       "title": "英雄选择",
-      "section": "准备支线 · 英雄",
-      "hover_title": "英雄列表 + 推荐",
-      "hover_description": "从左侧英雄列表中选择主将和副将。系统会推荐满星或高等级英雄, 等级区间 Lv.42 ~ Lv.51。点击确定返回战前准备。",
-      "states": [
-        "推荐",
-        "已选"
-      ],
+      "section": "战前 · 准备",
       "notes": [
-        "星级和等级决定战力",
-        "主将、副将分别独立选择"
+        "左侧推荐列表: 高战力英雄按等级 / 星级排序(Lv.51 ~ Lv.20+)",
+        "中央显示当前主将 / 副将 — 巴泽尔 Lv.9 四星, 高亮黄框为「主将」位",
+        "右下「确定」按钮提交选将并回到战前准备"
       ]
     },
     {
-      "file": "3.jpg",
-      "id": "3",
-      "title": "战前准备 · 已选将",
-      "section": "核心枢纽",
-      "hover_title": "选将后状态",
-      "hover_description": "英雄选完后回到准备界面, 此时装备槽仍为空。下一步需要进入「精密应急包」购买战斗增益装备。",
-      "states": [
-        "已选将",
-        "未购装"
-      ]
-    },
-    {
-      "file": "4.jpg",
-      "id": "4",
-      "title": "战前准备 · 就绪",
-      "section": "核心枢纽",
-      "hover_title": "全部就绪",
-      "hover_description": "英雄、装备、保险箱全部就绪后, 点「开始挑战」正式进入秘境战斗。",
-      "states": [
-        "就绪",
-        "可挑战"
-      ]
-    },
-    {
-      "file": "5.jpg",
-      "id": "5",
-      "title": "精密应急包 · 购买装备",
-      "section": "准备支线 · 装备",
-      "hover_title": "装备选择 / 购买",
-      "hover_description": "购买战斗增益装备 — 精密应急包(射击防御 +19% 共 3 条)。左侧可切换其他装备类型, 消耗 x10 资源点确认购买。",
-      "states": [
-        "可购买",
-        "已购买"
-      ]
-    },
-    {
-      "file": "6.jpg",
-      "id": "6",
-      "title": "秘境战斗",
-      "section": "副本战斗",
-      "hover_title": "秘境战斗场景",
-      "hover_description": "实际副本战斗。地图为沙漠地形, 玩家控制小队与敌人战斗(1 vs 15 显示兵力对比)。右上角小地图, 右侧悬赏榜, 底部技能 / 道具栏(含背包 16s 冷却), 左上角退出按钮。",
-      "states": [
-        "战斗中",
-        "计时中"
-      ],
+      "file": "equipment-buy.jpg",
+      "id": "equipment-buy",
+      "title": "精密应急包 · 装备购买",
+      "section": "战前 · 装备",
       "notes": [
-        "悬赏榜显示当前可挑战的目标单位",
-        "右侧英雄栏显示阵亡数 2/2",
-        "底部可使用战斗增益道具"
+        "左侧「全部」+ 4 个等级 1 卡片可横向切换装备型号",
+        "中央展示精密应急包: 3 条「射击防御 +19%」+ 消耗 ×10 货币",
+        "确认后装备进入战前准备的装备槽, 准备就绪后即可开始挑战"
+      ]
+    },
+    {
+      "file": "safe-upgrade.jpg",
+      "id": "safe-upgrade",
+      "title": "III 级保险箱 · 容量升级",
+      "section": "战前 · 保险箱",
+      "notes": [
+        "左侧 I/II/III/IV 级保险箱阶梯, 当前选中 III 级(2×3 格)",
+        "顶部强调「保险箱内的物资不会因为死亡而掉落」— 核心卖点",
+        "底部购买提示「购买后保险箱容量可享升级」, $9.9 IAP 入口",
+        "升级后回到战前准备, 局内背包容量随之扩大"
+      ]
+    },
+    {
+      "file": "battle-overview.jpg",
+      "id": "battle-overview",
+      "title": "秘境战斗 · 入场",
+      "section": "战斗 · 入场",
+      "notes": [
+        "进入沙漠副本, 1 vs 15 兵力对比, 顶部 3 个技能 CD(16s ×3)",
+        "右上角小地图 + 撤退路径标记, 右侧 2/2 英雄存活栏",
+        "左侧悬赏榜入口(折叠态)+ 3 名小队头像, 底部 4 技能槽 + 16s 冷却 + 「打开背包」入口"
+      ]
+    },
+    {
+      "file": "ingame-main.jpg",
+      "id": "ingame-main",
+      "title": "局内 HUD · 战斗主视图",
+      "section": "战斗 · 局内 HUD",
+      "notes": [
+        "战斗进行中: 玩家自身名牌「ApeW54W2AAL」显示血量条 + 玩家 ID",
+        "顶部技能槽 3 个紫色买断技能, 右上小地图标记敌人位置",
+        "右侧 2/2 主副将存活栏, 底部 4 技能槽 + 16s 倒计时 + 「打开背包」CTA",
+        "这是局内的稳定态 — 后续的弹窗 / 悬赏 / 背包都从这里展开"
+      ]
+    },
+    {
+      "file": "ingame-popup.jpg",
+      "id": "ingame-popup",
+      "parent": "ingame-main",
+      "title": "局内 HUD · 技能弹窗",
+      "section": "战斗 · 局内 HUD",
+      "notes": [
+        "技能图标点开后, 中央弹出 3 张「xxx 技能」卡片(02:05:55 计时格式)",
+        "弹窗叠加在战斗场景之上, 背景被压暗以聚焦",
+        "左侧「悬赏榜」入口高亮, 提示玩家随时可切换查看悬赏"
+      ]
+    },
+    {
+      "file": "ingame-bounty.jpg",
+      "id": "ingame-bounty",
+      "parent": "ingame-main",
+      "title": "局内 HUD · 悬赏榜展开",
+      "section": "战斗 · 局内 HUD",
+      "notes": [
+        "悬赏榜从左侧滑出: 3 名 NPC(坤坤哥 30W / 坤坤弟 20W / 坤坤妹 10W)",
+        "顶部「撤离还剩 15s」红字倒计时, 强化撤离决策时机",
+        "悬赏目标决定本局结算时的额外收益分配"
+      ]
+    },
+    {
+      "file": "ingame-bag.jpg",
+      "id": "ingame-bag",
+      "parent": "ingame-main",
+      "title": "局内 HUD · 背包面板",
+      "section": "战斗 · 战利品 · 背包",
+      "notes": [
+        "顶部装备栏 4 类(头部 / 胸甲 / 探测仪 / 医疗包), 当前选中探测仪",
+        "中部背包 4 格: 脉冲仪 ×3 + 宝藏箱; 选中脉冲仪后右侧弹出详情(¥30W)",
+        "右侧两个 CTA: 红色「丢弃」/ 蓝色「放入保险箱」— 保险箱内的不会因死亡掉落",
+        "底部「保险箱」槽位预览, 提示当前已锁定的物资"
+      ]
+    },
+    {
+      "file": "ingame-bag-loot.jpg",
+      "id": "ingame-bag-loot",
+      "parent": "ingame-main",
+      "title": "局内 HUD · 敌人战利品对比",
+      "section": "战斗 · 战利品 · 背包",
+      "notes": [
+        "击败敌人后弹出战利品对比: 普通探测仪(+19% ×3) vs 高级探测仪(+20% ×3)",
+        "中央「更换」按钮替换当前装备, 视觉上突出「绿色 +20%」对「黄色 +19%」",
+        "右侧展示坤坤哥的「装备 / 背包 / 保险箱」分区 — 提示这是从敌人身上抢来的",
+        "「快速领取」绿色按钮一键全收, 节省局内操作时间"
+      ]
+    },
+    {
+      "file": "ingame-bag-treasure.jpg",
+      "id": "ingame-bag-treasure",
+      "parent": "ingame-main",
+      "title": "局内 HUD · 宝藏领取",
+      "section": "战斗 · 战利品 · 背包",
+      "notes": [
+        "拾到宝藏后右侧弹出宝藏面板: 中央脉冲仪(¥30W)+ 两个 CTA「放入保险箱」/「领取」",
+        "右侧「宝藏」分区独立展示拾到的箱子, 提示尚未拆封",
+        "底部「快速领取」一键收取, 链路与战利品对比对称"
       ]
     }
   ],
-  "prototype": {
-    "intro": "秘境玩法 · 交互演示。点击每个场景下方的热区按钮切换到下一步, 按流程走完一个完整的准备 → 战斗循环。",
-    "scenes": []
+  "flow": {
+    "title": "K6 秘境玩法 · 交互流程图",
+    "description": "主枢纽「战前准备」连接三条支线(英雄 / 装备 / 保险箱), 全部就绪后进入战斗。战斗中通过局内 HUD 触发悬赏榜 / 技能弹窗 / 背包面板, 击败敌人或拾到宝藏后选择放入保险箱(死亡不掉落)或丢弃 / 快速领取。",
+    "nodes": [
+      { "id": "prep",          "label": "战前准备\n主枢纽",   "screen_id": "prep-hub",            "col": 0, "row": 1 },
+      { "id": "hero",          "label": "英雄选择",           "screen_id": "hero-select",         "col": 1, "row": 0 },
+      { "id": "equip",         "label": "装备购买",           "screen_id": "equipment-buy",       "col": 1, "row": 1 },
+      { "id": "safe",          "label": "保险箱升级",         "screen_id": "safe-upgrade",        "col": 1, "row": 2 },
+      { "id": "battle",        "label": "秘境战斗\n入场",     "screen_id": "battle-overview",     "col": 2, "row": 1 },
+      { "id": "ingame",        "label": "局内 HUD",           "screen_id": "ingame-main",         "col": 3, "row": 1 },
+      { "id": "skill",         "label": "技能弹窗",           "screen_id": "ingame-popup",        "col": 4, "row": 0 },
+      { "id": "bounty",        "label": "悬赏榜展开",         "screen_id": "ingame-bounty",       "col": 4, "row": 2 },
+      { "id": "bag",           "label": "局内背包",           "screen_id": "ingame-bag",          "col": 5, "row": 1 },
+      { "id": "loot",          "label": "敌人战利品对比",     "screen_id": "ingame-bag-loot",     "col": 6, "row": 0 },
+      { "id": "treasure",      "label": "宝藏领取",           "screen_id": "ingame-bag-treasure", "col": 6, "row": 2 }
+    ],
+    "edges": [
+      { "from": "prep",     "to": "hero",     "label": "点击英雄位" },
+      { "from": "hero",     "to": "prep",     "label": "确定", "type": "back" },
+      { "from": "prep",     "to": "equip",    "label": "点击装备位" },
+      { "from": "equip",    "to": "prep",     "label": "确认购买", "type": "back" },
+      { "from": "prep",     "to": "safe",     "label": "点击保险箱" },
+      { "from": "safe",     "to": "prep",     "label": "升级完成", "type": "back" },
+      { "from": "prep",     "to": "battle",   "label": "开始挑战" },
+      { "from": "battle",   "to": "ingame",   "label": "进入战斗" },
+      { "from": "ingame",   "to": "skill",    "label": "点击技能" },
+      { "from": "ingame",   "to": "bounty",   "label": "展开悬赏榜" },
+      { "from": "ingame",   "to": "bag",      "label": "打开背包" },
+      { "from": "bag",      "to": "loot",     "label": "击败敌人" },
+      { "from": "bag",      "to": "treasure", "label": "拾到宝藏" },
+      { "from": "loot",     "to": "bag",      "label": "快速领取", "type": "back" },
+      { "from": "treasure", "to": "bag",      "label": "放入保险箱 / 领取", "type": "back" }
+    ]
   }
 }
