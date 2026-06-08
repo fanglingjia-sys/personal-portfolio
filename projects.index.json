@@ -71,8 +71,8 @@
       "path": "Color_Guess_Game",
       "category": "minigame",
       "title": "备餐大挑战",
-      "subtitle": "运营活动-小游戏",
-      "summary": ""
+      "subtitle": "运营活动 · 颜色猜测小游戏",
+      "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。"
     },
     {
       "id": "gem-refinement",

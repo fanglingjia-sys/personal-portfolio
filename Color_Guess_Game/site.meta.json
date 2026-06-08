@@ -1,7 +1,7 @@
 {
-  "title": "猜色小游戏",
-  "subtitle": "Color Guess · 活动界面",
-  "description": "基于颜色猜测的互动小游戏界面与流程说明。",
+  "title": "备餐大挑战",
+  "subtitle": "Meal Prep Challenge · 颜色猜测玩法 + 错误历史复盘",
+  "description": "运营活动小游戏: 玩家根据三碗汤的颜色, 把对应酱料瓶拖到正确的碗上。全部答对解锁奖励, 答错的酱料会留在桌面作为「错误猜测历史」, 用来引导玩家复盘后重新挑战。",
   "owner": "Fangling Jia",
   "role": "UX Designer · Game UI",
   "bio": "游戏活动向 UI/UX 与交互说明整理。",
@@ -9,7 +9,8 @@
     "小游戏",
     "活动UI",
     "猜色",
-    "交互文档"
+    "拖拽交互",
+    "错误复盘"
   ],
   "interaction_doc": {
     "file": "交互文档.jpg",
@@ -130,5 +131,15 @@
     }
   ],
   "card_cover": "cover.jpg",
-  "cover": "cover.jpg"
+  "cover": "cover.jpg",
+  "videos": [
+    {
+      "file": "videos/meal-prep-feature-demo.mp4",
+      "title": "备餐大挑战 · 完整玩法录屏",
+      "caption": "从主界面进入 → 拖拽酱料到对应颜色的汤 → 提交结算 → 错误酱料留在桌面形成复盘历史的完整循环, 含奖励反馈与界面切换。",
+      "section": "玩法录屏",
+      "duration": "1:31",
+      "poster": "videos/meal-prep-feature-demo-poster.jpg"
+    }
+  ]
 }
