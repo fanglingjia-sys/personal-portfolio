@@ -3764,10 +3764,8 @@ function renderVideoLightbox(project) {
       <button type="button" class="lightbox-nav lightbox-nav-next" id="video-lb-next" title="下一段 (→)">›</button>
       <div class="lightbox-content video-lightbox-content">
         <div class="lightbox-image-wrap video-stage">
-          <video id="video-lb-player" src="${escapeHtml(video.src)}" controls autoplay playsinline preload="auto"
-                 ${video.poster?.src ? `poster="${escapeHtml(video.poster.src)}"` : ""}>
-            <source src="${escapeHtml(video.src)}" type="${escapeHtml(video.mime || "video/mp4")}">
-          </video>
+          <video id="video-lb-player" src="${escapeHtml(video.src)}" controls autoplay playsinline preload="metadata"
+                 ${video.poster?.src ? `poster="${escapeHtml(video.poster.src)}"` : ""}></video>
         </div>
         <aside class="lightbox-info">
           ${video.section ? `<div class="lightbox-section">${escapeHtml(video.section)}</div>` : ""}
