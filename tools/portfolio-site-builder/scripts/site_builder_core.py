@@ -3694,7 +3694,6 @@ function renderVideos(project, projectIndex) {
         <div>
           <div class="section-kicker">Videos</div>
           <h2 class="section-title">演示视频</h2>
-          <p class="muted">功能录屏 · 点击卡片可全屏播放, 高画质 + 流畅滚动条。</p>
         </div>
       </div>
   `;
