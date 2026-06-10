@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import functools
+import hashlib
 import http.server
 import json
 import re
@@ -6539,14 +6540,27 @@ def _build_analytics_snippet(analytics_cfg: dict[str, Any] | None) -> str:
 
 def write_site_files(output_dir: Path, data: dict[str, Any]) -> None:
     analytics_snippet = _build_analytics_snippet(data.get("site", {}).get("analytics"))
-    html = HTML_TEMPLATE.replace("__ANALYTICS_PLACEHOLDER__", analytics_snippet)
+    # Cache-bust app.js / styles.css / site-data.json with a short content hash
+    # so a fresh HTML pull always pulls fresh assets. GitHub Pages serves these
+    # with Cache-Control: max-age=600 (Fastly), and without a versioned URL the
+    # user has to hard-refresh after every deploy. The hash changes with content,
+    # so unchanged builds keep the same URL (browser cache stays warm).
+    css_hash = hashlib.sha1(CSS_TEMPLATE.encode("utf-8")).hexdigest()[:8]
+    js_hash = hashlib.sha1(JS_TEMPLATE.encode("utf-8")).hexdigest()[:8]
+    data_blob = json.dumps(data, ensure_ascii=False, indent=2)
+    data_hash = hashlib.sha1(data_blob.encode("utf-8")).hexdigest()[:8]
+    html = (
+        HTML_TEMPLATE
+        .replace("__ANALYTICS_PLACEHOLDER__", analytics_snippet)
+        .replace('href="./styles.css"', f'href="./styles.css?v={css_hash}"')
+        .replace('src="./app.js"', f'src="./app.js?v={js_hash}"')
+    )
+    # Bake the data hash into app.js so its fetch("./site-data.json") is also versioned.
+    js = JS_TEMPLATE.replace('fetch("./site-data.json"', f'fetch("./site-data.json?v={data_hash}"')
     (output_dir / "index.html").write_text(html, encoding="utf-8")
     (output_dir / "styles.css").write_text(CSS_TEMPLATE, encoding="utf-8")
-    (output_dir / "app.js").write_text(JS_TEMPLATE, encoding="utf-8")
-    (output_dir / "site-data.json").write_text(
-        json.dumps(data, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    (output_dir / "app.js").write_text(js, encoding="utf-8")
+    (output_dir / "site-data.json").write_text(data_blob, encoding="utf-8")
 
 
 def start_server(output_dir: Path, port: int, open_browser: bool) -> None:
