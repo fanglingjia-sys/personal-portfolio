@@ -21,19 +21,9 @@
   },
   "categories": [
     {
-      "id": "monetization",
-      "label": "商业化活动",
-      "description": "累充 / 累抽 / Gacha 等以视觉化进度驱动付费转化的活动设计。"
-    },
-    {
-      "id": "minigame",
-      "label": "运营小游戏",
-      "description": "活动期内嵌的互动小游戏, 以玩法循环和娱乐性为核心。"
-    },
-    {
-      "id": "system-gameplay",
-      "label": "系统玩法",
-      "description": "核心系统级长线设计 — 养成 / 工坊 / 共鸣等多界面联动的功能集。"
+      "id": "game-ux",
+      "label": "游戏交互",
+      "description": "游戏与运营活动的界面与交互设计 — 商业化活动(累充 / Gacha)、运营小游戏、系统玩法(养成 / 工坊 / 副本)等。"
     },
     {
       "id": "other-works",
@@ -45,23 +35,15 @@
     {
       "id": "cloud-gacha",
       "path": "CloudGacha",
-      "category": "monetization",
+      "category": "game-ux",
       "title": "云间寻宝",
       "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
       "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
     },
     {
-      "id": "bingo-rewards",
-      "path": "Bingo",
-      "category": "monetization",
-      "title": "宾果赢好礼",
-      "subtitle": "节日累充活动 · Bingo 返利",
-      "summary": "通过抽取棋格累计连线、达成 Bingo 解锁黄金棋盘, 配合自选机会和兑换商店的累充活动玩法。"
-    },
-    {
       "id": "fishing-game",
       "path": "Fishing",
-      "category": "minigame",
+      "category": "game-ux",
       "title": "欢乐钓鱼",
       "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
       "summary": "钓鱼主玩法 + 三档渔市订单 + 图鉴 / 海螺道具 / 每日目标的完整循环, 含二期优化对比。"
@@ -69,7 +51,7 @@
     {
       "id": "color-guess-game",
       "path": "Color_Guess_Game",
-      "category": "minigame",
+      "category": "game-ux",
       "title": "备餐大挑战",
       "subtitle": "运营活动 · 颜色猜测小游戏",
       "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。"
@@ -77,7 +59,7 @@
     {
       "id": "gem-refinement",
       "path": "GemRefinement",
-      "category": "system-gameplay",
+      "category": "game-ux",
       "title": "宝石洗炼系统",
       "subtitle": "KvK6 · 宝石工坊 + 共鸣副系统",
       "summary": "工坊 4 大功能(洗炼 / 合成 / 分解 / 共鸣)的完整系统设计, 把单件装备的属性养成做成可持续投入的长线闭环。"
@@ -85,7 +67,7 @@
     {
       "id": "k6-secret",
       "path": "K6Secret",
-      "category": "system-gameplay",
+      "category": "game-ux",
       "title": "K6 秘境玩法",
       "subtitle": "KvK6 · 秘境副本 + 战斗 HUD + 战利品保险箱",
       "summary": "战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内 HUD(悬赏榜 / 技能 / 背包 / 战利品对比 / 宝藏)的完整玩法链路, 保险箱锁定收益死亡不掉落。"
