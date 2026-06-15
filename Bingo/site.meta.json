@@ -23,182 +23,52 @@
       "进阶: 普通棋盘完整翻开后解锁黄金棋盘 (无限刷新模式)",
       "副线: 自选格机会 (可点选未翻开棋格), 兑换商店 (积分换礼包)"
     ],
-    "states": [
-      "核心循环",
-      "反馈动画",
-      "进阶模式",
-      "副线"
-    ]
+    "states": ["核心循环", "反馈动画", "进阶模式", "副线"]
   },
-  "hero": "普通棋盘.jpg",
-  "card_cover": "普通棋盘.jpg",
-  "cover": "普通棋盘.jpg",
+  "hero": "board-normal.jpg",
+  "card_cover": "board-normal.jpg",
+  "cover": "board-normal.jpg",
   "flow": {
     "title": "宾果赢好礼 · 交互流程图",
     "description": "普通棋盘是核心枢纽 — 主流程 (抽取 → 翻开 → Bingo) 在主行展开, 黄金棋盘作为通关后的进阶模式, 自选机会与兑换商店是两条副线。",
     "nodes": [
-      {
-        "id": "main",
-        "label": "普通棋盘\n主界面",
-        "screen_id": "普通棋盘",
-        "col": 0,
-        "row": 1
-      },
-      {
-        "id": "draw_anim",
-        "label": "抽取中\n滚动动画",
-        "screen_id": "抽取中",
-        "col": 1,
-        "row": 1
-      },
-      {
-        "id": "draw_selected",
-        "label": "抽取选中\n随机命中",
-        "screen_id": "抽取选中",
-        "col": 2,
-        "row": 1
-      },
-      {
-        "id": "draw_done",
-        "label": "抽取完\n翻开棋格",
-        "screen_id": "抽取完",
-        "col": 3,
-        "row": 1
-      },
-      {
-        "id": "bingo_anim",
-        "label": "Bingo 动画\n达成连线",
-        "screen_id": "bingo动画",
-        "col": 4,
-        "row": 1
-      },
-      {
-        "id": "bingo_done",
-        "label": "Bingo 达成\n高亮反馈",
-        "screen_id": "bingo达成cheng",
-        "col": 5,
-        "row": 1
-      },
-      {
-        "id": "golden_board",
-        "label": "黄金棋盘\n进阶模式",
-        "screen_id": "黄金棋盘",
-        "col": 6,
-        "row": 1
-      },
-      {
-        "id": "self_pick_hint",
-        "label": "自选机会\n触发提示",
-        "screen_id": "自选机会提示",
-        "col": 2,
-        "row": 0
-      },
-      {
-        "id": "self_pick",
-        "label": "自选机会\n选择棋格",
-        "screen_id": "自选机会",
-        "col": 3,
-        "row": 0
-      },
-      {
-        "id": "exchange_shop",
-        "label": "兑换商店\n积分兑换",
-        "screen_id": "兑换商店",
-        "col": 0,
-        "row": 2
-      }
+      { "id": "main",            "label": "普通棋盘\n主界面",       "screen_id": "board-normal",     "col": 0, "row": 1 },
+      { "id": "draw_anim",       "label": "抽取中\n滚动动画",       "screen_id": "draw-rolling",     "col": 1, "row": 1 },
+      { "id": "draw_selected",   "label": "抽取选中\n随机命中",     "screen_id": "draw-selected",    "col": 2, "row": 1 },
+      { "id": "draw_done",       "label": "抽取完\n翻开棋格",       "screen_id": "draw-done",        "col": 3, "row": 1 },
+      { "id": "bingo_anim",      "label": "Bingo 动画\n达成连线",   "screen_id": "bingo-anim",       "col": 4, "row": 1 },
+      { "id": "bingo_done",      "label": "Bingo 达成\n高亮反馈",   "screen_id": "bingo-achieved",   "col": 5, "row": 1 },
+      { "id": "golden_board",    "label": "黄金棋盘\n进阶模式",     "screen_id": "board-golden",     "col": 6, "row": 1 },
+      { "id": "self_pick_hint",  "label": "自选机会\n触发提示",     "screen_id": "self-pick-hint",   "col": 2, "row": 0 },
+      { "id": "self_pick",       "label": "自选机会\n选择棋格",     "screen_id": "self-pick",        "col": 3, "row": 0 },
+      { "id": "exchange_shop",   "label": "兑换商店\n积分兑换",     "screen_id": "exchange-shop",    "col": 0, "row": 2 }
     ],
     "edges": [
-      {
-        "from": "main",
-        "to": "draw_anim",
-        "label": "点击棋盘抽取"
-      },
-      {
-        "from": "draw_anim",
-        "to": "draw_selected",
-        "label": "随机选中"
-      },
-      {
-        "from": "draw_selected",
-        "to": "draw_done",
-        "label": "确认翻开"
-      },
-      {
-        "from": "draw_done",
-        "to": "bingo_anim",
-        "label": "达成 1 行 / 列"
-      },
-      {
-        "from": "draw_done",
-        "to": "main",
-        "label": "未达成 · 返回",
-        "type": "back"
-      },
-      {
-        "from": "bingo_anim",
-        "to": "bingo_done",
-        "label": "高亮整条线"
-      },
-      {
-        "from": "bingo_done",
-        "to": "main",
-        "label": "领取奖励 · 继续",
-        "type": "back"
-      },
-      {
-        "from": "bingo_done",
-        "to": "golden_board",
-        "label": "完成普通棋盘\n解锁黄金"
-      },
-      {
-        "from": "golden_board",
-        "to": "main",
-        "label": "返回",
-        "type": "back"
-      },
-      {
-        "from": "main",
-        "to": "self_pick_hint",
-        "label": "触发自选格"
-      },
-      {
-        "from": "self_pick_hint",
-        "to": "self_pick",
-        "label": "选择棋格"
-      },
-      {
-        "from": "self_pick",
-        "to": "main",
-        "label": "确定 · 返回",
-        "type": "back"
-      },
-      {
-        "from": "main",
-        "to": "exchange_shop",
-        "label": "点击兑换商店"
-      },
-      {
-        "from": "exchange_shop",
-        "to": "main",
-        "label": "关闭",
-        "type": "back"
-      }
+      { "from": "main",            "to": "draw_anim",       "label": "点击棋盘抽取" },
+      { "from": "draw_anim",       "to": "draw_selected",   "label": "随机选中" },
+      { "from": "draw_selected",   "to": "draw_done",       "label": "确认翻开" },
+      { "from": "draw_done",       "to": "bingo_anim",      "label": "达成 1 行 / 列" },
+      { "from": "draw_done",       "to": "main",            "label": "未达成 · 返回", "type": "back" },
+      { "from": "bingo_anim",      "to": "bingo_done",      "label": "高亮整条线" },
+      { "from": "bingo_done",      "to": "main",            "label": "领取奖励 · 继续", "type": "back" },
+      { "from": "bingo_done",      "to": "golden_board",    "label": "完成普通棋盘\n解锁黄金" },
+      { "from": "golden_board",    "to": "main",            "label": "返回", "type": "back" },
+      { "from": "main",            "to": "self_pick_hint",  "label": "触发自选格" },
+      { "from": "self_pick_hint",  "to": "self_pick",       "label": "选择棋格" },
+      { "from": "self_pick",       "to": "main",            "label": "确定 · 返回", "type": "back" },
+      { "from": "main",            "to": "exchange_shop",   "label": "点击兑换商店" },
+      { "from": "exchange_shop",   "to": "main",            "label": "关闭", "type": "back" }
     ]
   },
   "items": [
     {
-      "file": "普通棋盘.jpg",
-      "id": "普通棋盘",
+      "file": "board-normal.jpg",
+      "id": "board-normal",
       "title": "普通棋盘 · 主界面",
       "section": "核心枢纽",
       "hover_title": "宾果赢好礼主界面",
       "hover_description": "活动主界面。中央 14×6 棋盘是核心交互区, 左侧为活动 / 赛事入口, 右侧排行榜 + 主城皮肤奖励池, 右上角双货币 (214.5W) + 充值入口。底部包含 x400 抽取按钮、个人积分 500/000、累计连线 X10、黄金棋盘进度提示。",
-      "states": [
-        "待抽取",
-        "已抽取部分",
-        "可解锁黄金"
-      ],
+      "states": ["待抽取", "已抽取部分", "可解锁黄金"],
       "notes": [
         "棋盘格子按颜色区分:粉色 = 未翻开, 暗色 = 已翻开 / 命中",
         "右上提示「13时10分后刷新」 — 棋盘按时段重置",
@@ -206,153 +76,107 @@
       ]
     },
     {
-      "file": "抽取中.jpg",
-      "id": "抽取中",
-      "parent": "普通棋盘",
+      "file": "draw-rolling.jpg",
+      "id": "draw-rolling",
+      "parent": "board-normal",
       "title": "抽取中 · 滚动动画",
       "section": "核心循环",
       "hover_title": "抽取动画进行中",
       "hover_description": "点击抽取按钮后, 棋盘高亮一格作为「正在选中」, 镜面光晕动画沿行扫过。这一帧用于过渡, 给玩家「抽奖紧张感」。",
-      "states": [
-        "滚动中",
-        "等待落定"
-      ],
-      "notes": [
-        "光标高亮位置随机, 不可预测",
-        "抽取期间禁用棋盘其他点击"
-      ]
+      "states": ["滚动中", "等待落定"],
+      "notes": ["光标高亮位置随机, 不可预测", "抽取期间禁用棋盘其他点击"]
     },
     {
-      "file": "抽取选中.jpg",
-      "id": "抽取选中",
-      "parent": "普通棋盘",
+      "file": "draw-selected.jpg",
+      "id": "draw-selected",
+      "parent": "board-normal",
       "title": "抽取选中 · 全局展示",
       "section": "核心循环",
       "hover_title": "随机命中后的全棋盘预览",
       "hover_description": "抽取动画结束的瞬间, 整张棋盘从粉色未翻状态短暂闪现「选中」高亮 — 用紫色亮底强调命中格的位置, 让玩家清楚看到这次抽到了什么。",
-      "states": [
-        "命中预览"
-      ],
+      "states": ["命中预览"],
       "notes": [
         "持续时间约 0.5s, 然后过渡到「抽取完」翻开状态",
         "高亮的格子上数量徽章 (x3) 是本次抽中的物品数"
       ]
     },
     {
-      "file": "抽取完.jpg",
-      "id": "抽取完",
-      "parent": "普通棋盘",
+      "file": "draw-done.jpg",
+      "id": "draw-done",
+      "parent": "board-normal",
       "title": "抽取完 · 翻开棋格",
       "section": "核心循环",
       "hover_title": "棋格翻开后状态",
       "hover_description": "命中的棋格翻开, 显示具体物品 + 数量 (x3)。其余未翻开的格子维持粉色待状态。这一帧是抽取流程的终点 — 接下来要么累积尚未达成连线, 要么进入 Bingo 反馈。",
-      "states": [
-        "已翻开",
-        "等待下一次抽取"
-      ]
+      "states": ["已翻开", "等待下一次抽取"]
     },
     {
-      "file": "bingo动画.jpg",
-      "id": "bingo动画",
-      "parent": "普通棋盘",
+      "file": "bingo-anim.jpg",
+      "id": "bingo-anim",
+      "parent": "board-normal",
       "title": "Bingo 动画",
       "section": "反馈动画",
       "hover_title": "达成连线的庆祝瞬间",
       "hover_description": "当本次翻开使某行 / 某列连成一条时, 棋盘中央迸出大字「Bingo!」+ 角色与闪电粒子动画, 强反馈表达成就感。约 1.2s 持续, 然后过渡到「Bingo 达成」高亮态。",
-      "states": [
-        "庆祝中"
-      ],
-      "notes": [
-        "中央大字 + 角色出场, 视觉冲击力最高的一帧",
-        "底部累计连线计数 +1"
-      ]
+      "states": ["庆祝中"],
+      "notes": ["中央大字 + 角色出场, 视觉冲击力最高的一帧", "底部累计连线计数 +1"]
     },
     {
-      "file": "bingo达成cheng.jpg",
-      "id": "bingo达成cheng",
-      "parent": "普通棋盘",
+      "file": "bingo-achieved.jpg",
+      "id": "bingo-achieved",
+      "parent": "board-normal",
       "title": "Bingo 达成 · 高亮线",
       "section": "反馈动画",
       "hover_title": "整条 Bingo 线高亮",
       "hover_description": "Bingo 动画散场后, 整条达成的连线 (本例为竖向一列) 维持金色高亮 + 闪电特效约 2s, 让玩家清楚地确认是哪条线达成了。这一帧之后回到普通棋盘继续。",
-      "states": [
-        "金线高亮"
-      ],
-      "notes": [
-        "金色光柱 = 完整 Bingo 线",
-        "底部 X10 累计连线显示当前已达成总数"
-      ]
+      "states": ["金线高亮"],
+      "notes": ["金色光柱 = 完整 Bingo 线", "底部 X10 累计连线显示当前已达成总数"]
     },
     {
-      "file": "黄金棋盘.jpg",
-      "id": "黄金棋盘",
+      "file": "board-golden.jpg",
+      "id": "board-golden",
       "title": "黄金棋盘 · 进阶模式",
       "section": "进阶模式",
       "hover_title": "完成普通棋盘后解锁",
       "hover_description": "整张普通棋盘全部翻开后解锁黄金棋盘模式 — 视觉上从粉紫底色变为金色调, 提示「黄金棋盘模式可无限刷新」。玩法逻辑相同, 但奖励池更高, 可重复刷新继续抽取。",
-      "states": [
-        "已解锁",
-        "刷新中"
-      ],
+      "states": ["已解锁", "刷新中"],
       "notes": [
         "右上角顶部色调全部变金色",
         "底部「完成普通棋盘后可解锁」提示在锁定时显示, 解锁后变为「黄金棋盘」标题"
       ]
     },
     {
-      "file": "自选机会提示.jpg",
-      "id": "自选机会提示",
-      "parent": "自选机会",
+      "file": "self-pick-hint.jpg",
+      "id": "self-pick-hint",
+      "parent": "self-pick",
       "title": "自选机会 · 触发提示",
       "section": "副线 · 自选机会",
       "hover_title": "恭喜触发自选格机会",
       "hover_description": "在常规抽取过程中随机触发的奖励事件 — 角色弹出 + 黄底飘条「恭喜触发自选格机会!」, 提示玩家可以从未翻开的棋格中手动选一个翻开 (而不是随机)。",
-      "states": [
-        "触发中",
-        "等待玩家继续"
-      ],
-      "notes": [
-        "黄色横幅是关键反馈,3s 自动消失",
-        "玩家点击任意位置进入下一步"
-      ]
+      "states": ["触发中", "等待玩家继续"],
+      "notes": ["黄色横幅是关键反馈,3s 自动消失", "玩家点击任意位置进入下一步"]
     },
     {
-      "file": "自选机会.jpg",
-      "id": "自选机会",
+      "file": "self-pick.jpg",
+      "id": "self-pick",
       "title": "自选机会 · 棋格选择",
       "section": "副线 · 自选机会",
       "hover_title": "手动点选未翻开格",
       "hover_description": "提示「请选择一个未翻开的格子吧!」。所有未翻开的棋格变为可点击状态, 高亮被点选的一格 (本例为左下区域)。底部「确定」按钮在选定后激活。这是一次「保送命中」的奖励机会。",
-      "states": [
-        "可选择",
-        "已选定"
-      ],
-      "notes": [
-        "已翻开的格子不可再选 (变灰)",
-        "选定后未点确定可重选"
-      ]
+      "states": ["可选择", "已选定"],
+      "notes": ["已翻开的格子不可再选 (变灰)", "选定后未点确定可重选"]
     },
     {
-      "file": "兑换商店.jpg",
-      "id": "兑换商店",
+      "file": "exchange-shop.jpg",
+      "id": "exchange-shop",
       "title": "兑换商店 · 积分换礼包",
       "section": "副线 · 兑换商店",
       "hover_title": "积分兑换主界面",
       "hover_description": "用累计积分兑换实物 / 道具的商店。左侧为常规兑换列表 (限时礼包 + 数量徽章), 右侧大卡片是「优惠自选包」突出推荐, 底部 12.00$ 直购入口承接付费转化。",
-      "states": [
-        "可兑换",
-        "限购中",
-        "已售罄"
-      ],
-      "notes": [
-        "顶部条幅展示主推商品, 视觉重心",
-        "x1/0 的库存徽章表示剩余可兑换次数"
-      ]
+      "states": ["可兑换", "限购中", "已售罄"],
+      "notes": ["顶部条幅展示主推商品, 视觉重心", "x1/0 的库存徽章表示剩余可兑换次数"]
     }
   ],
-  "prototype": {
-    "intro": "宾果赢好礼 · 交互演示。点击场景下方热区按钮可走完一遍完整循环 (抽取 → 翻开 → Bingo → 黄金棋盘) 以及自选 / 兑换两条副线。"
-  },
   "videos": [
     {
       "file": "videos/bingo-feature-demo.mp4",

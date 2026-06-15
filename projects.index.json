@@ -41,6 +41,14 @@
       "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
     },
     {
+      "id": "bingo-rewards",
+      "path": "Bingo",
+      "category": "game-ux",
+      "title": "宾果赢好礼",
+      "subtitle": "节日累充活动 · Bingo 返利",
+      "summary": "通过抽取棋格累计连线、达成 Bingo 解锁黄金棋盘, 配合自选机会和兑换商店的累充活动玩法, 含完整功能录屏。"
+    },
+    {
       "id": "fishing-game",
       "path": "Fishing",
       "category": "game-ux",
@@ -55,14 +63,6 @@
       "title": "备餐大挑战",
       "subtitle": "运营活动 · 颜色猜测小游戏",
       "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。"
-    },
-    {
-      "id": "gem-refinement",
-      "path": "GemRefinement",
-      "category": "game-ux",
-      "title": "宝石洗炼系统",
-      "subtitle": "KvK6 · 宝石工坊 + 共鸣副系统",
-      "summary": "工坊 4 大功能(洗炼 / 合成 / 分解 / 共鸣)的完整系统设计, 把单件装备的属性养成做成可持续投入的长线闭环。"
     },
     {
       "id": "k6-secret",
