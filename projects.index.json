@@ -41,14 +41,6 @@
       "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
     },
     {
-      "id": "bingo-rewards",
-      "path": "Bingo",
-      "category": "game-ux",
-      "title": "宾果赢好礼",
-      "subtitle": "节日累充活动 · Bingo 返利",
-      "summary": "通过抽取棋格累计连线、达成 Bingo 解锁黄金棋盘, 配合自选机会和兑换商店的累充活动玩法, 含完整功能录屏。"
-    },
-    {
       "id": "fishing-game",
       "path": "Fishing",
       "category": "game-ux",
