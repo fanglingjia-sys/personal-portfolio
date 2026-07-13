@@ -33,6 +33,14 @@
   ],
   "projects": [
     {
+      "id": "gem-refinement",
+      "path": "GemRefinement",
+      "category": "system-gameplay",
+      "title": "宝石洗炼系统",
+      "subtitle": "KvK6 · 宝石工坊 + 共鸣副系统",
+      "summary": "工坊 4 大功能(洗炼 / 合成 / 分解 / 共鸣)的完整系统设计, 把单件装备的属性养成做成可持续投入的长线闭环。"
+    },
+    {
       "id": "k6-secret",
       "path": "K6Secret",
       "category": "system-gameplay",
