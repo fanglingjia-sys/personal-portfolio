@@ -21,14 +21,14 @@
   },
   "categories": [
     {
-      "id": "system-gameplay",
-      "label": "系统玩法",
-      "description": "长线系统与核心玩法的界面与交互设计 — 副本 / 战斗 HUD / 养成 / 工坊等。"
-    },
-    {
       "id": "casual-events",
       "label": "运营活动 / 休闲小游戏玩法",
       "description": "商业化与运营活动玩法 — 累充 / Gacha 累计活动、运营向休闲小游戏等。"
+    },
+    {
+      "id": "system-gameplay",
+      "label": "系统玩法",
+      "description": "长线系统与核心玩法的界面与交互设计 — 副本 / 战斗 HUD / 养成 / 工坊等。"
     }
   ],
   "projects": [
