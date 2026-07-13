@@ -21,21 +21,29 @@
   },
   "categories": [
     {
-      "id": "game-ux",
-      "label": "游戏交互",
-      "description": "游戏与运营活动的界面与交互设计 — 商业化活动(累充 / Gacha)、运营小游戏、系统玩法(养成 / 工坊 / 副本)等。"
+      "id": "system-gameplay",
+      "label": "系统玩法",
+      "description": "长线系统与核心玩法的界面与交互设计 — 副本 / 战斗 HUD / 养成 / 工坊等。"
     },
     {
-      "id": "other-works",
-      "label": "其他项目",
-      "description": "空间交互 / 装置艺术 / 可穿戴体验等设计方向的院校与个人作品。"
+      "id": "casual-events",
+      "label": "运营活动 / 休闲小游戏玩法",
+      "description": "商业化与运营活动玩法 — 累充 / Gacha 累计活动、运营向休闲小游戏等。"
     }
   ],
   "projects": [
     {
+      "id": "k6-secret",
+      "path": "K6Secret",
+      "category": "system-gameplay",
+      "title": "K6 秘境玩法",
+      "subtitle": "KvK6 · 秘境副本 + 战斗 HUD + 战利品保险箱",
+      "summary": "战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内 HUD(悬赏榜 / 技能 / 背包 / 战利品对比 / 宝藏)的完整玩法链路, 保险箱锁定收益死亡不掉落。"
+    },
+    {
       "id": "cloud-gacha",
       "path": "CloudGacha",
-      "category": "game-ux",
+      "category": "casual-events",
       "title": "云间寻宝",
       "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
       "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
@@ -43,7 +51,7 @@
     {
       "id": "fishing-game",
       "path": "Fishing",
-      "category": "game-ux",
+      "category": "casual-events",
       "title": "欢乐钓鱼",
       "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
       "summary": "钓鱼主玩法 + 三档渔市订单 (普通 / 高级 / 超级) + 图鉴 / 海螺道具 / 每日目标的完整经营循环。"
@@ -51,34 +59,10 @@
     {
       "id": "color-guess-game",
       "path": "Color_Guess_Game",
-      "category": "game-ux",
+      "category": "casual-events",
       "title": "备餐大挑战",
       "subtitle": "运营活动 · 颜色猜测小游戏",
       "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。"
-    },
-    {
-      "id": "k6-secret",
-      "path": "K6Secret",
-      "category": "game-ux",
-      "title": "K6 秘境玩法",
-      "subtitle": "KvK6 · 秘境副本 + 战斗 HUD + 战利品保险箱",
-      "summary": "战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内 HUD(悬赏榜 / 技能 / 背包 / 战利品对比 / 宝藏)的完整玩法链路, 保险箱锁定收益死亡不掉落。"
-    },
-    {
-      "id": "truman-show",
-      "path": "TrumanShow",
-      "category": "other-works",
-      "title": "楚门的世界",
-      "subtitle": "游戏空间交互 · Service / Space Design",
-      "summary": "以《楚门的世界》为灵感的服务设计 + 空间设计项目, 通过空间叙事推动玩家从固化思维走向批判性思考。"
-    },
-    {
-      "id": "lighten-space",
-      "path": "LightenSpace",
-      "category": "other-works",
-      "title": "LIGHTEN SPACE",
-      "subtitle": "可穿戴交互 · 感官扩展空间",
-      "summary": "听觉增强耳机 + 三角棱锥空间 + 光感装置组合, 让用户在不同时段听见日常被忽略的声音, 把空间转化为感官扩展的画布。"
     }
   ]
 }
