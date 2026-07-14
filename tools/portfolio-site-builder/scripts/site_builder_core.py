@@ -332,7 +332,7 @@ h1, h2, h3, h4 {
 
 .title {
   margin: 0;
-  font-size: clamp(26px, 3.5vw, 44px);
+  font-size: clamp(24px, 3.1vw, 40px);
   line-height: 1.1;
   font-weight: 800;
 }
@@ -2885,7 +2885,7 @@ body {
 
 /* Equal-weight continuous project index */
 .hub-hero.editorial-hero {
-  min-height: 470px;
+  min-height: 410px;
   align-items: center;
   padding: clamp(52px, 8vw, 110px) 4px;
   border: 0;
@@ -2896,7 +2896,7 @@ body {
   backdrop-filter: none;
 }
 .editorial-hero::after { right: 0; top: 8%; font-size: clamp(140px, 22vw, 320px); opacity: .7; }
-.hero-statement { max-width: 1040px; font-size: clamp(45px, 6.2vw, 88px); line-height: 1.02; }
+.hero-statement { max-width: 900px; font-size: clamp(36px, 3.7vw, 52px); line-height: 1.1; letter-spacing: -.04em; }
 .editorial-hero .hub-bio { max-width: 720px; }
 .hero-footer { margin-top: 28px; }
 .editorial-section {
@@ -2913,7 +2913,7 @@ body {
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(255,255,255,.14);
 }
-.editorial-section .section-title { font-size: clamp(38px, 5vw, 64px); }
+.editorial-section .section-title { font-size: clamp(28px, 3.4vw, 44px); }
 .project-list { display: block; }
 .project-card.project-row,
 .project-card.project-row:nth-child(1),
@@ -2957,7 +2957,7 @@ body {
 .project-card.project-row .project-meta { padding: 0; }
 .project-card.project-row .project-meta h3 {
   margin-bottom: 14px;
-  font-size: clamp(32px, 4vw, 58px);
+  font-size: clamp(29px, 3.5vw, 50px);
   letter-spacing: -.045em;
 }
 .project-card.project-row .project-subtitle { margin: 0 0 18px; color: #d6def0; font-size: 15px; line-height: 1.65; }
@@ -2975,10 +2975,10 @@ body {
   .project-card.project-row:nth-child(even) .project-meta { grid-row: 2; }
 }
 @media (max-width: 620px) {
-  .hub-hero.editorial-hero { min-height: 500px; padding: 54px 2px; border-radius: 0; }
+  .hub-hero.editorial-hero { min-height: 430px; padding: 46px 2px; border-radius: 0; }
   .editorial-section { padding: 74px 2px 24px; border-radius: 0; }
   .editorial-section .section-head { margin-bottom: 10px; }
-  .project-card.project-row .project-meta h3 { font-size: 36px; }
+  .project-card.project-row .project-meta h3 { font-size: 32px; }
   .project-card.project-row .project-cover { border-radius: 15px; }
 }
 
@@ -3655,7 +3655,7 @@ function renderHome(data) {
         </div>
         <div class="hub-hero-left">
           <p class="hero-intro">${escapeHtml(role || "UX Designer")} · Independent Portfolio</p>
-          <h1 class="hero-statement">让复杂玩法，变成清晰而<em>有吸引力</em>的体验。</h1>
+          <h1 class="hero-statement">把复杂玩法，设计成<em>清晰好玩</em>的体验。</h1>
           ${bio   ? `<p class="hub-bio" data-edit-path="site.bio">${escapeHtml(bio)}</p>` : ""}
           <div class="hero-footer">
             <a class="hero-cta" href="#selected-work">浏览全部项目 <span aria-hidden="true">↓</span></a>
@@ -3839,7 +3839,7 @@ function renderInteractionDoc(project, projectIndex) {
         <div class="doc-image-wrap" id="doc-wrap-${projectIndex}">
           <button type="button" class="doc-zoom-btn" data-doc-zoom="${escapeHtml(project.id)}" title="点击放大查看完整文档">⤢ 查看大图</button>
           <div class="doc-image">
-            <img src="${project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" data-doc-zoom="${escapeHtml(project.id)}" loading="lazy" decoding="async" />
+            <img src="${project.interaction_doc.preview || project.interaction_doc.src}" alt="${escapeHtml(project.interaction_doc.title || "交互文档")}" data-image-path="projects.${projectIndex}.interaction_doc.src" data-doc-zoom="${escapeHtml(project.id)}" loading="lazy" decoding="async" />
           </div>
           <div class="doc-expand-bar">
             <button type="button" class="doc-expand-btn doc-expand-toggle" data-expand-toggle="${projectIndex}">
@@ -6667,9 +6667,23 @@ def detect_interaction_doc(
 ) -> dict[str, Any] | None:
     value = meta.get("interaction_doc")
     if isinstance(value, dict) and value.get("file"):
-        return build_item(value, project_dir, output_dir, asset_prefix, cache)
+        item = build_item(value, project_dir, output_dir, asset_prefix, cache)
+        source_path, _ = resolve_source_path(project_dir, value["file"])
+        preview = make_thumb_asset(
+            source_path, output_dir, asset_prefix, cache, max_width=2400, quality=86
+        )
+        if preview:
+            item["preview"] = preview
+        return item
     if isinstance(value, str):
-        return build_item({"file": value, "title": "交互文档"}, project_dir, output_dir, asset_prefix, cache)
+        item = build_item({"file": value, "title": "交互文档"}, project_dir, output_dir, asset_prefix, cache)
+        source_path, _ = resolve_source_path(project_dir, value)
+        preview = make_thumb_asset(
+            source_path, output_dir, asset_prefix, cache, max_width=2400, quality=86
+        )
+        if preview:
+            item["preview"] = preview
+        return item
     return None
 
 
