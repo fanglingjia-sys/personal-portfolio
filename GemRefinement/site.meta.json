@@ -17,9 +17,9 @@
     ],
     "states": ["洗炼", "合成", "分解", "共鸣"]
   },
-  "hero": "refine-detail.jpg",
-  "card_cover": "resonance-active.jpg",
-  "cover": "refine-detail.jpg",
+  "hero": "cover.jpg",
+  "card_cover": "cover.jpg",
+  "cover": "cover.jpg",
   "items": [
     {
       "file": "refine-entry.jpg",

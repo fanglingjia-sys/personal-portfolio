@@ -2832,7 +2832,7 @@ body {
 .project-card:nth-child(1) { grid-column: span 7; }
 .project-card:nth-child(2) { grid-column: span 5; }
 .project-card .project-cover { padding: 0; }
-.project-card .project-cover img { border-radius: 0; aspect-ratio: 16 / 10; }
+.project-card .project-cover img { border-radius: 0; aspect-ratio: 16 / 9; }
 .project-card:nth-child(1) .project-cover img,
 .project-card:nth-child(2) .project-cover img { aspect-ratio: 16 / 9; }
 .project-card .project-meta { padding: 22px; }
@@ -2948,7 +2948,7 @@ body {
 .project-card.project-row:nth-child(2) .project-cover img {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   border-radius: 0;
   object-fit: cover;
   transition: transform .65s cubic-bezier(.2,.7,.3,1), filter .4s ease;
