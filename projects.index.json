@@ -33,6 +33,14 @@
   ],
   "projects": [
     {
+      "id": "rpg-chest-gift",
+      "path": "RPGChestGift",
+      "category": "casual-events",
+      "title": "RPG 宝箱礼包",
+      "subtitle": "7 月节日活动 · 点击战斗式礼包玩法",
+      "summary": "把礼包购买包装成一场轻量 RPG 宝箱战斗：选择奖励档位，通过普通攻击、暴击与 Miss 逐步削减宝箱血量，击败后开箱揭晓奖励。"
+    },
+    {
       "id": "gem-refinement",
       "path": "GemRefinement",
       "category": "system-gameplay",

@@ -1,0 +1,186 @@
+{
+  "title": "RPG 宝箱礼包",
+  "subtitle": "7 月节日活动 · 点击战斗式礼包玩法",
+  "description": "把常规礼包购买包装成一场轻量 RPG 宝箱战斗：玩家选择不同奖励档位的宝箱，通过点击攻击、普通命中、暴击与 Miss 反馈逐步削减宝箱血量，击败后开箱领取固定奖励，形成从付费选择到战斗反馈再到奖励揭晓的完整体验。",
+  "owner": "Fangling Jia",
+  "role": "UX Designer",
+  "bio": "礼包商业化包装、轻量战斗反馈与奖励揭晓流程设计。",
+  "all_tags": [
+    "活动 UI",
+    "RPG 玩法",
+    "礼包商业化",
+    "战斗反馈",
+    "奖励揭晓"
+  ],
+  "tags": [
+    "活动 UI",
+    "休闲小游戏",
+    "礼包",
+    "战斗反馈"
+  ],
+  "hero": "cover.jpg",
+  "card_cover": "cover.jpg",
+  "cover": "cover.jpg",
+  "interaction_doc": {
+    "file": "interaction-doc.jpg",
+    "title": "RPG 宝箱礼包 · 交互总览",
+    "summary": "从宝箱档位选择、点击攻击、命中判定，到宝箱开启与奖励结算的完整交互链路。",
+    "notes": [
+      "商业化入口：三档宝箱对应不同随机奖励范围与固定奖励列表",
+      "战斗循环：点击攻击 → 普通 / 暴击 / Miss 判定 → 削减血量或继续攻击",
+      "结算闭环：血量归零 → 开箱动效 → 奖励弹窗 → 主界面完成状态"
+    ],
+    "states": [
+      "宝箱选择",
+      "攻击循环",
+      "命中反馈",
+      "奖励结算"
+    ]
+  },
+  "items": [
+    {
+      "id": "main-screen",
+      "file": "main-screen.jpg",
+      "title": "活动主界面 · 宝箱选择",
+      "section": "活动入口",
+      "hover_title": "选择奖励档位与宝箱类型",
+      "hover_description": "主界面同时展示阶段奖励、三档宝箱、随机奖励范围和固定奖励列表。玩家可在左侧活动页签间切换，并点击宝箱下方按钮进入对应战斗。",
+      "states": ["可购买", "已完成", "阶段进度"],
+      "notes": [
+        "三档宝箱使用造型和颜色区分价值层级",
+        "顶部阶段奖励把单次购买串联成连续活动目标"
+      ]
+    },
+    {
+      "id": "battle-ready",
+      "file": "battle-ready.jpg",
+      "title": "宝箱战斗 · 待攻击",
+      "section": "战斗循环",
+      "hover_title": "点击屏幕发起一次攻击",
+      "hover_description": "中央宝箱、顶部血量格和底部剩余武器共同构成战斗信息。玩家点击任意位置即可挥剑攻击，攻击过程中屏幕暂时禁用连续输入。",
+      "states": ["待攻击", "剩余次数"],
+      "notes": [
+        "血量越低，奖励越接近揭晓",
+        "底部武器数量同时承担攻击次数提示"
+      ]
+    },
+    {
+      "id": "attack-normal",
+      "parent": "battle-ready",
+      "file": "attack-normal.jpg",
+      "title": "普通攻击 · 命中",
+      "section": "战斗反馈",
+      "hover_title": "普通命中反馈",
+      "hover_description": "挥剑击中宝箱后显示伤害数字并扣除一格血量，短暂反馈结束后宝箱回到待攻击位置。",
+      "states": ["普通命中", "扣减血量"],
+      "notes": ["普通攻击是战斗循环的基础节奏"]
+    },
+    {
+      "id": "critical-hit-1",
+      "parent": "battle-ready",
+      "file": "critical-hit-1.jpg",
+      "title": "暴击反馈 · 强光命中",
+      "section": "战斗反馈",
+      "hover_title": "暴击第一段：重击表现",
+      "hover_description": "触发暴击时出现更强的剑光、暴击字样与高伤害数字，建立明显高于普通命中的奖励感。",
+      "states": ["暴击", "高伤害"],
+      "notes": ["暴击需要在亮度、字号和位移上形成层级差"]
+    },
+    {
+      "id": "critical-hit-2",
+      "parent": "battle-ready",
+      "file": "critical-hit-2.jpg",
+      "title": "暴击反馈 · 宝箱震落",
+      "section": "战斗反馈",
+      "hover_title": "暴击第二段：宝箱掉落",
+      "hover_description": "重击后宝箱从台面震落，以更大幅度的位置变化强化暴击重量感，随后回到台面继续战斗。",
+      "states": ["击飞", "回位"],
+      "notes": ["位移动画延长暴击反馈，但不阻断下一次操作太久"]
+    },
+    {
+      "id": "miss",
+      "parent": "battle-ready",
+      "file": "miss.jpg",
+      "title": "攻击反馈 · Miss",
+      "section": "战斗反馈",
+      "hover_title": "未命中状态",
+      "hover_description": "攻击未命中时显示双层 Miss 标识，宝箱血量不变，玩家可继续点击发起下一次攻击。",
+      "states": ["Miss", "血量不变"],
+      "notes": ["失败反馈简短，避免打断连续点击节奏"]
+    },
+    {
+      "id": "chest-open",
+      "file": "chest-open.jpg",
+      "title": "宝箱击败 · 开启动效",
+      "section": "奖励结算",
+      "hover_title": "宝箱血量归零",
+      "hover_description": "最后一次攻击清空血量后，宝箱盖打开并发出高亮光效，将战斗阶段自然过渡到奖励揭晓。",
+      "states": ["血量归零", "宝箱开启"],
+      "notes": ["开箱光效承担战斗结束与奖励弹窗之间的转场"]
+    },
+    {
+      "id": "rewards",
+      "file": "rewards.jpg",
+      "title": "奖励揭晓 · 结算弹窗",
+      "section": "奖励结算",
+      "hover_title": "展示本次获得奖励",
+      "hover_description": "CONGRATULATIONS 弹窗集中展示固定与随机奖励，让玩家在离开战斗前完成价值确认。",
+      "states": ["奖励展示", "领取完成"],
+      "notes": ["奖励图标保持等宽排列，便于快速扫描"]
+    },
+    {
+      "id": "completed",
+      "file": "completed.jpg",
+      "title": "活动主界面 · 完成状态",
+      "section": "完成反馈",
+      "hover_title": "礼包购买后的状态回写",
+      "hover_description": "返回活动主界面后，对应宝箱显示已击败和刷新倒计时，顶部阶段进度同步增加，明确本次行为已经生效。",
+      "states": ["已击败", "刷新倒计时", "阶段进度更新"],
+      "notes": ["完成态避免重复购买，并提示下一次可参与时间"]
+    }
+  ],
+  "flow": {
+    "title": "RPG 宝箱礼包 · 交互流程图",
+    "description": "从宝箱选择进入点击战斗，攻击结果在普通命中、暴击和 Miss 之间分支；宝箱血量归零后进入开箱、奖励展示和完成状态。",
+    "nodes": [
+      {"id": "main", "label": "活动主界面\n选择宝箱", "screen_id": "main-screen", "col": 0, "row": 1},
+      {"id": "battle", "label": "宝箱战斗\n待攻击", "screen_id": "battle-ready", "col": 1, "row": 1},
+      {"id": "normal", "label": "普通攻击\n扣减血量", "screen_id": "attack-normal", "col": 2, "row": 1},
+      {"id": "critical_1", "label": "暴击\n强光命中", "screen_id": "critical-hit-1", "col": 2, "row": 0},
+      {"id": "critical_2", "label": "暴击\n宝箱震落", "screen_id": "critical-hit-2", "col": 3, "row": 0},
+      {"id": "miss", "label": "Miss\n血量不变", "screen_id": "miss", "col": 2, "row": 2},
+      {"id": "open", "label": "宝箱击败\n开启动效", "screen_id": "chest-open", "col": 4, "row": 1},
+      {"id": "reward", "label": "奖励揭晓\n结算弹窗", "screen_id": "rewards", "col": 5, "row": 1},
+      {"id": "completed", "label": "活动主界面\n完成状态", "screen_id": "completed", "col": 6, "row": 1}
+    ],
+    "edges": [
+      {"from": "main", "to": "battle", "label": "点击宝箱按钮"},
+      {"from": "battle", "to": "normal", "label": "普通命中"},
+      {"from": "battle", "to": "critical_1", "label": "触发暴击"},
+      {"from": "critical_1", "to": "critical_2", "label": "宝箱震落"},
+      {"from": "battle", "to": "miss", "label": "攻击未命中"},
+      {"from": "normal", "to": "battle", "label": "剩余血量 > 0", "type": "back"},
+      {"from": "critical_2", "to": "battle", "label": "剩余血量 > 0", "type": "back"},
+      {"from": "miss", "to": "battle", "label": "继续攻击", "type": "back"},
+      {"from": "normal", "to": "open", "label": "血量归零"},
+      {"from": "critical_2", "to": "open", "label": "血量归零"},
+      {"from": "open", "to": "reward", "label": "开箱完成"},
+      {"from": "reward", "to": "completed", "label": "确认奖励"},
+      {"from": "completed", "to": "main", "label": "查看其他宝箱", "type": "back"}
+    ]
+  },
+  "prototype": {
+    "intro": "演示宝箱选择、点击攻击、命中反馈与奖励揭晓的完整循环。",
+    "scenes": []
+  },
+  "videos": [
+    {
+      "file": "videos/rpg-chest-feature-demo.mp4",
+      "title": "RPG 宝箱礼包 · 完整功能演示",
+      "caption": "完整展示宝箱档位选择、点击攻击、普通命中、暴击与 Miss 反馈，以及击败宝箱后的开箱和奖励结算流程。",
+      "section": "功能录屏",
+      "duration": "1:09",
+      "poster": "cover.jpg"
+    }
+  ]
+}
