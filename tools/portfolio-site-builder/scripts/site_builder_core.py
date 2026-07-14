@@ -70,6 +70,7 @@ HTML_TEMPLATE = """<!doctype html>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#selected-work">跳到精选项目</a>
   <div id="app" class="app">
     <div class="loading">Loading site...</div>
   </div>
@@ -2659,6 +2660,505 @@ h1, h2, h3, h4 {
     padding: 16px;
   }
 }
+
+/* ── Editorial portfolio refresh ────────────────────────────────────── */
+.skip-link {
+  position: fixed;
+  z-index: 10000;
+  top: 16px;
+  left: 20px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #fff;
+  color: #0b1020;
+  font-weight: 700;
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+body {
+  background:
+    radial-gradient(circle at 12% -8%, rgba(124, 92, 255, .22), transparent 32%),
+    radial-gradient(circle at 92% 10%, rgba(45, 212, 191, .12), transparent 27%),
+    #080b14;
+}
+
+.app { padding-top: 20px; }
+
+.portfolio-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 8px 4px;
+}
+
+.portfolio-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.portfolio-mark::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 18px rgba(45, 212, 191, .8);
+}
+
+.portfolio-nav-meta {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.hub-hero.editorial-hero {
+  position: relative;
+  min-height: min(72vh, 720px);
+  align-items: flex-end;
+  overflow: hidden;
+  padding: clamp(34px, 6vw, 82px);
+  border-radius: 34px;
+  background:
+    linear-gradient(105deg, rgba(8, 11, 20, .98) 4%, rgba(8, 11, 20, .8) 52%, rgba(8, 11, 20, .18) 100%),
+    linear-gradient(145deg, rgba(124, 92, 255, .2), rgba(45, 212, 191, .08));
+}
+
+.editorial-hero::after {
+  content: "UX";
+  position: absolute;
+  right: -2vw;
+  top: -6vw;
+  color: transparent;
+  font-size: clamp(180px, 28vw, 430px);
+  font-weight: 800;
+  letter-spacing: -.1em;
+  line-height: 1;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .065);
+  pointer-events: none;
+}
+
+.editorial-hero .hub-hero-left {
+  position: relative;
+  z-index: 1;
+  max-width: 920px;
+}
+
+.hero-intro {
+  margin: 0 0 22px;
+  color: var(--accent-2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.hero-statement {
+  max-width: 900px;
+  margin: 0;
+  color: #f7f8fc;
+  font-size: clamp(46px, 7vw, 102px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: .96;
+}
+
+.hero-statement em {
+  color: var(--accent-2);
+  font-style: normal;
+}
+
+.editorial-hero .hub-bio {
+  max-width: 650px;
+  margin: 30px 0 0;
+  color: rgba(229, 238, 252, .68);
+  font-size: 16px;
+}
+
+.hero-footer {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 34px;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  transition: 180ms ease;
+}
+
+.hero-cta:hover { background: #fff; color: #0b1020; transform: translateY(-2px); }
+
+.editorial-section {
+  margin-top: 22px;
+  padding: clamp(24px, 4vw, 54px);
+  border-radius: 34px;
+  background: rgba(12, 17, 30, .82);
+}
+
+.editorial-section .section-head { margin-bottom: 42px; }
+.editorial-section .section-title { font-size: clamp(34px, 5vw, 68px); letter-spacing: -.045em; }
+.editorial-section .section-kicker { color: var(--accent-2); }
+
+.project-category { margin-top: 70px; }
+.project-category:first-child { margin-top: 0; }
+.project-category-head { align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+.project-category-label { font-size: 20px; }
+.project-category-desc { max-width: 640px; font-size: 13px; line-height: 1.7; text-align: right; }
+
+.project-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.project-card { grid-column: span 4; min-width: 0; border-radius: 22px; background: #101725; }
+.project-card:nth-child(1) { grid-column: span 7; }
+.project-card:nth-child(2) { grid-column: span 5; }
+.project-card .project-cover { padding: 0; }
+.project-card .project-cover img { border-radius: 0; aspect-ratio: 16 / 10; }
+.project-card:nth-child(1) .project-cover img,
+.project-card:nth-child(2) .project-cover img { aspect-ratio: 16 / 9; }
+.project-card .project-meta { padding: 22px; }
+
+.case-overline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: var(--accent-2);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.case-view { color: var(--text-soft); transition: 160ms ease; }
+.project-card:hover .case-view,
+.project-card:focus-visible .case-view { color: #fff; transform: translateX(3px); }
+.project-card:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 4px; }
+.project-meta h3 { font-size: clamp(20px, 2vw, 30px); }
+.project-meta .muted + .muted { font-size: 13px; }
+
+@media (max-width: 900px) {
+  .project-card,
+  .project-card:nth-child(1),
+  .project-card:nth-child(2) { grid-column: span 6; }
+  .editorial-hero { min-height: 620px; }
+}
+
+@media (max-width: 620px) {
+  .app { padding: 12px; }
+  .portfolio-nav-meta { display: none; }
+  .hub-hero.editorial-hero { min-height: 600px; padding: 30px 22px; border-radius: 26px; }
+  .hero-statement { font-size: clamp(43px, 14vw, 66px); }
+  .hero-footer { align-items: flex-start; flex-direction: column; }
+  .hub-tags { display: none; }
+  .editorial-section { padding: 30px 18px; border-radius: 26px; }
+  .project-category-head { display: block; }
+  .project-category-desc { margin: 10px 0 0 12px; text-align: left; }
+  .project-grid { grid-template-columns: 1fr; }
+  .project-card,
+  .project-card:nth-child(1),
+  .project-card:nth-child(2) { grid-column: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* Equal-weight continuous project index */
+.hub-hero.editorial-hero {
+  min-height: 470px;
+  align-items: center;
+  padding: clamp(52px, 8vw, 110px) 4px;
+  border: 0;
+  border-bottom: 1px solid rgba(255,255,255,.13);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+.editorial-hero::after { right: 0; top: 8%; font-size: clamp(140px, 22vw, 320px); opacity: .7; }
+.hero-statement { max-width: 1040px; font-size: clamp(45px, 6.2vw, 88px); line-height: 1.02; }
+.editorial-hero .hub-bio { max-width: 720px; }
+.hero-footer { margin-top: 28px; }
+.editorial-section {
+  margin-top: 0;
+  padding: clamp(70px, 9vw, 130px) 4px 40px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+.editorial-section .section-head {
+  margin-bottom: 46px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.editorial-section .section-title { font-size: clamp(38px, 5vw, 64px); }
+.project-list { display: block; }
+.project-card.project-row,
+.project-card.project-row:nth-child(1),
+.project-card.project-row:nth-child(2) {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+  grid-column: auto;
+  align-items: center;
+  gap: clamp(34px, 6vw, 94px);
+  min-height: 440px;
+  padding: clamp(34px, 5vw, 72px) 0;
+  overflow: visible;
+  border: 0;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.project-card.project-row:hover { transform: none; border-color: rgba(255,255,255,.28); box-shadow: none; }
+.project-card.project-row::after { display: none; }
+.project-card.project-row:nth-child(even) .project-cover { grid-column: 2; }
+.project-card.project-row:nth-child(even) .project-meta { grid-column: 1; grid-row: 1; }
+.project-card.project-row .project-cover {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #111827;
+  box-shadow: 0 24px 60px rgba(0,0,0,.28);
+}
+.project-card.project-row .project-cover img,
+.project-card.project-row:nth-child(1) .project-cover img,
+.project-card.project-row:nth-child(2) .project-cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 0;
+  object-fit: cover;
+  transition: transform .65s cubic-bezier(.2,.7,.3,1), filter .4s ease;
+}
+.project-card.project-row:hover .project-cover img { transform: scale(1.025); filter: brightness(1.04); }
+.project-card.project-row .project-meta { padding: 0; }
+.project-card.project-row .project-meta h3 {
+  margin-bottom: 14px;
+  font-size: clamp(32px, 4vw, 58px);
+  letter-spacing: -.045em;
+}
+.project-card.project-row .project-subtitle { margin: 0 0 18px; color: #d6def0; font-size: 15px; line-height: 1.65; }
+.project-card.project-row .project-summary { max-width: 580px; margin: 0; color: var(--text-soft); font-size: 14px; line-height: 1.8; }
+.project-card.project-row .case-overline { margin-bottom: 22px; }
+.project-card.project-row .chips { margin-top: 24px; }
+.project-card.project-row .chip { background: transparent; border: 1px solid rgba(255,255,255,.13); color: #aeb9cc; }
+@media (max-width: 820px) {
+  .project-card.project-row,
+  .project-card.project-row:nth-child(1),
+  .project-card.project-row:nth-child(2) { grid-template-columns: 1fr; gap: 28px; min-height: 0; padding: 50px 0; }
+  .project-card.project-row:nth-child(even) .project-cover,
+  .project-card.project-row:nth-child(even) .project-meta { grid-column: 1; }
+  .project-card.project-row:nth-child(even) .project-cover { grid-row: 1; }
+  .project-card.project-row:nth-child(even) .project-meta { grid-row: 2; }
+}
+@media (max-width: 620px) {
+  .hub-hero.editorial-hero { min-height: 500px; padding: 54px 2px; border-radius: 0; }
+  .editorial-section { padding: 74px 2px 24px; border-radius: 0; }
+  .editorial-section .section-head { margin-bottom: 10px; }
+  .project-card.project-row .project-meta h3 { font-size: 36px; }
+  .project-card.project-row .project-cover { border-radius: 15px; }
+}
+
+/* Pixel-game accents and category tabs */
+.pixel-cluster {
+  position: absolute;
+  z-index: 1;
+  right: clamp(22px, 5vw, 76px);
+  bottom: clamp(34px, 6vw, 82px);
+  width: 82px;
+  height: 62px;
+  opacity: .72;
+  pointer-events: none;
+}
+.pixel-cluster i { position: absolute; display: block; width: 8px; height: 8px; background: var(--accent-2); image-rendering: pixelated; }
+.pixel-cluster i:nth-child(1) { left: 0; top: 16px; box-shadow: 8px 0 var(--accent-2), 16px 0 var(--accent-2), 16px 8px var(--accent-2); }
+.pixel-cluster i:nth-child(2) { right: 0; top: 0; background: var(--accent); box-shadow: -8px 8px var(--accent), -16px 16px var(--accent); }
+.pixel-cluster i:nth-child(3) { right: 24px; bottom: 0; background: #fff; box-shadow: 8px 0 #fff, 0 -8px #fff, 8px -8px #fff; opacity: .48; }
+.pixel-cluster i:nth-child(n+4) { display: none; }
+
+.pixel-avatar {
+  position: absolute;
+  z-index: 2;
+  right: clamp(18px, 5vw, 72px);
+  bottom: clamp(26px, 5vw, 68px);
+  width: 174px;
+  height: 104px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  clip-path: none;
+  box-shadow: none;
+  image-rendering: pixelated;
+  animation: pixel-avatar-idle 2.8s steps(2, end) infinite;
+}
+.pixel-girl { position: relative; float: left; width: 76px; height: 76px; image-rendering: pixelated; }
+.pixel-girl i { position: absolute; display: block; }
+.pg-hair {
+  left: 7px;
+  top: 3px;
+  width: 62px;
+  height: 63px;
+  background: #28223f;
+  box-shadow: -4px 8px 0 #28223f, 4px 8px 0 #28223f, 0 8px 0 #28223f;
+}
+.pg-face {
+  left: 15px;
+  top: 18px;
+  width: 46px;
+  height: 43px;
+  background: #ffd6bd;
+  box-shadow: 0 4px 0 #ffd6bd, 4px 0 0 #ffd6bd, -4px 0 0 #ffd6bd;
+}
+.pg-bangs {
+  left: 11px;
+  top: 9px;
+  width: 54px;
+  height: 16px;
+  background: #28223f;
+  box-shadow: 0 4px 0 #28223f, 8px 8px 0 #28223f, 26px 8px 0 #28223f, 42px 8px 0 #28223f;
+}
+.pg-eye { top: 34px; width: 5px; height: 7px; background: #332f48; box-shadow: 0 -1px 0 #fff; }
+.pg-eye-left { left: 25px; }
+.pg-eye-right { right: 25px; }
+.pg-blush { top: 45px; width: 6px; height: 3px; background: #f49aaa; opacity: .9; }
+.pg-blush-left { left: 19px; }
+.pg-blush-right { right: 19px; }
+.pg-mouth { left: 35px; top: 49px; width: 7px; height: 3px; background: #b85b70; box-shadow: 2px 2px 0 #b85b70; }
+.pg-neck { left: 31px; top: 60px; width: 14px; height: 8px; background: #f2bda6; }
+.pg-shirt {
+  left: 17px;
+  bottom: 0;
+  width: 42px;
+  height: 12px;
+  background: var(--accent);
+  box-shadow: -7px 5px 0 var(--accent), 7px 5px 0 var(--accent);
+}
+.pixel-gamepad {
+  position: absolute;
+  right: 12px;
+  top: 28px;
+  width: 66px;
+  height: 48px;
+  image-rendering: pixelated;
+  transform: rotate(2deg);
+}
+.pixel-gamepad i { position: absolute; display: block; }
+.pad-body {
+  left: 6px;
+  top: 6px;
+  width: 54px;
+  height: 32px;
+  background: #e9ecf8;
+  box-shadow: -4px 4px 0 #e9ecf8, 4px 4px 0 #e9ecf8, 0 -4px 0 #e9ecf8, 4px 0 0 #aeb5d1, 0 4px 0 #aeb5d1;
+}
+.pad-grip { top: 30px; width: 14px; height: 15px; background: #aeb5d1; }
+.pad-grip-left { left: 8px; box-shadow: 4px 4px 0 #aeb5d1; }
+.pad-grip-right { right: 8px; box-shadow: -4px 4px 0 #aeb5d1; }
+.pad-cross {
+  left: 16px;
+  top: 16px;
+  width: 14px;
+  height: 5px;
+  background: #28223f;
+  box-shadow: 4px -4px 0 #28223f, 4px 4px 0 #28223f;
+}
+.pad-button { width: 6px; height: 6px; background: var(--accent); }
+.pad-button-a { right: 15px; top: 14px; }
+.pad-button-b { right: 23px; top: 22px; background: var(--accent-2); }
+.pad-light { left: 31px; top: 28px; width: 5px; height: 3px; background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
+.pixel-avatar:hover .pixel-gamepad { animation: gamepad-nudge .42s steps(2, end); }
+.pixel-avatar:hover .pg-eye { height: 2px; top: 38px; box-shadow: none; }
+@keyframes pixel-avatar-idle {
+  0%, 88%, 100% { transform: translateY(0); }
+  92%, 96% { transform: translateY(-3px); }
+}
+@keyframes gamepad-nudge {
+  0%, 100% { transform: rotate(2deg) translateY(0); }
+  50% { transform: rotate(-3deg) translateY(-3px); }
+}
+
+.category-switcher {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 18px;
+}
+.category-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 68px;
+  padding: 16px 20px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 4px;
+  background: rgba(255,255,255,.025);
+  color: var(--text-soft);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.category-tab::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  background: currentColor;
+  box-shadow: 8px 0 currentColor;
+  opacity: .55;
+}
+.category-tab span { flex: 1; font-size: 14px; font-weight: 700; }
+.category-tab b { font-size: 11px; letter-spacing: .12em; }
+.category-tab:hover { color: #fff; border-color: rgba(255,255,255,.28); transform: translateY(-2px); }
+.category-tab.is-active {
+  border-color: var(--accent-2);
+  background: rgba(45,212,191,.1);
+  color: #fff;
+  box-shadow: 4px 4px 0 rgba(45,212,191,.22);
+}
+.category-tab.is-active::after {
+  content: "PLAY";
+  position: absolute;
+  right: 18px;
+  bottom: 5px;
+  color: var(--accent-2);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.category-tab:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 3px; }
+
+@media (max-width: 620px) {
+  .pixel-cluster { right: 10px; bottom: 28px; transform: scale(.75); transform-origin: right bottom; }
+  .pixel-avatar { right: 4px; bottom: 22px; transform: scale(.72); transform-origin: right bottom; animation: none; }
+  .category-switcher { grid-template-columns: 1fr; gap: 8px; margin-top: 24px; }
+  .category-tab { min-height: 60px; padding: 13px 16px; }
+}
 """
 
 
@@ -2679,6 +3179,7 @@ JS_TEMPLATE = """const state = {
   lightboxVariantIndex: 0,
   lightboxVideoIndex: 0,
   lightboxShowcaseIndex: 0,
+  activeHomeCategory: "casual-events",
 };
 
 const app = document.getElementById("app");
@@ -3134,27 +3635,43 @@ function renderHome(data) {
 
   return `
     <div class="shell">
-      <header class="hub-hero panel">
-        <div class="hub-hero-left">
-          ${owner ? `<h1 class="hub-owner" data-edit-path="site.owner">${escapeHtml(owner)}</h1>` : ""}
-          ${role  ? `<div class="hub-role" data-edit-path="site.role">${escapeHtml(role)}</div>` : ""}
-          ${bio   ? `<p class="hub-bio" data-edit-path="site.bio">${escapeHtml(bio)}</p>` : ""}
-          ${tagCloud}
+      <nav class="portfolio-nav" aria-label="作品集导航">
+        <div class="portfolio-mark">Fangling Jia · Portfolio</div>
+        <div class="portfolio-nav-meta">Game UX / Interaction Design · 2026</div>
+      </nav>
+      <header class="hub-hero editorial-hero panel">
+        <div class="pixel-avatar" aria-hidden="true">
+          <div class="pixel-girl">
+            <i class="pg-hair"></i><i class="pg-face"></i><i class="pg-bangs"></i>
+            <i class="pg-eye pg-eye-left"></i><i class="pg-eye pg-eye-right"></i>
+            <i class="pg-blush pg-blush-left"></i><i class="pg-blush pg-blush-right"></i>
+            <i class="pg-mouth"></i><i class="pg-neck"></i><i class="pg-shirt"></i>
+          </div>
+          <div class="pixel-gamepad">
+            <i class="pad-body"></i><i class="pad-grip pad-grip-left"></i><i class="pad-grip pad-grip-right"></i>
+            <i class="pad-cross"></i><i class="pad-button pad-button-a"></i><i class="pad-button pad-button-b"></i>
+            <i class="pad-light"></i>
+          </div>
         </div>
-        ${heroImg ? `
-        <div class="hub-hero-right">
-          <img src="${heroImg.src}" alt="${escapeHtml(heroImg.title || owner || "portfolio")}" data-image-path="site.hero_image.src" decoding="async" fetchpriority="high" />
-        </div>` : ""}
+        <div class="hub-hero-left">
+          <p class="hero-intro">${escapeHtml(role || "UX Designer")} · Independent Portfolio</p>
+          <h1 class="hero-statement">让复杂玩法，变成清晰而<em>有吸引力</em>的体验。</h1>
+          ${bio   ? `<p class="hub-bio" data-edit-path="site.bio">${escapeHtml(bio)}</p>` : ""}
+          <div class="hero-footer">
+            <a class="hero-cta" href="#selected-work">浏览全部项目 <span aria-hidden="true">↓</span></a>
+            ${tagCloud}
+          </div>
+        </div>
       </header>
-      <section class="section panel">
+      <section class="section panel editorial-section" id="selected-work">
         <div class="section-head">
           <div>
-            <div class="section-kicker" data-edit-path="site.labels.home_section_kicker">${escapeHtml(labels.home_section_kicker || "Works")}</div>
-            <h2 class="section-title" data-edit-path="site.labels.home_section_title">${escapeHtml(labels.home_section_title || "项目")}</h2>
+            <div class="section-kicker">Project Index</div>
+            <h2 class="section-title">全部项目</h2>
           </div>
           ${state.manageMode ? `<button type="button" class="btn-outline" id="open-add-panel">+ 添加项目</button>` : ""}
         </div>
-        ${renderProjectGroups(data)}
+        ${renderEqualProjectList(data)}
       </section>
     </div>
   `;
@@ -3168,12 +3685,13 @@ function renderProjectGroups(data) {
   const categories = Array.isArray(data.site?.categories) ? data.site.categories : [];
 
   const renderCard = (project, globalIndex) => `
-    <article class="panel project-card" data-project-id="${project.id}">
+    <article class="panel project-card" data-project-id="${project.id}" role="button" tabindex="0" aria-label="查看项目：${escapeHtml(project.title)}">
       ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="删除此项目">✕</button>` : ""}
       <div class="project-cover">
         ${project.card_cover ? `<img src="${project.card_cover.thumb || project.card_cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${globalIndex}.card_cover.src" decoding="async" loading="lazy" />` : ""}
       </div>
       <div class="project-meta">
+        <div class="case-overline"><span>Case ${String(globalIndex + 1).padStart(2, "0")}</span><span class="case-view">View case →</span></div>
         <h3 data-edit-path="projects.${globalIndex}.title">${escapeHtml(project.title)}</h3>
         ${project.subtitle ? `<p class="muted" data-edit-path="projects.${globalIndex}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
         ${project.summary ? `<p class="muted" data-edit-path="projects.${globalIndex}.summary">${escapeHtml(project.summary)}</p>` : ""}
@@ -3235,6 +3753,55 @@ function renderProjectGroups(data) {
   }
 
   return groups.join("");
+}
+
+function renderEqualProjectList(data) {
+  const projects = Array.isArray(data.projects) ? data.projects : [];
+  const categories = Array.isArray(data.site?.categories) ? data.site.categories : [];
+  const categoryLabels = new Map(categories.map((category) => [category.id, category.label]));
+  const availableCategories = categories.filter((category) => projects.some((project) => project.category === category.id));
+  const fallbackCategory = availableCategories[0]?.id || "";
+  const activeCategory = availableCategories.some((category) => category.id === state.activeHomeCategory)
+    ? state.activeHomeCategory
+    : fallbackCategory;
+  state.activeHomeCategory = activeCategory;
+  const visibleProjects = projects
+    .map((project, sourceIndex) => ({ project, sourceIndex }))
+    .filter(({ project }) => !activeCategory || project.category === activeCategory);
+
+  const tabs = availableCategories.map((category) => {
+    const count = projects.filter((project) => project.category === category.id).length;
+    const active = category.id === activeCategory;
+    return `<button type="button" class="category-tab${active ? " is-active" : ""}" role="tab" aria-selected="${active}" data-home-category="${escapeHtml(category.id)}">
+      <span>${escapeHtml(category.label)}</span><b>${String(count).padStart(2, "0")}</b>
+    </button>`;
+  }).join("");
+
+  const cards = visibleProjects.map(({ project, sourceIndex }, visibleIndex) => {
+    const index = sourceIndex;
+    const categoryLabel = categoryLabels.get(project.category) || "Project";
+    return `
+      <article class="project-card project-row" data-project-id="${project.id}" role="button" tabindex="0" aria-label="View project: ${escapeHtml(project.title)}">
+        ${state.manageMode ? `<button type="button" class="manage-delete-btn" data-remove-project="${project.id}" title="Remove project">×</button>` : ""}
+        <div class="project-cover">
+          ${project.card_cover ? `<img src="${project.card_cover.src || project.card_cover.thumb}" alt="${escapeHtml(project.title)}" data-image-path="projects.${index}.card_cover.src" decoding="async" loading="lazy" />` : ""}
+        </div>
+        <div class="project-meta">
+          <div class="case-overline">
+            <span>${String(visibleIndex + 1).padStart(2, "0")} · ${escapeHtml(categoryLabel)}</span>
+            <span class="case-view">View case →</span>
+          </div>
+          <h3 data-edit-path="projects.${index}.title">${escapeHtml(project.title)}</h3>
+          ${project.subtitle ? `<p class="project-subtitle" data-edit-path="projects.${index}.subtitle">${escapeHtml(project.subtitle)}</p>` : ""}
+          ${project.summary ? `<p class="project-summary" data-edit-path="projects.${index}.summary">${escapeHtml(project.summary)}</p>` : ""}
+          ${renderTags(project.tags)}
+        </div>
+      </article>`;
+  });
+
+  return `
+    <div class="category-switcher" role="tablist" aria-label="Project categories">${tabs}</div>
+    <div class="project-list" role="tabpanel">${cards.join("")}</div>`;
 }
 
 function renderInteractionDoc(project, projectIndex) {
@@ -4075,11 +4642,34 @@ function render() {
     requestAnimationFrame(() => drawFlowArrows(projectIndex, project.flow));
   }
 
+  document.querySelectorAll("[data-home-category]").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      state.activeHomeCategory = tab.getAttribute("data-home-category") || "casual-events";
+      render();
+      document.getElementById("selected-work")?.scrollIntoView({ block: "start" });
+    });
+    tab.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      const tabs = [...document.querySelectorAll("[data-home-category]")];
+      const current = tabs.indexOf(tab);
+      const offset = event.key === "ArrowRight" ? 1 : -1;
+      const next = tabs[(current + offset + tabs.length) % tabs.length];
+      event.preventDefault();
+      next?.click();
+      requestAnimationFrame(() => document.querySelector(`[data-home-category="${state.activeHomeCategory}"]`)?.focus());
+    });
+  });
+
   document.querySelectorAll("[data-project-id]").forEach((node) => {
     node.addEventListener("click", () => {
       if (state.editMode) {
         return;
       }
+      setProject(node.getAttribute("data-project-id"));
+    });
+    node.addEventListener("keydown", (event) => {
+      if (state.editMode || (event.key !== "Enter" && event.key !== " ")) return;
+      event.preventDefault();
       setProject(node.getAttribute("data-project-id"));
     });
   });
