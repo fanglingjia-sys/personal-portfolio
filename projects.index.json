@@ -69,7 +69,7 @@
       }
     ],
     "tools": ["Figma", "Unity", "Illustrator", "Photoshop", "SketchUp", "Nomad", "Procreate", "After Effects"],
-    "ai_tools": ["AI 图像与视频处理", "Claude Code", "Cursor", "Agent Skills", "自动化工作流"],
+    "ai_tools": ["视觉生成与处理", "AI 辅助开发", "工作流自动化"],
     "languages": ["IELTS 6.5", "CET-4"]
   },
   "all_tags": [
