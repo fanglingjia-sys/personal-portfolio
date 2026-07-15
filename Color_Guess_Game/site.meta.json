@@ -3,8 +3,17 @@
   "subtitle": "Meal Prep Challenge · 颜色猜测玩法 + 错误历史复盘",
   "description": "运营活动小游戏: 玩家根据三碗汤的颜色, 把对应酱料瓶拖到正确的碗上。全部答对解锁奖励, 答错的酱料会留在桌面作为「错误猜测历史」, 用来引导玩家复盘后重新挑战。",
   "owner": "Fangling Jia",
-  "role": "UX Designer · Game UI",
+  "role": "UX / UI / GUI Designer",
   "bio": "游戏活动向 UI/UX 与交互说明整理。",
+  "contribution": {
+    "title": "个人职责",
+    "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。UI 视觉素材主要通过 AI 辅助获取，本人负责需求定义、素材筛选、界面组合与最终呈现。",
+    "items": [
+      {"title": "UX 设计", "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"},
+      {"title": "UI / GUI", "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"},
+      {"title": "AI 素材协作", "description": "UI 视觉素材主要通过 AI 辅助获取，并由本人完成筛选、组合与整体一致性把控。"}
+    ]
+  },
   "all_tags": [
     "小游戏",
     "活动UI",

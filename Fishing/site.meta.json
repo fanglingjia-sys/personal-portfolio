@@ -3,8 +3,17 @@
   "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易 + 图鉴 / 道具",
   "description": "钓鱼主玩法 (抛钩 → 上钩 → 收线 → 结果) + 渔市交易 (普通 / 高级 / 超级三档订单) + 图鉴 / 海螺道具 / 每日目标的完整体验。",
   "owner": "Fangling Jia",
-  "role": "UX Designer",
+  "role": "UX / UI / GUI Designer",
   "bio": "活动小游戏 + 经营反馈循环的完整界面与交互整理。",
+  "contribution": {
+    "title": "个人职责",
+    "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。UI 视觉素材主要通过 AI 辅助获取，本人负责需求定义、素材筛选、界面组合与最终呈现。",
+    "items": [
+      {"title": "UX 设计", "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"},
+      {"title": "UI / GUI", "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"},
+      {"title": "AI 素材协作", "description": "UI 视觉素材主要通过 AI 辅助获取，并由本人完成筛选、组合与整体一致性把控。"}
+    ]
+  },
   "all_tags": [
     "活动UI",
     "钓鱼小游戏",

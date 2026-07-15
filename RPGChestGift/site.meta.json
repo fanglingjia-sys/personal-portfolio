@@ -3,8 +3,17 @@
   "subtitle": "7 月节日活动 · 点击战斗式礼包玩法",
   "description": "把常规礼包购买包装成一场轻量 RPG 宝箱战斗：玩家选择不同奖励档位的宝箱，通过点击攻击、普通命中、暴击与 Miss 反馈逐步削减宝箱血量，击败后开箱领取固定奖励，形成从付费选择到战斗反馈再到奖励揭晓的完整体验。",
   "owner": "Fangling Jia",
-  "role": "UX Designer",
+  "role": "UX / UI / GUI Designer",
   "bio": "礼包商业化包装、轻量战斗反馈与奖励揭晓流程设计。",
+  "contribution": {
+    "title": "个人职责",
+    "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。UI 视觉素材主要通过 AI 辅助获取，本人负责需求定义、素材筛选、界面组合与最终呈现。",
+    "items": [
+      {"title": "UX 设计", "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"},
+      {"title": "UI / GUI", "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"},
+      {"title": "AI 素材协作", "description": "UI 视觉素材主要通过 AI 辅助获取，并由本人完成筛选、组合与整体一致性把控。"}
+    ]
+  },
   "all_tags": [
     "活动 UI",
     "RPG 玩法",

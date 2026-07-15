@@ -422,6 +422,48 @@ h1, h2, h3, h4 {
   object-position: center;
 }
 
+.contribution-section .section-head {
+  margin-bottom: 22px;
+}
+
+.contribution-summary {
+  max-width: 820px;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.contribution-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.contribution-item {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.contribution-item h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+
+.contribution-item p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+@media (max-width: 760px) {
+  .contribution-grid { grid-template-columns: 1fr; }
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -2720,6 +2762,58 @@ body {
   font-size: 12px;
 }
 
+.portfolio-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.portfolio-nav-link,
+.portfolio-mark-button {
+  border: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font: inherit;
+  cursor: pointer;
+}
+
+.portfolio-nav-link {
+  padding: 7px 0;
+  font-size: 12px;
+}
+
+.portfolio-nav-link:hover,
+.portfolio-nav-link.is-active {
+  color: #fff;
+}
+
+.portfolio-mark-button {
+  padding: 0;
+  text-align: left;
+}
+
+.portfolio-about-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid rgba(45,212,191,.38);
+  border-radius: 999px;
+  background: rgba(45,212,191,.08);
+  color: #d8fff8;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.portfolio-about-button:hover {
+  border-color: var(--accent-2);
+  background: rgba(45,212,191,.16);
+  transform: translateY(-1px);
+}
+
 .hub-hero.editorial-hero {
   position: relative;
   min-height: min(72vh, 720px);
@@ -2790,6 +2884,13 @@ body {
   margin-top: 34px;
 }
 
+.hero-primary-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
 .hero-cta {
   display: inline-flex;
   align-items: center;
@@ -2805,6 +2906,29 @@ body {
 }
 
 .hero-cta:hover { background: #fff; color: #0b1020; transform: translateY(-2px); }
+
+.hero-about-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border: 1px solid rgba(45,212,191,.38);
+  border-radius: 999px;
+  background: rgba(45,212,191,.08);
+  color: #d8fff8;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.hero-about-cta:hover {
+  border-color: var(--accent-2);
+  background: var(--accent-2);
+  color: #07120f;
+  transform: translateY(-2px);
+}
 
 .editorial-section {
   margin-top: 22px;
@@ -2869,6 +2993,7 @@ body {
   .hub-hero.editorial-hero { min-height: 600px; padding: 30px 22px; border-radius: 26px; }
   .hero-statement { font-size: clamp(43px, 14vw, 66px); }
   .hero-footer { align-items: flex-start; flex-direction: column; }
+  .hero-primary-actions { align-items: flex-start; flex-direction: column; }
   .hub-tags { display: none; }
   .editorial-section { padding: 30px 18px; border-radius: 26px; }
   .project-category-head { display: block; }
@@ -3003,7 +3128,7 @@ body {
   position: absolute;
   z-index: 2;
   right: clamp(18px, 5vw, 72px);
-  bottom: clamp(26px, 5vw, 68px);
+  bottom: clamp(108px, 10vw, 138px);
   width: 174px;
   height: 104px;
   padding: 0;
@@ -3013,6 +3138,21 @@ body {
   box-shadow: none;
   image-rendering: pixelated;
   animation: pixel-avatar-idle 2.8s steps(2, end) infinite;
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .pixel-avatar {
+    right: 14px;
+    top: 70px;
+    bottom: auto;
+    transform: scale(.76);
+    transform-origin: right top;
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .pixel-avatar { display: none; }
 }
 .pixel-girl { position: relative; float: left; width: 76px; height: 76px; image-rendering: pixelated; }
 .pixel-girl i { position: absolute; display: block; }
@@ -3153,11 +3293,140 @@ body {
 }
 .category-tab:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 3px; }
 
+/* About page */
+.about-page { padding-bottom: 50px; }
+.about-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr);
+  gap: clamp(34px, 7vw, 110px);
+  align-items: end;
+  min-height: 560px;
+  padding: clamp(64px, 9vw, 130px) 4px 80px;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.about-hero-copy { max-width: 900px; }
+.about-hero h1 {
+  max-width: 850px;
+  margin: 18px 0 24px;
+  font-size: clamp(44px, 6vw, 78px);
+  line-height: .98;
+  letter-spacing: -.065em;
+}
+.about-hero-copy > p {
+  max-width: 720px;
+  margin: 0;
+  color: #c5cede;
+  font-size: clamp(16px, 1.7vw, 21px);
+  line-height: 1.8;
+}
+.about-focus { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 30px; }
+.about-focus span,
+.about-tool-cloud span {
+  padding: 8px 11px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 999px;
+  color: #cbd5e1;
+  font-size: 11px;
+}
+.about-identity-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 24px;
+  background: linear-gradient(155deg, rgba(124,92,255,.15), rgba(45,212,191,.04));
+}
+.about-monogram {
+  margin-bottom: 62px;
+  color: transparent;
+  font-size: clamp(54px, 6vw, 86px);
+  font-weight: 800;
+  letter-spacing: -.07em;
+  line-height: .8;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px rgba(255,255,255,.22);
+}
+.about-name-cn { margin: 0; color: #fff; font-size: 28px; font-weight: 760; }
+.about-name-en { margin: 4px 0 0; color: var(--text-soft); font-size: 13px; }
+.about-role { margin-top: 24px; color: var(--accent-2); font-size: 13px; font-weight: 700; letter-spacing: .05em; }
+.about-privacy-note { margin: 22px 0 0; color: #768196; font-size: 10px; line-height: 1.6; }
+.about-section { padding: clamp(70px, 9vw, 124px) 4px; border-bottom: 1px solid rgba(255,255,255,.14); }
+.about-section-heading { margin-bottom: 42px; }
+.about-section-heading.compact { margin-bottom: 28px; }
+.about-section-heading h2 { margin: 9px 0 0; font-size: clamp(34px, 4.4vw, 60px); letter-spacing: -.05em; }
+.about-section-heading.compact h2 { font-size: clamp(30px, 3.5vw, 46px); }
+.about-capability-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+.about-capability-card {
+  min-height: 245px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  background: rgba(255,255,255,.025);
+}
+.about-capability-card > span { color: var(--accent-2); font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.about-capability-card h3 { margin: 52px 0 12px; font-size: 21px; }
+.about-capability-card p { margin: 0; color: var(--text-soft); font-size: 13px; line-height: 1.75; }
+.about-timeline { border-top: 1px solid rgba(255,255,255,.12); }
+.about-timeline-item {
+  display: grid;
+  grid-template-columns: minmax(210px,.35fr) minmax(0,1fr);
+  gap: clamp(30px, 7vw, 110px);
+  padding: 42px 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.about-timeline-meta { display: flex; flex-direction: column; gap: 9px; }
+.about-timeline-meta span { color: var(--accent-2); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+.about-timeline-meta strong { color: #fff; font-size: 18px; }
+.about-product { margin: 0 0 6px; color: var(--text-soft); font-size: 12px; }
+.about-timeline-content h3 { margin: 0 0 14px; font-size: clamp(24px,3vw,38px); }
+.about-timeline-content > p:last-of-type { margin: 0; color: #c0cada; line-height: 1.8; }
+.about-timeline-content ul { display: grid; gap: 9px; margin: 22px 0 0; padding-left: 18px; color: var(--text-soft); font-size: 13px; line-height: 1.7; }
+.about-bottom-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(46px, 9vw, 130px); }
+.about-education-list { display: grid; gap: 14px; }
+.about-education-section .about-education-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.about-education-card { padding: 24px; border: 1px solid rgba(255,255,255,.12); border-radius: 18px; background: rgba(255,255,255,.025); }
+.about-education-card span { color: var(--accent-2); font-size: 10px; }
+.about-education-card h3 { margin: 20px 0 7px; font-size: 20px; }
+.about-education-card p { margin: 0; color: var(--text-soft); font-size: 13px; line-height: 1.6; }
+.about-tool-group + .about-tool-group { margin-top: 30px; }
+.about-toolkit-layout { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: clamp(34px, 7vw, 90px); }
+.about-toolkit-layout .about-tool-group + .about-tool-group { margin-top: 0; }
+.about-tool-group h3 { margin: 0 0 13px; font-size: 14px; }
+.about-tool-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+.about-tool-cloud.accent span { border-color: rgba(45,212,191,.28); color: #c9fff5; background: rgba(45,212,191,.06); }
+.about-language { margin: 32px 0 0; color: var(--text-soft); font-size: 12px; }
+.about-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 50px 4px 10px; }
+.about-footer p { margin: 0; color: #d7deeb; font-size: 16px; }
+.about-footer .hero-cta {
+  border: 1px solid rgba(255,255,255,.18);
+  background: transparent;
+  cursor: pointer;
+}
+
+@media (max-width: 980px) {
+  .about-capability-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .about-bottom-grid { grid-template-columns: 1fr; }
+  .about-education-section .about-education-list,
+  .about-toolkit-layout { grid-template-columns: 1fr; }
+}
+ 
 @media (max-width: 620px) {
   .pixel-cluster { right: 10px; bottom: 28px; transform: scale(.75); transform-origin: right bottom; }
   .pixel-avatar { right: 4px; bottom: 22px; transform: scale(.72); transform-origin: right bottom; animation: none; }
   .category-switcher { grid-template-columns: 1fr; gap: 8px; margin-top: 24px; }
   .category-tab { min-height: 60px; padding: 13px 16px; }
+  .portfolio-nav-actions { gap: 10px; }
+  .portfolio-nav-meta { display: none; }
+  .about-hero { grid-template-columns: 1fr; min-height: 0; padding: 58px 2px; }
+  .about-hero h1 { font-size: clamp(46px, 15vw, 66px); }
+  .about-identity-card { min-height: 300px; }
+  .about-capability-grid { grid-template-columns: 1fr; }
+  .about-capability-card { min-height: 0; }
+  .about-capability-card h3 { margin-top: 28px; }
+  .about-timeline-item { grid-template-columns: 1fr; gap: 24px; }
+  .about-bottom-grid { grid-template-columns: 1fr; }
+  .about-footer { align-items: flex-start; flex-direction: column; }
 }
 """
 
@@ -3173,6 +3442,7 @@ JS_TEMPLATE = """const state = {
   sectionConfig: {},
   pendingImagePath: null,
   currentProjectId: null,
+  showAbout: false,
   currentSceneIndex: 0,
   activeHotspotIndex: 0,
   lightboxScreenIndex: 0,
@@ -3522,10 +3792,18 @@ function hasPrototype(project) {
 }
 
 function setProject(projectId) {
+  state.showAbout = false;
   state.currentProjectId = projectId;
   state.currentSceneIndex = 0;
   state.activeHotspotIndex = 0;
   window.location.hash = projectId ? `#${projectId}` : "";
+  render();
+}
+
+function openAbout() {
+  state.showAbout = true;
+  state.currentProjectId = null;
+  window.location.hash = "about";
   render();
 }
 
@@ -3614,6 +3892,121 @@ function getCurrentScene(project) {
   return scene;
 }
 
+function renderAbout(data) {
+  const about = data.site?.about || {};
+  const capabilities = Array.isArray(about.capabilities) ? about.capabilities : [];
+  const experience = Array.isArray(about.experience) ? about.experience : [];
+  const education = Array.isArray(about.education) ? about.education : [];
+  const focus = Array.isArray(about.focus) ? about.focus : [];
+  const tools = Array.isArray(about.tools) ? about.tools : [];
+  const aiTools = Array.isArray(about.ai_tools) ? about.ai_tools : [];
+  const languages = Array.isArray(about.languages) ? about.languages : [];
+
+  return `
+    <div class="shell about-page">
+      <nav class="portfolio-nav" aria-label="个人主页导航">
+        <button type="button" class="portfolio-mark portfolio-mark-button" data-back-home>Fangling Jia · Portfolio</button>
+        <div class="portfolio-nav-actions">
+          <span class="portfolio-nav-link is-active">关于我</span>
+          <button type="button" class="portfolio-nav-link" data-back-home>项目</button>
+        </div>
+      </nav>
+
+      <header class="about-hero">
+        <div class="about-hero-copy">
+          <div class="section-kicker">About / ${escapeHtml(about.name_en || "Fangling Jia")}</div>
+          <h1>${escapeHtml(about.headline || "把设计思考推进到可运行的游戏界面。")}</h1>
+          <p>${escapeHtml(about.intro || "")}</p>
+          ${focus.length ? `<div class="about-focus">${focus.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
+        </div>
+        <aside class="about-identity-card">
+          <div class="about-monogram" aria-hidden="true">${escapeHtml(about.name_en || "JiaJia")}</div>
+          <div>
+            <p class="about-name-cn">${escapeHtml(about.name || "方菱葭")}</p>
+            <p class="about-name-en">${escapeHtml(about.name_en || "Fangling Jia")}</p>
+          </div>
+          <div class="about-role">${escapeHtml(about.role || "游戏体验设计师")}</div>
+          <p class="about-privacy-note">本页仅展示与作品集相关的职业信息。</p>
+        </aside>
+      </header>
+
+      <section class="about-section">
+        <div class="about-section-heading">
+          <div class="section-kicker">Capabilities</div>
+          <h2>从体验方案到真机落地</h2>
+        </div>
+        <div class="about-capability-grid">
+          ${capabilities.map((item, index) => `
+            <article class="about-capability-card">
+              <span>${String(index + 1).padStart(2, "0")}</span>
+              <h3>${escapeHtml(item.title || "")}</h3>
+              <p>${escapeHtml(item.description || "")}</p>
+            </article>`).join("")}
+        </div>
+      </section>
+
+      <section class="about-section about-education-section">
+        <div class="about-section-heading">
+          <div class="section-kicker">Education</div>
+          <h2>教育背景</h2>
+        </div>
+        <div class="about-education-list">
+          ${education.map(item => `
+            <article class="about-education-card">
+              <span>${escapeHtml(item.period || "")}</span>
+              <h3>${escapeHtml(item.school || "")}</h3>
+              <p>${escapeHtml(item.degree || "")}</p>
+            </article>`).join("")}
+        </div>
+      </section>
+
+      <section class="about-section about-experience-section">
+        <div class="about-section-heading">
+          <div class="section-kicker">Experience</div>
+          <h2>工作经历</h2>
+        </div>
+        <div class="about-timeline">
+          ${experience.map(item => `
+            <article class="about-timeline-item">
+              <div class="about-timeline-meta">
+                <span>${escapeHtml(item.period || "")}</span>
+                <strong>${escapeHtml(item.company || "")}</strong>
+              </div>
+              <div class="about-timeline-content">
+                <p class="about-product">${escapeHtml(item.product || "")}</p>
+                <h3>${escapeHtml(item.role || "")}</h3>
+                <p>${escapeHtml(item.summary || "")}</p>
+                ${Array.isArray(item.details) && item.details.length ? `<ul>${item.details.map(detail => `<li>${escapeHtml(detail)}</li>`).join("")}</ul>` : ""}
+              </div>
+            </article>`).join("")}
+        </div>
+      </section>
+
+      <section class="about-section about-toolkit-section">
+        <div class="about-section-heading">
+          <div class="section-kicker">Toolkit</div>
+          <h2>工具与工作流</h2>
+        </div>
+        <div class="about-toolkit-layout">
+          <div class="about-tool-group">
+            <h3>设计与实现</h3>
+            <div class="about-tool-cloud">${tools.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+          </div>
+          <div class="about-tool-group">
+            <h3>AI 协作</h3>
+            <div class="about-tool-cloud accent">${aiTools.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+          </div>
+        </div>
+        ${languages.length ? `<p class="about-language">语言能力 · ${languages.map(escapeHtml).join(" / ")}</p>` : ""}
+      </section>
+
+      <footer class="about-footer">
+        <p>继续查看我的系统玩法、运营活动与休闲小游戏设计。</p>
+        <button type="button" class="hero-cta" data-back-home>返回项目列表 <span aria-hidden="true">→</span></button>
+      </footer>
+    </div>`;
+}
+
 function renderHome(data) {
   const labels   = getLabels(data.site, null);
   const heroImg  = data.site.hero_image || null;
@@ -3637,7 +4030,10 @@ function renderHome(data) {
     <div class="shell">
       <nav class="portfolio-nav" aria-label="作品集导航">
         <div class="portfolio-mark">Fangling Jia · Portfolio</div>
-        <div class="portfolio-nav-meta">Game UX / Interaction Design · 2026</div>
+        <div class="portfolio-nav-actions">
+          <div class="portfolio-nav-meta">Game UX / Interaction Design · 2026</div>
+          <button type="button" class="portfolio-about-button" data-open-about>个人主页 <span aria-hidden="true">→</span></button>
+        </div>
       </nav>
       <header class="hub-hero editorial-hero panel">
         <div class="pixel-avatar" aria-hidden="true">
@@ -3658,7 +4054,10 @@ function renderHome(data) {
           <h1 class="hero-statement">把复杂玩法，设计成<em>清晰好玩</em>的体验。</h1>
           ${bio   ? `<p class="hub-bio" data-edit-path="site.bio">${escapeHtml(bio)}</p>` : ""}
           <div class="hero-footer">
-            <a class="hero-cta" href="#selected-work">浏览全部项目 <span aria-hidden="true">↓</span></a>
+            <div class="hero-primary-actions">
+              <a class="hero-cta" href="#selected-work">浏览全部项目 <span aria-hidden="true">↓</span></a>
+              <button type="button" class="hero-about-cta" data-open-about>了解我 / About <span aria-hidden="true">→</span></button>
+            </div>
             ${tagCloud}
           </div>
         </div>
@@ -4576,6 +4975,29 @@ function renderPrototype(project, projectIndex) {
   `;
 }
 
+function renderContribution(project, projectIndex) {
+  const contribution = project.contribution;
+  if (!contribution || typeof contribution !== "object") return "";
+  const items = Array.isArray(contribution.items) ? contribution.items : [];
+  return `
+    <section class="section panel contribution-section" id="contribution-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Contribution</div>
+          <h2 class="section-title" data-edit-path="projects.${projectIndex}.contribution.title">${escapeHtml(contribution.title || "个人职责")}</h2>
+          ${contribution.summary ? `<p class="contribution-summary" data-edit-path="projects.${projectIndex}.contribution.summary">${escapeHtml(contribution.summary)}</p>` : ""}
+        </div>
+      </div>
+      ${items.length ? `<div class="contribution-grid">
+        ${items.map((item, itemIndex) => `
+          <article class="contribution-item">
+            <h3 data-edit-path="projects.${projectIndex}.contribution.items.${itemIndex}.title">${escapeHtml(item.title || "")}</h3>
+            <p data-edit-path="projects.${projectIndex}.contribution.items.${itemIndex}.description">${escapeHtml(item.description || "")}</p>
+          </article>`).join("")}
+      </div>` : ""}
+    </section>`;
+}
+
 function renderProject(project, projectIndex) {
   const labels = getLabels(state.data.site, project);
   return `
@@ -4595,6 +5017,7 @@ function renderProject(project, projectIndex) {
           ${project.cover ? `<img src="${project.cover.src}" alt="${escapeHtml(project.title)}" data-image-path="projects.${projectIndex}.cover.src" decoding="async" fetchpriority="high" />` : ""}
         </section>
       </header>
+      ${renderContribution(project, projectIndex)}
       ${isSectionVisible(project.id, "interaction_doc") ? renderInteractionDoc(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "screens")         ? renderScreens(project, projectIndex) : ""}
       ${isSectionVisible(project.id, "videos")          ? renderVideos(project, projectIndex) : ""}
@@ -4620,7 +5043,7 @@ function render() {
   app.classList.toggle("edit-mode", state.editMode && state.manageMode);
   try {
     const toolbar = state.manageMode ? renderEditorToolbar() : "";
-    app.innerHTML = `${toolbar}${project ? renderProject(project, projectIndex) : renderHome(state.data)}`;
+    app.innerHTML = `${toolbar}${state.showAbout ? renderAbout(state.data) : (project ? renderProject(project, projectIndex) : renderHome(state.data))}`;
   } catch (err) {
     console.error("render failed:", err);
     const stack = (err && (err.stack || err.message)) || String(err);
@@ -4680,6 +5103,12 @@ function render() {
         return;
       }
       setProject(null);
+    });
+  });
+
+  document.querySelectorAll("[data-open-about]").forEach((node) => {
+    node.addEventListener("click", () => {
+      if (!state.editMode) openAbout();
     });
   });
 
@@ -5224,7 +5653,8 @@ function bindScreenLightbox(project) {
 
 function applyHash() {
   const projectId = window.location.hash.replace(/^#/, "");
-  state.currentProjectId = projectId || null;
+  state.showAbout = projectId === "about";
+  state.currentProjectId = state.showAbout ? null : (projectId || null);
 }
 
 // ── Section Manager ──────────────────────────────────────────────────────
@@ -6955,6 +7385,8 @@ def build_project(
             if built:
                 showcase.append(built)
 
+    contribution = manifest.get("contribution") if isinstance(manifest.get("contribution"), dict) else None
+
     # Pass per-project display config (hide_sections / screens_layout etc.)
     # straight through to site-data.json so the client can read it
     display_meta = manifest.get("display") if isinstance(manifest.get("display"), dict) else {}
@@ -6973,6 +7405,7 @@ def build_project(
         "summary": summary,
         "tags": tags,
         "labels": labels,
+        "contribution": contribution,
         "cover": cover,
         "card_cover": card_cover,
         "interaction_doc": interaction_doc,
@@ -7042,6 +7475,7 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
                 "owner": index_manifest.get("owner", ""),
                 "role": index_manifest.get("role", ""),
                 "bio": index_manifest.get("bio", ""),
+                "about": index_manifest.get("about") if isinstance(index_manifest.get("about"), dict) else None,
                 "all_tags": index_manifest.get("all_tags") or all_tags,
                 "prototype_enabled": args.enable_prototype,
                 "labels": merge_labels(index_manifest.get("labels")),
@@ -7079,6 +7513,7 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
             "owner": single_manifest.get("owner", ""),
             "role": single_manifest.get("role", ""),
             "bio": single_manifest.get("bio", ""),
+            "about": single_manifest.get("about") if isinstance(single_manifest.get("about"), dict) else None,
             "all_tags": single_manifest.get("all_tags") or all_tags,
             "prototype_enabled": args.enable_prototype,
             "labels": merge_labels(single_manifest.get("labels")),

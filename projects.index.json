@@ -3,8 +3,75 @@
   "subtitle": "UX / UI · 交互说明 · 流程与原型",
   "description": "个人工作产出索引:按项目分文件夹存放素材与 site.meta.json;在此登记 projects 后,首页会展示全部项目卡片。新增项目时在本目录新建子文件夹并追加一条 projects 记录即可。",
   "owner": "Fangling Jia",
-  "role": "UX Designer",
-  "bio": "游戏与活动向界面设计、交互文档整理、可演示流程与界面说明。以下为近期项目条目。",
+  "role": "Game UX / UI / GUI Designer",
+  "bio": "专注游戏核心系统玩法、商业化运营活动与内置小游戏，连接体验设计、GUI 输出与 Unity 落地。",
+  "about": {
+    "name": "方菱葭",
+    "name_en": "JiaJia",
+    "role": "游戏体验设计师",
+    "headline": "把设计思考，推进到可运行的游戏界面。",
+    "intro": "专注游戏核心系统玩法、商业化运营活动与内置小游戏的 UX / UI / GUI 全链路设计。既能梳理复杂规则与交互状态，也能在 Unity UGUI 中完成界面实装、交互验证和多分辨率适配，并持续探索 AI 驱动的设计与自动化工作流。",
+    "focus": ["系统玩法", "运营活动", "休闲小游戏", "Unity UGUI", "AI 工作流"],
+    "capabilities": [
+      {
+        "title": "游戏体验设计",
+        "description": "从需求分析、玩法结构和信息架构出发，完成交互方案、状态覆盖、规范说明与体验验证。"
+      },
+      {
+        "title": "UI / GUI 输出",
+        "description": "完成中高保真界面、信息层级与 GUI 拼接，将玩法逻辑转化为清晰、可操作的视觉界面。"
+      },
+      {
+        "title": "Unity UGUI 落地",
+        "description": "独立进行 Prefab 架构、组件复用、反馈动画、交互验证和多分辨率适配，连接设计与真机表现。"
+      },
+      {
+        "title": "AI 与自动化",
+        "description": "使用 AI 进行视觉探索、图像与视频处理，并通过 Agent Skills 和自动化流程减少重复性工作。"
+      }
+    ],
+    "experience": [
+      {
+        "period": "2024.08 - 至今",
+        "company": "Tap4Fun",
+        "product": "猿族时代 · Age of the Apes",
+        "role": "游戏体验设计师",
+        "summary": "负责核心系统玩法、商业化运营活动与内置小游戏的 UX / UI / GUI 全链路设计，覆盖方案设计、界面输出、开发协作与上线验证。",
+        "details": [
+          "梳理复杂玩法规则、操作链路与界面状态，持续完善系统和活动体验。",
+          "基于 Unity UGUI 完成界面实装、Prefab 搭建、组件维护、反馈动画与适配验证。",
+          "探索 AI 视觉生成与开发协作工具，构建设计资产处理、规范校验和资源管理工作流。"
+        ]
+      },
+      {
+        "period": "2024.01 - 2024.05",
+        "company": "网易互动娱乐事业群",
+        "product": "命运：崛起 · Destiny: Rising",
+        "role": "游戏体验设计师 · 实习",
+        "summary": "参与 FPS + RPG 产品的系统功能与玩法体验设计，覆盖需求分析、原型方案、开发跟进和体验验证。",
+        "details": [
+          "参与登录、奖励发放、任务背包、公告栏与举报系统等功能模块设计。",
+          "参与拍照系统、界面解谜与卡牌构筑玩法的流程梳理、原型设计和体验优化。",
+          "参与设计系统与组件库建设，并输出交互规范、设计文档与验收标准。"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "period": "2022.09 - 2024.06",
+        "school": "伦敦艺术大学 · University of the Arts London",
+        "degree": "硕士 · 用户体验设计 User Experience Design"
+      },
+      {
+        "period": "2018.08 - 2022.06",
+        "school": "澳门城市大学 · City University of Macau",
+        "degree": "本科 · 环境艺术与空间设计"
+      }
+    ],
+    "tools": ["Figma", "Unity", "Illustrator", "Photoshop", "SketchUp", "Nomad", "Procreate", "After Effects"],
+    "ai_tools": ["AI 图像与视频处理", "Claude Code", "Cursor", "Agent Skills", "自动化工作流"],
+    "languages": ["IELTS 6.5", "CET-4"]
+  },
   "all_tags": [
     "UX",
     "UI",

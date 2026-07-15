@@ -3,8 +3,17 @@
   "subtitle": "KvK6 个人成长线 · 宝石工坊",
   "description": "围绕\"宝石\"长线培养的工坊系统设计 — 一套界面里完成洗炼 / 合成 / 分解三个核心动作, 配合「璀璨宝石 · 共鸣」副系统(放置 → 达成基础共鸣 → 升级到完美共鸣), 把单件装备的属性养成做成可持续投入的闭环。",
   "owner": "Fangling Jia",
-  "role": "UX Designer",
+  "role": "UX / UI / GUI Designer",
   "bio": "系统级长线养成: 工坊功能集 + 二级共鸣循环。",
+  "contribution": {
+    "title": "个人职责",
+    "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。UI 视觉素材主要通过 AI 辅助获取，本人负责需求定义、素材筛选、界面组合与最终呈现。",
+    "items": [
+      {"title": "UX 设计", "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"},
+      {"title": "UI / GUI", "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"},
+      {"title": "AI 素材协作", "description": "UI 视觉素材主要通过 AI 辅助获取，并由本人完成筛选、组合与整体一致性把控。"}
+    ]
+  },
   "all_tags": ["系统玩法", "宝石工坊", "属性洗炼", "合成 / 分解", "共鸣副系统", "VFX 反馈"],
   "interaction_doc": {
     "file": "交互文档.jpg",

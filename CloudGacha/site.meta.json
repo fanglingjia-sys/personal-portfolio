@@ -3,8 +3,17 @@
   "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
   "description": "把累计抽卡的进度感转化成一张「乘热气球往天上飞」的可视化棋盘 — 抽奖填格子 / 热气球上升 / 通关解锁可变模式与战斗礼盒 / 兑换商店与 Tips 提示完整闭环。",
   "owner": "Fangling Jia",
-  "role": "UX Designer",
+  "role": "UX / UI / GUI Designer",
   "bio": "节日累计活动的视觉化进度循环 + 多模式扩展设计。",
+  "contribution": {
+    "title": "个人职责",
+    "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。UI 视觉素材主要通过 AI 辅助获取，本人负责需求定义、素材筛选、界面组合与最终呈现。",
+    "items": [
+      {"title": "UX 设计", "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"},
+      {"title": "UI / GUI", "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"},
+      {"title": "AI 素材协作", "description": "UI 视觉素材主要通过 AI 辅助获取，并由本人完成筛选、组合与整体一致性把控。"}
+    ]
+  },
   "all_tags": ["活动UI", "节日累计", "Gacha", "可变模式", "兑换商店", "Tips 引导"],
   "interaction_doc": {
     "file": "交互文档.jpg",

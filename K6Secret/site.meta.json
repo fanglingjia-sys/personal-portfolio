@@ -3,8 +3,17 @@
   "subtitle": "KVK6 Secret Realm · 准备 → 战斗 → 战利品/保险箱",
   "description": "K6 秘境副本的完整玩法链路: 战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内HUD(悬赏榜 / 技能弹窗 / 背包 / 战利品对比 / 宝藏领取) → 通过保险箱锁定收益, 死亡不掉落。",
   "owner": "Fangling Jia",
-  "role": "UX Designer",
+  "role": "UX / UI / GUI Designer",
   "bio": "K6 秘境活动: 准备界面 + 局内战斗 HUD + 战利品系统的完整交互设计。",
+  "contribution": {
+    "title": "个人职责",
+    "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。UI 视觉素材主要通过 AI 辅助获取，本人负责需求定义、素材筛选、界面组合与最终呈现。",
+    "items": [
+      {"title": "UX 设计", "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"},
+      {"title": "UI / GUI", "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"},
+      {"title": "AI 素材协作", "description": "UI 视觉素材主要通过 AI 辅助获取，并由本人完成筛选、组合与整体一致性把控。"}
+    ]
+  },
   "all_tags": [
     "系统玩法",
     "秘境副本",
