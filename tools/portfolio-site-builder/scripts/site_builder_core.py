@@ -2814,6 +2814,28 @@ body {
   transform: translateY(-1px);
 }
 
+.portfolio-project-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid rgba(45,212,191,.38);
+  border-radius: 999px;
+  background: rgba(45,212,191,.1);
+  color: #d8fff8;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.portfolio-project-button:hover {
+  border-color: var(--accent-2);
+  background: var(--accent-2);
+  color: #07120f;
+}
+
 .hub-hero.editorial-hero {
   position: relative;
   min-height: min(72vh, 720px);
@@ -3308,18 +3330,36 @@ body {
 .about-hero h1 {
   max-width: 850px;
   margin: 18px 0 24px;
-  font-size: clamp(44px, 6vw, 78px);
-  line-height: .98;
-  letter-spacing: -.065em;
+  font-size: clamp(38px, 4.5vw, 58px);
+  line-height: 1.04;
+  letter-spacing: -.05em;
 }
 .about-hero-copy > p {
   max-width: 720px;
   margin: 0;
   color: #c5cede;
-  font-size: clamp(16px, 1.7vw, 21px);
+  font-size: clamp(15px, 1.35vw, 18px);
   line-height: 1.8;
 }
-.about-focus { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 30px; }
+.about-hero-actions { margin-top: 26px; }
+.about-project-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 19px;
+  border: 1px solid var(--accent-2);
+  border-radius: 999px;
+  background: var(--accent-2);
+  color: #07120f;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(45,212,191,.16);
+  transition: 180ms ease;
+}
+.about-project-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(45,212,191,.24); }
+.about-focus { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
 .about-focus span,
 .about-tool-cloud span {
   padding: 8px 11px;
@@ -3347,15 +3387,15 @@ body {
   white-space: nowrap;
   -webkit-text-stroke: 1px rgba(255,255,255,.22);
 }
-.about-name-cn { margin: 0; color: #fff; font-size: 28px; font-weight: 760; }
+.about-name-cn { margin: 0; color: #fff; font-size: 24px; font-weight: 760; }
 .about-name-en { margin: 4px 0 0; color: var(--text-soft); font-size: 13px; }
 .about-role { margin-top: 24px; color: var(--accent-2); font-size: 13px; font-weight: 700; letter-spacing: .05em; }
 .about-privacy-note { margin: 22px 0 0; color: #768196; font-size: 10px; line-height: 1.6; }
 .about-section { padding: clamp(70px, 9vw, 124px) 4px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .about-section-heading { margin-bottom: 42px; }
 .about-section-heading.compact { margin-bottom: 28px; }
-.about-section-heading h2 { margin: 9px 0 0; font-size: clamp(34px, 4.4vw, 60px); letter-spacing: -.05em; }
-.about-section-heading.compact h2 { font-size: clamp(30px, 3.5vw, 46px); }
+.about-section-heading h2 { margin: 9px 0 0; font-size: clamp(28px, 3.4vw, 44px); letter-spacing: -.04em; }
+.about-section-heading.compact h2 { font-size: clamp(27px, 3vw, 40px); }
 .about-capability-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
 .about-capability-card {
   min-height: 245px;
@@ -3365,7 +3405,7 @@ body {
   background: rgba(255,255,255,.025);
 }
 .about-capability-card > span { color: var(--accent-2); font-size: 10px; font-weight: 800; letter-spacing: .13em; }
-.about-capability-card h3 { margin: 52px 0 12px; font-size: 21px; }
+.about-capability-card h3 { margin: 52px 0 12px; font-size: 19px; }
 .about-capability-card p { margin: 0; color: var(--text-soft); font-size: 13px; line-height: 1.75; }
 .about-timeline { border-top: 1px solid rgba(255,255,255,.12); }
 .about-timeline-item {
@@ -3379,7 +3419,7 @@ body {
 .about-timeline-meta span { color: var(--accent-2); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
 .about-timeline-meta strong { color: #fff; font-size: 18px; }
 .about-product { margin: 0 0 6px; color: var(--text-soft); font-size: 12px; }
-.about-timeline-content h3 { margin: 0 0 14px; font-size: clamp(24px,3vw,38px); }
+.about-timeline-content h3 { margin: 0 0 14px; font-size: clamp(22px,2.5vw,32px); }
 .about-timeline-content > p:last-of-type { margin: 0; color: #c0cada; line-height: 1.8; }
 .about-timeline-content ul { display: grid; gap: 9px; margin: 22px 0 0; padding-left: 18px; color: var(--text-soft); font-size: 13px; line-height: 1.7; }
 .about-bottom-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(46px, 9vw, 130px); }
@@ -3418,8 +3458,10 @@ body {
   .category-tab { min-height: 60px; padding: 13px 16px; }
   .portfolio-nav-actions { gap: 10px; }
   .portfolio-nav-meta { display: none; }
+  .about-page .portfolio-nav-link.is-active { display: none; }
+  .portfolio-project-button { padding: 8px 11px; }
   .about-hero { grid-template-columns: 1fr; min-height: 0; padding: 58px 2px; }
-  .about-hero h1 { font-size: clamp(46px, 15vw, 66px); }
+  .about-hero h1 { font-size: clamp(38px, 11vw, 50px); }
   .about-identity-card { min-height: 300px; }
   .about-capability-grid { grid-template-columns: 1fr; }
   .about-capability-card { min-height: 0; }
@@ -3908,7 +3950,7 @@ function renderAbout(data) {
         <button type="button" class="portfolio-mark portfolio-mark-button" data-back-home>Fangling Jia · Portfolio</button>
         <div class="portfolio-nav-actions">
           <span class="portfolio-nav-link is-active">关于我</span>
-          <button type="button" class="portfolio-nav-link" data-back-home>项目</button>
+          <button type="button" class="portfolio-project-button" data-back-home>查看项目 <span aria-hidden="true">→</span></button>
         </div>
       </nav>
 
@@ -3917,6 +3959,9 @@ function renderAbout(data) {
           <div class="section-kicker">About / ${escapeHtml(about.name_en || "Fangling Jia")}</div>
           <h1>${escapeHtml(about.headline || "把设计思考推进到可运行的游戏界面。")}</h1>
           <p>${escapeHtml(about.intro || "")}</p>
+          <div class="about-hero-actions">
+            <button type="button" class="about-project-cta" data-back-home>查看项目作品 <span aria-hidden="true">→</span></button>
+          </div>
           ${focus.length ? `<div class="about-focus">${focus.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
         </div>
         <aside class="about-identity-card">
