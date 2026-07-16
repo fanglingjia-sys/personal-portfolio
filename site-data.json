@@ -1,0 +1,3265 @@
+{
+  "site": {
+    "title": "工作内容总览",
+    "subtitle": "UX / UI · 交互说明 · 流程与原型",
+    "description": "个人工作产出索引:按项目分文件夹存放素材与 site.meta.json;在此登记 projects 后,首页会展示全部项目卡片。新增项目时在本目录新建子文件夹并追加一条 projects 记录即可。",
+    "owner": "Fangling Jia",
+    "role": "Game UX / UI / GUI Designer",
+    "bio": "专注游戏核心系统玩法、商业化运营活动与内置小游戏，连接体验设计、GUI 输出与 Unity 落地。",
+    "asset_note": "案例中的部分视觉素材使用 AI 辅助获取；所有 UX 方案、信息架构、交互流程、GUI 界面拼接与 Unity UGUI 落地均由本人独立完成。",
+    "about": {
+      "name": "方菱葭",
+      "name_en": "JiaJia",
+      "role": "游戏体验设计师",
+      "headline": "从玩法逻辑，到可运行界面。",
+      "intro": "专注游戏核心系统玩法、商业化运营活动与内置小游戏的 UX / UI / GUI 全链路设计。既能梳理复杂规则与交互状态，也能在 Unity UGUI 中完成界面实装、交互验证和多分辨率适配，并持续探索 AI 驱动的设计与自动化工作流。",
+      "focus": [
+        "系统玩法",
+        "运营活动",
+        "休闲小游戏",
+        "Unity UGUI",
+        "AI 工作流"
+      ],
+      "capabilities": [
+        {
+          "title": "游戏体验设计",
+          "description": "从需求分析、玩法结构和信息架构出发，完成交互方案、状态覆盖、规范说明与体验验证。"
+        },
+        {
+          "title": "UI / GUI 输出",
+          "description": "完成中高保真界面、信息层级与 GUI 拼接，将玩法逻辑转化为清晰、可操作的视觉界面。"
+        },
+        {
+          "title": "Unity UGUI 落地",
+          "description": "独立进行 Prefab 架构、组件复用、反馈动画、交互验证和多分辨率适配，连接设计与真机表现。"
+        },
+        {
+          "title": "AI 与自动化",
+          "description": "使用 AI 进行视觉探索、图像与视频处理，并通过 Agent Skills 和自动化流程减少重复性工作。"
+        }
+      ],
+      "experience": [
+        {
+          "period": "2024.08 - 至今",
+          "company": "Tap4Fun",
+          "product": "猿族时代 · Age of the Apes",
+          "role": "游戏体验设计师",
+          "summary": "负责核心系统玩法、商业化运营活动与内置小游戏的 UX / UI / GUI 全链路设计，覆盖方案设计、界面输出、开发协作与上线验证。",
+          "details": [
+            "梳理复杂玩法规则、操作链路与界面状态，持续完善系统和活动体验。",
+            "基于 Unity UGUI 完成界面实装、Prefab 搭建、组件维护、反馈动画与适配验证。",
+            "探索 AI 视觉生成与开发协作工具，构建设计资产处理、规范校验和资源管理工作流。"
+          ]
+        },
+        {
+          "period": "2024.01 - 2024.05",
+          "company": "网易互动娱乐事业群",
+          "product": "命运：崛起 · Destiny: Rising",
+          "role": "游戏体验设计师 · 实习",
+          "summary": "参与 FPS + RPG 产品的系统功能与玩法体验设计，覆盖需求分析、原型方案、开发跟进和体验验证。",
+          "details": [
+            "参与登录、奖励发放、任务背包、公告栏与举报系统等功能模块设计。",
+            "参与拍照系统、界面解谜与卡牌构筑玩法的流程梳理、原型设计和体验优化。",
+            "参与设计系统与组件库建设，并输出交互规范、设计文档与验收标准。"
+          ]
+        }
+      ],
+      "education": [
+        {
+          "period": "2022.09 - 2024.06",
+          "school": "伦敦艺术大学 · University of the Arts London",
+          "degree": "硕士 · 用户体验设计 User Experience Design"
+        },
+        {
+          "period": "2018.08 - 2022.06",
+          "school": "澳门城市大学 · City University of Macau",
+          "degree": "本科 · 环境艺术与空间设计"
+        }
+      ],
+      "tools": [
+        "Figma",
+        "Unity",
+        "Illustrator",
+        "Photoshop",
+        "SketchUp",
+        "Nomad",
+        "Procreate",
+        "After Effects"
+      ],
+      "ai_tools": [
+        "视觉生成与处理",
+        "AI 辅助开发",
+        "工作流自动化"
+      ],
+      "languages": [
+        "IELTS 6.5",
+        "CET-4"
+      ]
+    },
+    "all_tags": [
+      "UX",
+      "UI",
+      "交互文档",
+      "活动玩法",
+      "小游戏",
+      "流程图",
+      "原型演示"
+    ],
+    "prototype_enabled": true,
+    "labels": {
+      "home_eyebrow": "Project Hub",
+      "home_section_kicker": "Projects",
+      "home_section_title": "项目总览",
+      "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+      "back_to_home": "返回项目总览",
+      "project_detail_eyebrow": "Project Detail",
+      "interaction_doc_kicker": "Document",
+      "interaction_doc_title": "交互文档",
+      "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+      "interaction_doc_empty": "当前项目还没有配置交互文档。",
+      "screens_kicker": "Screens",
+      "screens_title": "单独界面",
+      "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+      "screens_empty": "当前项目还没有配置界面列表。",
+      "prototype_kicker": "Prototype",
+      "prototype_title": "动态交互原型",
+      "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+      "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+      "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+      "hotspot_title": "热点说明",
+      "scene_list_title": "流程场景",
+      "steps_title": "步骤说明",
+      "doc_notes_title": "关键说明",
+      "doc_states_title": "流程节点",
+      "screen_states_title": "状态说明",
+      "screen_notes_title": "备注",
+      "screen_refs_title": "文档引用",
+      "stat_project_count": "项目数量",
+      "stat_screen_count": "界面数量",
+      "stat_prototype": "原型模块",
+      "stat_detail_screens": "界面数量",
+      "stat_detail_doc": "交互文档",
+      "stat_detail_scenes": "原型场景"
+    },
+    "hero_image": null,
+    "categories": [
+      {
+        "id": "casual-events",
+        "label": "运营活动 / 休闲小游戏玩法",
+        "description": "商业化与运营活动玩法 — 累充 / Gacha 累计活动、运营向休闲小游戏等。"
+      },
+      {
+        "id": "system-gameplay",
+        "label": "系统玩法",
+        "description": "长线系统与核心玩法的界面与交互设计 — 副本 / 战斗 HUD / 养成 / 工坊等。"
+      }
+    ],
+    "analytics": {
+      "cloudflare": {
+        "token": "b80171bd289d434bbb5f9bcf1a427344"
+      }
+    },
+    "theme": {
+      "accent": "#7c5cff",
+      "background": "#0b1020"
+    }
+  },
+  "projects": [
+    {
+      "id": "fishing-game",
+      "category": "casual-events",
+      "title": "欢乐钓鱼",
+      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
+      "summary": "钓鱼主玩法 + 三档渔市订单 (普通 / 高级 / 超级) + 图鉴 / 海螺道具 / 每日目标的完整经营循环。",
+      "tags": [],
+      "labels": {
+        "home_eyebrow": "Project Hub",
+        "home_section_kicker": "Projects",
+        "home_section_title": "项目总览",
+        "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+        "back_to_home": "返回项目总览",
+        "project_detail_eyebrow": "Project Detail",
+        "interaction_doc_kicker": "Document",
+        "interaction_doc_title": "交互文档",
+        "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+        "interaction_doc_empty": "当前项目还没有配置交互文档。",
+        "screens_kicker": "Screens",
+        "screens_title": "单独界面",
+        "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+        "screens_empty": "当前项目还没有配置界面列表。",
+        "prototype_kicker": "Prototype",
+        "prototype_title": "动态交互原型",
+        "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+        "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+        "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+        "hotspot_title": "热点说明",
+        "scene_list_title": "流程场景",
+        "steps_title": "步骤说明",
+        "doc_notes_title": "关键说明",
+        "doc_states_title": "流程节点",
+        "screen_states_title": "状态说明",
+        "screen_notes_title": "备注",
+        "screen_refs_title": "文档引用",
+        "stat_project_count": "项目数量",
+        "stat_screen_count": "界面数量",
+        "stat_prototype": "原型模块",
+        "stat_detail_screens": "界面数量",
+        "stat_detail_doc": "交互文档",
+        "stat_detail_scenes": "原型场景"
+      },
+      "contribution": {
+        "title": "个人职责",
+        "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。",
+        "items": [
+          {
+            "title": "UX 设计",
+            "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"
+          },
+          {
+            "title": "UI / GUI",
+            "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"
+          }
+        ]
+      },
+      "cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "Fishing cover",
+        "src": "assets/fishing-game/cover.jpg"
+      },
+      "card_cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "Fishing card cover",
+        "src": "assets/fishing-game/cover.jpg",
+        "thumb": "assets/fishing-game/cover-thumb.jpg"
+      },
+      "interaction_doc": {
+        "id": "交互文档",
+        "relative_path": "交互文档.jpg",
+        "title": "欢乐钓鱼 · 交互总览",
+        "caption": "",
+        "section": "",
+        "tags": [],
+        "summary": "上半部分是钓鱼主玩法 + 鱼市交易; 下半部分是二期优化内容 (主界面重设、图鉴新增、新道具与每日目标)。",
+        "notes": [
+          "核心循环: 主界面 → 抛钩进行钓鱼 → 成功 / 失败 → 收获入鱼篓 → 渔市交易换金币",
+          "三档订单: 普通 / 高级 / 超级, 难度和奖励逐级递增",
+          "二期新增: 紧凑主界面、图鉴系统、海螺召唤道具、每日目标 + 排行榜"
+        ],
+        "states": [
+          "核心循环",
+          "渔市交易",
+          "二期优化"
+        ],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/fishing-game/交互文档.jpg",
+        "preview": "assets/fishing-game/交互文档-thumb.jpg"
+      },
+      "screens": [
+        {
+          "id": "钓鱼主界面",
+          "relative_path": "钓鱼主界面.jpg",
+          "title": "钓鱼主界面",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "钓鱼场景占据视觉中心, 角色 + 鱼竿 + 海面构成主舞台",
+            "顶部左上「欢乐钓鱼」标题 + 倒计时, 右上角入口: 鱼竿礼包 / 图鉴 / 排行",
+            "左侧入口: 鱼市订单 / 钓鱼 BP / 兑换商店, 横向排布层级紧凑",
+            "右侧 HUD: 当前 Lv3 + 钓鱼个数 0/20",
+            "右下角鱼篓 (鱼竿 x1 + 鱼饵 x10 + 海螺 x10) + 大「开始钓鱼」CTA",
+            "海面下可见鱼群, 提示玩家可抛钩的目标"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/fishing-game/钓鱼主界面.jpg"
+        },
+        {
+          "id": "钓鱼进行中",
+          "relative_path": "钓鱼进行中1.jpg",
+          "title": "钓鱼进行中 · 拉条上钩",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "海面下水面分割, 上半显示「卡得不错」反馈",
+            "下半三段进度: 1.咬钩 → 2.拖拉 → 3.收线 (右下按钮)",
+            "进度条上鱼图标随玩家操作前后摆动",
+            "操作期间禁用其他入口"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/fishing-game/钓鱼进行中1.jpg"
+        },
+        {
+          "id": "钓鱼成功",
+          "relative_path": "钓鱼成功.jpg",
+          "title": "钓鱼成功",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "上方飘条「钓鱼成功!」+ 鱼出水水花特效",
+            "进度条变化为完整, 提示进入收线动画",
+            "成功后进入收获状态, 鱼入鱼篓"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "钓鱼进行中",
+          "src": "assets/fishing-game/钓鱼成功.jpg"
+        },
+        {
+          "id": "钓鱼失败结算",
+          "relative_path": "钓鱼失败结算.jpg",
+          "title": "钓鱼失败结算",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "角色举手抓头表情, 强反馈表达失败",
+            "屏幕飘条「钓鱼失败, 再试一次吧!」",
+            "进度条变灰, 玩家可重新抛钩"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "钓鱼进行中",
+          "src": "assets/fishing-game/钓鱼失败结算.jpg"
+        },
+        {
+          "id": "卖鱼商铺",
+          "relative_path": "卖鱼商铺.jpg",
+          "title": "渔市交易 · 普通订单",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "猴子摊主 + 三格订单板 (本例已收两条对应鱼)",
+            "顶部 200 金币 + 充值入口",
+            "「让我满意的订单, 可以获得更多奖励哦!」NPC 提示",
+            "底部「确认交易」按钮高亮可点"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/fishing-game/卖鱼商铺.jpg"
+        },
+        {
+          "id": "中级商铺",
+          "relative_path": "中级.jpg",
+          "title": "渔市交易 · 高级订单",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "中级摊主 (老者形象, 紫色顶棚)",
+            "三格订单是更高级鱼种 (鳗鱼 / 大白 / 河豚)",
+            "底部按钮变为「一键提交」",
+            "奖励规则更复杂, 鱼种价值更高"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "卖鱼商铺",
+          "src": "assets/fishing-game/中级.jpg"
+        },
+        {
+          "id": "高级鱼铺",
+          "relative_path": "高级鱼铺.jpg",
+          "title": "渔市交易 · 超级订单",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "超级摊主 (壮汉黄衫, 木顶棚)",
+            "「超级订单」最高档, 鱼种最稀有",
+            "底部「一键提交」, 奖励最丰厚",
+            "三档订单形成完整的难度梯度"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "卖鱼商铺",
+          "src": "assets/fishing-game/高级鱼铺.jpg"
+        },
+        {
+          "id": "卖鱼结算",
+          "relative_path": "卖鱼结算.jpg",
+          "title": "卖鱼结算 · 物品放入中",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "玩家把第一条鱼放进订单板, NPC 上方出现想法泡泡",
+            "订单板第一格亮起对勾",
+            "其他两格仍为空, 等待玩家继续放入"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "卖鱼商铺",
+          "src": "assets/fishing-game/卖鱼结算.jpg"
+        },
+        {
+          "id": "卖鱼结算反馈",
+          "relative_path": "卖鱼结算反馈.jpg",
+          "title": "卖鱼结算 · 全部完成反馈",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "三格全部对勾, 摊主举手庆祝",
+            "NPC 飘条「小伙子不赖啊!」反馈玩家做得好",
+            "顺利触发奖励发放, 进入庆祝弹窗"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "卖鱼商铺",
+          "src": "assets/fishing-game/卖鱼结算反馈.jpg"
+        },
+        {
+          "id": "卖鱼结算弹窗",
+          "relative_path": "卖鱼结算弹窗.jpg",
+          "title": "CONGRATULATIONS 庆祝弹窗",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "黄底大字「CONGRATULATIONS」横幅",
+            "中央展示获得的金币 x25 奖励",
+            "强反馈表达正面情绪, 点击关闭后回到鱼市"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "卖鱼商铺",
+          "src": "assets/fishing-game/卖鱼结算弹窗.jpg"
+        },
+        {
+          "id": "新增图鉴页",
+          "relative_path": "新增图鉴页.jpg",
+          "title": "图鉴 · 二期新增",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "翻页式书本形态, 左页是分类标签",
+            "右页展示已发现 / 未发现的鱼类网格",
+            "点选某条鱼时显示大图卡 + 解锁状态",
+            "增强收集驱动, 鼓励玩家钓更多种类"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/fishing-game/新增图鉴页.jpg"
+        },
+        {
+          "id": "鱼类等级解锁图鉴弹窗",
+          "relative_path": "鱼类等级解锁图鉴弹窗.jpg",
+          "title": "图鉴 · 深海渔场解锁",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "贝壳装饰弹窗 + 紫色海底场景",
+            "「深海渔场」分类标签高亮",
+            "解锁条件: 完成一定等级后开启更高级渔场",
+            "新渔场鱼种价值更高, 形成等级追求"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "新增图鉴页",
+          "src": "assets/fishing-game/鱼类等级解锁图鉴弹窗.jpg"
+        },
+        {
+          "id": "海螺道具使用弹窗",
+          "relative_path": "海螺道具使用弹窗.jpg",
+          "title": "海螺召唤 · 道具弹窗",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "顶部标题「召唤海螺」+ 关闭 ✕",
+            "鱼类网格: 河豚 / 鲑鱼 / 鳕鱼 / 海蚌 / 金枪鱼 / 螃蟹 / 章鱼 / 鲷鱼 (8 种可选)",
+            "「使用1次召唤海螺, 在下次钓鱼过程中可 100% 钓出指定鱼类」",
+            "底部「召唤 x1」按钮, 消耗一个海螺道具"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/fishing-game/海螺道具使用弹窗.jpg"
+        },
+        {
+          "id": "每日目标及排行榜",
+          "relative_path": "每日目标及排行榜.jpg",
+          "title": "每日目标 + 排行榜",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "顶部 Tab 切换「今日目标 / 排行榜」",
+            "中央展示主推鱼 + 称重数",
+            "排行榜列出多名玩家 + 重量 + 名次",
+            "二期新增的留存设计, 给玩家阶段性目标"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/fishing-game/每日目标及排行榜.jpg"
+        }
+      ],
+      "videos": [
+        {
+          "id": "fishing-feature-demo",
+          "relative_path": "videos/fishing-feature-demo.mp4",
+          "title": "钓鱼小游戏完整录屏",
+          "caption": "从主界面进入, 走完抛钩 → 上钩 → 成功收获 → 渔市交易完整循环, 包含图鉴 / 海螺道具 / 每日目标等模块演示。",
+          "section": "功能录屏",
+          "duration": "1:25",
+          "mime": "video/mp4",
+          "poster": {
+            "relative_path": "videos/fishing-feature-demo-poster.jpg",
+            "src": "assets/fishing-game/videos/fishing-feature-demo-poster.jpg"
+          },
+          "src": "assets/fishing-game/videos/fishing-feature-demo.mp4"
+        }
+      ],
+      "pdfs": [],
+      "showcase": [],
+      "display": {},
+      "flow": null,
+      "prototype": {
+        "enabled": true,
+        "intro": "",
+        "scenes": []
+      }
+    },
+    {
+      "id": "color-guess-game",
+      "category": "casual-events",
+      "title": "备餐大挑战",
+      "subtitle": "运营活动 · 颜色猜测小游戏",
+      "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。",
+      "tags": [],
+      "labels": {
+        "home_eyebrow": "Project Hub",
+        "home_section_kicker": "Projects",
+        "home_section_title": "项目总览",
+        "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+        "back_to_home": "返回项目总览",
+        "project_detail_eyebrow": "Project Detail",
+        "interaction_doc_kicker": "Document",
+        "interaction_doc_title": "交互文档",
+        "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+        "interaction_doc_empty": "当前项目还没有配置交互文档。",
+        "screens_kicker": "Screens",
+        "screens_title": "单独界面",
+        "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+        "screens_empty": "当前项目还没有配置界面列表。",
+        "prototype_kicker": "Prototype",
+        "prototype_title": "动态交互原型",
+        "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+        "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+        "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+        "hotspot_title": "热点说明",
+        "scene_list_title": "流程场景",
+        "steps_title": "步骤说明",
+        "doc_notes_title": "关键说明",
+        "doc_states_title": "流程节点",
+        "screen_states_title": "状态说明",
+        "screen_notes_title": "备注",
+        "screen_refs_title": "文档引用",
+        "stat_project_count": "项目数量",
+        "stat_screen_count": "界面数量",
+        "stat_prototype": "原型模块",
+        "stat_detail_screens": "界面数量",
+        "stat_detail_doc": "交互文档",
+        "stat_detail_scenes": "原型场景"
+      },
+      "contribution": {
+        "title": "个人职责",
+        "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。",
+        "items": [
+          {
+            "title": "UX 设计",
+            "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"
+          },
+          {
+            "title": "UI / GUI",
+            "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"
+          }
+        ]
+      },
+      "cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "Color Guess Game cover",
+        "src": "assets/color-guess-game/cover.jpg"
+      },
+      "card_cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "Color Guess Game card cover",
+        "src": "assets/color-guess-game/cover.jpg",
+        "thumb": "assets/color-guess-game/cover-thumb.jpg"
+      },
+      "interaction_doc": {
+        "id": "交互文档",
+        "relative_path": "交互文档.jpg",
+        "title": "猜色小游戏 · 交互文档",
+        "caption": "",
+        "section": "",
+        "tags": [],
+        "summary": "总览交互流程、状态与反馈，具体以交互稿为准。",
+        "notes": [],
+        "states": [],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/color-guess-game/交互文档.jpg",
+        "preview": "assets/color-guess-game/交互文档-thumb.jpg"
+      },
+      "screens": [
+        {
+          "id": "1",
+          "relative_path": "1.jpg",
+          "title": "主界面 · 待操作",
+          "caption": "",
+          "section": "核心流程",
+          "tags": [],
+          "summary": "",
+          "notes": [],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "初始状态",
+          "hover_description": "玩家进入后的主界面，等待开始操作。",
+          "parent": null,
+          "src": "assets/color-guess-game/1.jpg"
+        },
+        {
+          "id": "2",
+          "relative_path": "2.jpg",
+          "title": "主界面 · 操作中",
+          "caption": "",
+          "section": "核心流程",
+          "tags": [],
+          "summary": "",
+          "notes": [],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "进行中",
+          "hover_description": "玩家进行猜测或拖拽等核心操作时的界面状态。",
+          "parent": null,
+          "src": "assets/color-guess-game/2.jpg"
+        },
+        {
+          "id": "4",
+          "relative_path": "4.jpg",
+          "title": "结果 · 成功",
+          "caption": "",
+          "section": "反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "挑战成功",
+          "hover_description": "全部正确时的成功反馈与动效。",
+          "parent": null,
+          "src": "assets/color-guess-game/4.jpg"
+        },
+        {
+          "id": "5",
+          "relative_path": "5.jpg",
+          "title": "结果 · 失败",
+          "caption": "",
+          "section": "反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "挑战失败",
+          "hover_description": "存在错误时的失败反馈；随后错误酱料会留在桌上，进入「错误历史」状态（见下一屏）。",
+          "parent": null,
+          "src": "assets/color-guess-game/5.jpg"
+        },
+        {
+          "id": "6",
+          "relative_path": "6.jpg",
+          "title": "失败后续 · 错误猜测历史",
+          "caption": "",
+          "section": "反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "酱料上桌 · 错误历史",
+          "hover_description": "挑战失败后，本次猜错的酱料会出现在桌面上，作为本轮的错误猜测历史记录，便于玩家对照复盘；之后可返回主界面再次挑战。",
+          "parent": null,
+          "src": "assets/color-guess-game/6.jpg"
+        }
+      ],
+      "videos": [
+        {
+          "id": "meal-prep-feature-demo",
+          "relative_path": "videos/meal-prep-feature-demo.mp4",
+          "title": "备餐大挑战 · 完整玩法录屏",
+          "caption": "从主界面进入 → 拖拽酱料到对应颜色的汤 → 提交结算 → 错误酱料留在桌面形成复盘历史的完整循环, 含奖励反馈与界面切换。",
+          "section": "玩法录屏",
+          "duration": "1:31",
+          "mime": "video/mp4",
+          "poster": {
+            "relative_path": "videos/meal-prep-feature-demo-poster.jpg",
+            "src": "assets/color-guess-game/videos/meal-prep-feature-demo-poster.jpg"
+          },
+          "src": "assets/color-guess-game/videos/meal-prep-feature-demo.mp4"
+        }
+      ],
+      "pdfs": [],
+      "showcase": [],
+      "display": {},
+      "flow": {
+        "title": "交互流程图",
+        "description": "主流程：待操作 → 操作中 → 成功或失败；失败后酱料留在桌上形成错误猜测历史，再返回主界面继续挑战。",
+        "nodes": [
+          {
+            "id": "main",
+            "label": "主界面\n待操作",
+            "screen_id": "1",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "drag",
+            "label": "操作中",
+            "screen_id": "2",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "success",
+            "label": "挑战成功",
+            "screen_id": "4",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "fail",
+            "label": "挑战失败",
+            "screen_id": "5",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "history",
+            "label": "错误历史\n酱料上桌",
+            "screen_id": "6",
+            "col": 3,
+            "row": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "main",
+            "to": "drag",
+            "label": "开始操作",
+            "type": "forward"
+          },
+          {
+            "from": "drag",
+            "to": "success",
+            "label": "全部正确",
+            "type": "forward"
+          },
+          {
+            "from": "drag",
+            "to": "fail",
+            "label": "存在错误",
+            "type": "forward"
+          },
+          {
+            "from": "success",
+            "to": "main",
+            "label": "下一关",
+            "type": "back"
+          },
+          {
+            "from": "fail",
+            "to": "history",
+            "label": "酱料上桌\n记录错误",
+            "type": "forward"
+          },
+          {
+            "from": "history",
+            "to": "main",
+            "label": "再次挑战",
+            "type": "back"
+          }
+        ]
+      },
+      "prototype": {
+        "enabled": true,
+        "intro": "点击画面中的热区按钮，可切换到对应交互场景。",
+        "scenes": [
+          {
+            "id": "main",
+            "relative_path": "1.jpg",
+            "title": "主界面 待操作",
+            "caption": "",
+            "section": "核心流程",
+            "tags": [],
+            "summary": "",
+            "notes": [],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "初始状态",
+            "hover_description": "玩家进入后的主界面，等待开始操作。",
+            "parent": null,
+            "src": "assets/color-guess-game/1.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-main-drag",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "开始操作",
+                "label": "开始操作",
+                "content": "",
+                "goto_scene_index": 1
+              }
+            ]
+          },
+          {
+            "id": "drag",
+            "relative_path": "2.jpg",
+            "title": "操作中",
+            "caption": "",
+            "section": "核心流程",
+            "tags": [],
+            "summary": "",
+            "notes": [],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "进行中",
+            "hover_description": "玩家进行猜测或拖拽等核心操作时的界面状态。",
+            "parent": null,
+            "src": "assets/color-guess-game/2.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-drag-success",
+                "x": 34.0,
+                "y": 84.0,
+                "title": "全部正确",
+                "label": "全部正确",
+                "content": "",
+                "goto_scene_index": 2
+              },
+              {
+                "id": "hs-drag-fail",
+                "x": 66.0,
+                "y": 84.0,
+                "title": "存在错误",
+                "label": "存在错误",
+                "content": "",
+                "goto_scene_index": 3
+              }
+            ]
+          },
+          {
+            "id": "success",
+            "relative_path": "4.jpg",
+            "title": "挑战成功",
+            "caption": "",
+            "section": "反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "挑战成功",
+            "hover_description": "全部正确时的成功反馈与动效。",
+            "parent": null,
+            "src": "assets/color-guess-game/4.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-success-main",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "下一关",
+                "label": "下一关",
+                "content": "",
+                "goto_scene_index": 0
+              }
+            ]
+          },
+          {
+            "id": "fail",
+            "relative_path": "5.jpg",
+            "title": "挑战失败",
+            "caption": "",
+            "section": "反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "挑战失败",
+            "hover_description": "存在错误时的失败反馈；随后错误酱料会留在桌上，进入「错误历史」状态（见下一屏）。",
+            "parent": null,
+            "src": "assets/color-guess-game/5.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-fail-history",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "酱料上桌\n记录错误",
+                "label": "酱料上桌\n记录错误",
+                "content": "",
+                "goto_scene_index": 4
+              }
+            ]
+          },
+          {
+            "id": "history",
+            "relative_path": "6.jpg",
+            "title": "错误历史 酱料上桌",
+            "caption": "",
+            "section": "反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "酱料上桌 · 错误历史",
+            "hover_description": "挑战失败后，本次猜错的酱料会出现在桌面上，作为本轮的错误猜测历史记录，便于玩家对照复盘；之后可返回主界面再次挑战。",
+            "parent": null,
+            "src": "assets/color-guess-game/6.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-history-main",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "再次挑战",
+                "label": "再次挑战",
+                "content": "",
+                "goto_scene_index": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "rpg-chest-gift",
+      "category": "casual-events",
+      "title": "RPG 宝箱礼包",
+      "subtitle": "7 月节日活动 · 点击战斗式礼包玩法",
+      "summary": "把礼包购买包装成一场轻量 RPG 宝箱战斗：选择奖励档位，通过普通攻击、暴击与 Miss 逐步削减宝箱血量，击败后开箱揭晓奖励。",
+      "tags": [
+        "活动 UI",
+        "休闲小游戏",
+        "礼包",
+        "战斗反馈"
+      ],
+      "labels": {
+        "home_eyebrow": "Project Hub",
+        "home_section_kicker": "Projects",
+        "home_section_title": "项目总览",
+        "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+        "back_to_home": "返回项目总览",
+        "project_detail_eyebrow": "Project Detail",
+        "interaction_doc_kicker": "Document",
+        "interaction_doc_title": "交互文档",
+        "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+        "interaction_doc_empty": "当前项目还没有配置交互文档。",
+        "screens_kicker": "Screens",
+        "screens_title": "单独界面",
+        "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+        "screens_empty": "当前项目还没有配置界面列表。",
+        "prototype_kicker": "Prototype",
+        "prototype_title": "动态交互原型",
+        "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+        "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+        "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+        "hotspot_title": "热点说明",
+        "scene_list_title": "流程场景",
+        "steps_title": "步骤说明",
+        "doc_notes_title": "关键说明",
+        "doc_states_title": "流程节点",
+        "screen_states_title": "状态说明",
+        "screen_notes_title": "备注",
+        "screen_refs_title": "文档引用",
+        "stat_project_count": "项目数量",
+        "stat_screen_count": "界面数量",
+        "stat_prototype": "原型模块",
+        "stat_detail_screens": "界面数量",
+        "stat_detail_doc": "交互文档",
+        "stat_detail_scenes": "原型场景"
+      },
+      "contribution": {
+        "title": "个人职责",
+        "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。",
+        "items": [
+          {
+            "title": "UX 设计",
+            "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"
+          },
+          {
+            "title": "UI / GUI",
+            "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"
+          }
+        ]
+      },
+      "cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "RPGChestGift cover",
+        "src": "assets/rpg-chest-gift/cover.jpg"
+      },
+      "card_cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "RPGChestGift card cover",
+        "src": "assets/rpg-chest-gift/cover.jpg",
+        "thumb": "assets/rpg-chest-gift/cover-thumb.jpg"
+      },
+      "interaction_doc": {
+        "id": "interaction-doc",
+        "relative_path": "interaction-doc.jpg",
+        "title": "RPG 宝箱礼包 · 交互总览",
+        "caption": "",
+        "section": "",
+        "tags": [],
+        "summary": "从宝箱档位选择、点击攻击、命中判定，到宝箱开启与奖励结算的完整交互链路。",
+        "notes": [
+          "商业化入口：三档宝箱对应不同随机奖励范围与固定奖励列表",
+          "战斗循环：点击攻击 → 普通 / 暴击 / Miss 判定 → 削减血量或继续攻击",
+          "结算闭环：血量归零 → 开箱动效 → 奖励弹窗 → 主界面完成状态"
+        ],
+        "states": [
+          "宝箱选择",
+          "攻击循环",
+          "命中反馈",
+          "奖励结算"
+        ],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/rpg-chest-gift/interaction-doc.jpg",
+        "preview": "assets/rpg-chest-gift/interaction-doc-thumb.jpg"
+      },
+      "screens": [
+        {
+          "id": "main-screen",
+          "relative_path": "main-screen.jpg",
+          "title": "活动主界面 · 宝箱选择",
+          "caption": "",
+          "section": "活动入口",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "三档宝箱使用造型和颜色区分价值层级",
+            "顶部阶段奖励把单次购买串联成连续活动目标"
+          ],
+          "states": [
+            "可购买",
+            "已完成",
+            "阶段进度"
+          ],
+          "doc_refs": [],
+          "hover_title": "选择奖励档位与宝箱类型",
+          "hover_description": "主界面同时展示阶段奖励、三档宝箱、随机奖励范围和固定奖励列表。玩家可在左侧活动页签间切换，并点击宝箱下方按钮进入对应战斗。",
+          "parent": null,
+          "src": "assets/rpg-chest-gift/main-screen.jpg"
+        },
+        {
+          "id": "battle-ready",
+          "relative_path": "battle-ready.jpg",
+          "title": "宝箱战斗 · 待攻击",
+          "caption": "",
+          "section": "战斗循环",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "血量越低，奖励越接近揭晓",
+            "底部武器数量同时承担攻击次数提示"
+          ],
+          "states": [
+            "待攻击",
+            "剩余次数"
+          ],
+          "doc_refs": [],
+          "hover_title": "点击屏幕发起一次攻击",
+          "hover_description": "中央宝箱、顶部血量格和底部剩余武器共同构成战斗信息。玩家点击任意位置即可挥剑攻击，攻击过程中屏幕暂时禁用连续输入。",
+          "parent": null,
+          "src": "assets/rpg-chest-gift/battle-ready.jpg"
+        },
+        {
+          "id": "attack-normal",
+          "relative_path": "attack-normal.jpg",
+          "title": "普通攻击 · 命中",
+          "caption": "",
+          "section": "战斗反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "普通攻击是战斗循环的基础节奏"
+          ],
+          "states": [
+            "普通命中",
+            "扣减血量"
+          ],
+          "doc_refs": [],
+          "hover_title": "普通命中反馈",
+          "hover_description": "挥剑击中宝箱后显示伤害数字并扣除一格血量，短暂反馈结束后宝箱回到待攻击位置。",
+          "parent": "battle-ready",
+          "src": "assets/rpg-chest-gift/attack-normal.jpg"
+        },
+        {
+          "id": "critical-hit-1",
+          "relative_path": "critical-hit-1.jpg",
+          "title": "暴击反馈 · 强光命中",
+          "caption": "",
+          "section": "战斗反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "暴击需要在亮度、字号和位移上形成层级差"
+          ],
+          "states": [
+            "暴击",
+            "高伤害"
+          ],
+          "doc_refs": [],
+          "hover_title": "暴击第一段：重击表现",
+          "hover_description": "触发暴击时出现更强的剑光、暴击字样与高伤害数字，建立明显高于普通命中的奖励感。",
+          "parent": "battle-ready",
+          "src": "assets/rpg-chest-gift/critical-hit-1.jpg"
+        },
+        {
+          "id": "critical-hit-2",
+          "relative_path": "critical-hit-2.jpg",
+          "title": "暴击反馈 · 宝箱震落",
+          "caption": "",
+          "section": "战斗反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "位移动画延长暴击反馈，但不阻断下一次操作太久"
+          ],
+          "states": [
+            "击飞",
+            "回位"
+          ],
+          "doc_refs": [],
+          "hover_title": "暴击第二段：宝箱掉落",
+          "hover_description": "重击后宝箱从台面震落，以更大幅度的位置变化强化暴击重量感，随后回到台面继续战斗。",
+          "parent": "battle-ready",
+          "src": "assets/rpg-chest-gift/critical-hit-2.jpg"
+        },
+        {
+          "id": "miss",
+          "relative_path": "miss.jpg",
+          "title": "攻击反馈 · Miss",
+          "caption": "",
+          "section": "战斗反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "失败反馈简短，避免打断连续点击节奏"
+          ],
+          "states": [
+            "Miss",
+            "血量不变"
+          ],
+          "doc_refs": [],
+          "hover_title": "未命中状态",
+          "hover_description": "攻击未命中时显示双层 Miss 标识，宝箱血量不变，玩家可继续点击发起下一次攻击。",
+          "parent": "battle-ready",
+          "src": "assets/rpg-chest-gift/miss.jpg"
+        },
+        {
+          "id": "chest-open",
+          "relative_path": "chest-open.jpg",
+          "title": "宝箱击败 · 开启动效",
+          "caption": "",
+          "section": "奖励结算",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "开箱光效承担战斗结束与奖励弹窗之间的转场"
+          ],
+          "states": [
+            "血量归零",
+            "宝箱开启"
+          ],
+          "doc_refs": [],
+          "hover_title": "宝箱血量归零",
+          "hover_description": "最后一次攻击清空血量后，宝箱盖打开并发出高亮光效，将战斗阶段自然过渡到奖励揭晓。",
+          "parent": null,
+          "src": "assets/rpg-chest-gift/chest-open.jpg"
+        },
+        {
+          "id": "rewards",
+          "relative_path": "rewards.jpg",
+          "title": "奖励揭晓 · 结算弹窗",
+          "caption": "",
+          "section": "奖励结算",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "奖励图标保持等宽排列，便于快速扫描"
+          ],
+          "states": [
+            "奖励展示",
+            "领取完成"
+          ],
+          "doc_refs": [],
+          "hover_title": "展示本次获得奖励",
+          "hover_description": "CONGRATULATIONS 弹窗集中展示固定与随机奖励，让玩家在离开战斗前完成价值确认。",
+          "parent": null,
+          "src": "assets/rpg-chest-gift/rewards.jpg"
+        },
+        {
+          "id": "completed",
+          "relative_path": "completed.jpg",
+          "title": "活动主界面 · 完成状态",
+          "caption": "",
+          "section": "完成反馈",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "完成态避免重复购买，并提示下一次可参与时间"
+          ],
+          "states": [
+            "已击败",
+            "刷新倒计时",
+            "阶段进度更新"
+          ],
+          "doc_refs": [],
+          "hover_title": "礼包购买后的状态回写",
+          "hover_description": "返回活动主界面后，对应宝箱显示已击败和刷新倒计时，顶部阶段进度同步增加，明确本次行为已经生效。",
+          "parent": null,
+          "src": "assets/rpg-chest-gift/completed.jpg"
+        }
+      ],
+      "videos": [
+        {
+          "id": "rpg-chest-feature-demo",
+          "relative_path": "videos/rpg-chest-feature-demo.mp4",
+          "title": "RPG 宝箱礼包 · 完整功能演示",
+          "caption": "完整展示宝箱档位选择、点击攻击、普通命中、暴击与 Miss 反馈，以及击败宝箱后的开箱和奖励结算流程。",
+          "section": "功能录屏",
+          "duration": "1:09",
+          "mime": "video/mp4",
+          "poster": {
+            "relative_path": "cover.jpg",
+            "src": "assets/rpg-chest-gift/cover.jpg"
+          },
+          "src": "assets/rpg-chest-gift/videos/rpg-chest-feature-demo.mp4"
+        }
+      ],
+      "pdfs": [],
+      "showcase": [],
+      "display": {},
+      "flow": {
+        "title": "RPG 宝箱礼包 · 交互流程图",
+        "description": "从宝箱选择进入点击战斗，攻击结果在普通命中、暴击和 Miss 之间分支；宝箱血量归零后进入开箱、奖励展示和完成状态。",
+        "nodes": [
+          {
+            "id": "main",
+            "label": "活动主界面\n选择宝箱",
+            "screen_id": "main-screen",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "battle",
+            "label": "宝箱战斗\n待攻击",
+            "screen_id": "battle-ready",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "normal",
+            "label": "普通攻击\n扣减血量",
+            "screen_id": "attack-normal",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "critical_1",
+            "label": "暴击\n强光命中",
+            "screen_id": "critical-hit-1",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "critical_2",
+            "label": "暴击\n宝箱震落",
+            "screen_id": "critical-hit-2",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "miss",
+            "label": "Miss\n血量不变",
+            "screen_id": "miss",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "open",
+            "label": "宝箱击败\n开启动效",
+            "screen_id": "chest-open",
+            "col": 4,
+            "row": 1
+          },
+          {
+            "id": "reward",
+            "label": "奖励揭晓\n结算弹窗",
+            "screen_id": "rewards",
+            "col": 5,
+            "row": 1
+          },
+          {
+            "id": "completed",
+            "label": "活动主界面\n完成状态",
+            "screen_id": "completed",
+            "col": 6,
+            "row": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "main",
+            "to": "battle",
+            "label": "点击宝箱按钮",
+            "type": "forward"
+          },
+          {
+            "from": "battle",
+            "to": "normal",
+            "label": "普通命中",
+            "type": "forward"
+          },
+          {
+            "from": "battle",
+            "to": "critical_1",
+            "label": "触发暴击",
+            "type": "forward"
+          },
+          {
+            "from": "critical_1",
+            "to": "critical_2",
+            "label": "宝箱震落",
+            "type": "forward"
+          },
+          {
+            "from": "battle",
+            "to": "miss",
+            "label": "攻击未命中",
+            "type": "forward"
+          },
+          {
+            "from": "normal",
+            "to": "battle",
+            "label": "剩余血量 > 0",
+            "type": "back"
+          },
+          {
+            "from": "critical_2",
+            "to": "battle",
+            "label": "剩余血量 > 0",
+            "type": "back"
+          },
+          {
+            "from": "miss",
+            "to": "battle",
+            "label": "继续攻击",
+            "type": "back"
+          },
+          {
+            "from": "normal",
+            "to": "open",
+            "label": "血量归零",
+            "type": "forward"
+          },
+          {
+            "from": "critical_2",
+            "to": "open",
+            "label": "血量归零",
+            "type": "forward"
+          },
+          {
+            "from": "open",
+            "to": "reward",
+            "label": "开箱完成",
+            "type": "forward"
+          },
+          {
+            "from": "reward",
+            "to": "completed",
+            "label": "确认奖励",
+            "type": "forward"
+          },
+          {
+            "from": "completed",
+            "to": "main",
+            "label": "查看其他宝箱",
+            "type": "back"
+          }
+        ]
+      },
+      "prototype": {
+        "enabled": true,
+        "intro": "点击画面中的热区按钮，可切换到对应交互场景。",
+        "scenes": [
+          {
+            "id": "main",
+            "relative_path": "main-screen.jpg",
+            "title": "活动主界面 选择宝箱",
+            "caption": "",
+            "section": "活动入口",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "三档宝箱使用造型和颜色区分价值层级",
+              "顶部阶段奖励把单次购买串联成连续活动目标"
+            ],
+            "states": [
+              "可购买",
+              "已完成",
+              "阶段进度"
+            ],
+            "doc_refs": [],
+            "hover_title": "选择奖励档位与宝箱类型",
+            "hover_description": "主界面同时展示阶段奖励、三档宝箱、随机奖励范围和固定奖励列表。玩家可在左侧活动页签间切换，并点击宝箱下方按钮进入对应战斗。",
+            "parent": null,
+            "src": "assets/rpg-chest-gift/main-screen.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-main-battle",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "点击宝箱按钮",
+                "label": "点击宝箱按钮",
+                "content": "",
+                "goto_scene_index": 1
+              }
+            ]
+          },
+          {
+            "id": "battle",
+            "relative_path": "battle-ready.jpg",
+            "title": "宝箱战斗 待攻击",
+            "caption": "",
+            "section": "战斗循环",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "血量越低，奖励越接近揭晓",
+              "底部武器数量同时承担攻击次数提示"
+            ],
+            "states": [
+              "待攻击",
+              "剩余次数"
+            ],
+            "doc_refs": [],
+            "hover_title": "点击屏幕发起一次攻击",
+            "hover_description": "中央宝箱、顶部血量格和底部剩余武器共同构成战斗信息。玩家点击任意位置即可挥剑攻击，攻击过程中屏幕暂时禁用连续输入。",
+            "parent": null,
+            "src": "assets/rpg-chest-gift/battle-ready.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-battle-normal",
+                "x": 31.0,
+                "y": 84.0,
+                "title": "普通命中",
+                "label": "普通命中",
+                "content": "",
+                "goto_scene_index": 2
+              },
+              {
+                "id": "hs-battle-critical_1",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "触发暴击",
+                "label": "触发暴击",
+                "content": "",
+                "goto_scene_index": 3
+              },
+              {
+                "id": "hs-battle-miss",
+                "x": 69.0,
+                "y": 84.0,
+                "title": "攻击未命中",
+                "label": "攻击未命中",
+                "content": "",
+                "goto_scene_index": 5
+              }
+            ]
+          },
+          {
+            "id": "normal",
+            "relative_path": "attack-normal.jpg",
+            "title": "普通攻击 扣减血量",
+            "caption": "",
+            "section": "战斗反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "普通攻击是战斗循环的基础节奏"
+            ],
+            "states": [
+              "普通命中",
+              "扣减血量"
+            ],
+            "doc_refs": [],
+            "hover_title": "普通命中反馈",
+            "hover_description": "挥剑击中宝箱后显示伤害数字并扣除一格血量，短暂反馈结束后宝箱回到待攻击位置。",
+            "parent": "battle-ready",
+            "src": "assets/rpg-chest-gift/attack-normal.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-normal-battle",
+                "x": 34.0,
+                "y": 84.0,
+                "title": "剩余血量 > 0",
+                "label": "剩余血量 > 0",
+                "content": "",
+                "goto_scene_index": 1
+              },
+              {
+                "id": "hs-normal-open",
+                "x": 66.0,
+                "y": 84.0,
+                "title": "血量归零",
+                "label": "血量归零",
+                "content": "",
+                "goto_scene_index": 6
+              }
+            ]
+          },
+          {
+            "id": "critical_1",
+            "relative_path": "critical-hit-1.jpg",
+            "title": "暴击 强光命中",
+            "caption": "",
+            "section": "战斗反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "暴击需要在亮度、字号和位移上形成层级差"
+            ],
+            "states": [
+              "暴击",
+              "高伤害"
+            ],
+            "doc_refs": [],
+            "hover_title": "暴击第一段：重击表现",
+            "hover_description": "触发暴击时出现更强的剑光、暴击字样与高伤害数字，建立明显高于普通命中的奖励感。",
+            "parent": "battle-ready",
+            "src": "assets/rpg-chest-gift/critical-hit-1.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-critical_1-critical_2",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "宝箱震落",
+                "label": "宝箱震落",
+                "content": "",
+                "goto_scene_index": 4
+              }
+            ]
+          },
+          {
+            "id": "critical_2",
+            "relative_path": "critical-hit-2.jpg",
+            "title": "暴击 宝箱震落",
+            "caption": "",
+            "section": "战斗反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "位移动画延长暴击反馈，但不阻断下一次操作太久"
+            ],
+            "states": [
+              "击飞",
+              "回位"
+            ],
+            "doc_refs": [],
+            "hover_title": "暴击第二段：宝箱掉落",
+            "hover_description": "重击后宝箱从台面震落，以更大幅度的位置变化强化暴击重量感，随后回到台面继续战斗。",
+            "parent": "battle-ready",
+            "src": "assets/rpg-chest-gift/critical-hit-2.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-critical_2-battle",
+                "x": 34.0,
+                "y": 84.0,
+                "title": "剩余血量 > 0",
+                "label": "剩余血量 > 0",
+                "content": "",
+                "goto_scene_index": 1
+              },
+              {
+                "id": "hs-critical_2-open",
+                "x": 66.0,
+                "y": 84.0,
+                "title": "血量归零",
+                "label": "血量归零",
+                "content": "",
+                "goto_scene_index": 6
+              }
+            ]
+          },
+          {
+            "id": "miss",
+            "relative_path": "miss.jpg",
+            "title": "Miss 血量不变",
+            "caption": "",
+            "section": "战斗反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "失败反馈简短，避免打断连续点击节奏"
+            ],
+            "states": [
+              "Miss",
+              "血量不变"
+            ],
+            "doc_refs": [],
+            "hover_title": "未命中状态",
+            "hover_description": "攻击未命中时显示双层 Miss 标识，宝箱血量不变，玩家可继续点击发起下一次攻击。",
+            "parent": "battle-ready",
+            "src": "assets/rpg-chest-gift/miss.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-miss-battle",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "继续攻击",
+                "label": "继续攻击",
+                "content": "",
+                "goto_scene_index": 1
+              }
+            ]
+          },
+          {
+            "id": "open",
+            "relative_path": "chest-open.jpg",
+            "title": "宝箱击败 开启动效",
+            "caption": "",
+            "section": "奖励结算",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "开箱光效承担战斗结束与奖励弹窗之间的转场"
+            ],
+            "states": [
+              "血量归零",
+              "宝箱开启"
+            ],
+            "doc_refs": [],
+            "hover_title": "宝箱血量归零",
+            "hover_description": "最后一次攻击清空血量后，宝箱盖打开并发出高亮光效，将战斗阶段自然过渡到奖励揭晓。",
+            "parent": null,
+            "src": "assets/rpg-chest-gift/chest-open.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-open-reward",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "开箱完成",
+                "label": "开箱完成",
+                "content": "",
+                "goto_scene_index": 7
+              }
+            ]
+          },
+          {
+            "id": "reward",
+            "relative_path": "rewards.jpg",
+            "title": "奖励揭晓 结算弹窗",
+            "caption": "",
+            "section": "奖励结算",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "奖励图标保持等宽排列，便于快速扫描"
+            ],
+            "states": [
+              "奖励展示",
+              "领取完成"
+            ],
+            "doc_refs": [],
+            "hover_title": "展示本次获得奖励",
+            "hover_description": "CONGRATULATIONS 弹窗集中展示固定与随机奖励，让玩家在离开战斗前完成价值确认。",
+            "parent": null,
+            "src": "assets/rpg-chest-gift/rewards.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-reward-completed",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "确认奖励",
+                "label": "确认奖励",
+                "content": "",
+                "goto_scene_index": 8
+              }
+            ]
+          },
+          {
+            "id": "completed",
+            "relative_path": "completed.jpg",
+            "title": "活动主界面 完成状态",
+            "caption": "",
+            "section": "完成反馈",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "完成态避免重复购买，并提示下一次可参与时间"
+            ],
+            "states": [
+              "已击败",
+              "刷新倒计时",
+              "阶段进度更新"
+            ],
+            "doc_refs": [],
+            "hover_title": "礼包购买后的状态回写",
+            "hover_description": "返回活动主界面后，对应宝箱显示已击败和刷新倒计时，顶部阶段进度同步增加，明确本次行为已经生效。",
+            "parent": null,
+            "src": "assets/rpg-chest-gift/completed.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-completed-main",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "查看其他宝箱",
+                "label": "查看其他宝箱",
+                "content": "",
+                "goto_scene_index": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "cloud-gacha",
+      "category": "casual-events",
+      "title": "云间寻宝",
+      "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
+      "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。",
+      "tags": [],
+      "labels": {
+        "home_eyebrow": "Project Hub",
+        "home_section_kicker": "Projects",
+        "home_section_title": "项目总览",
+        "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+        "back_to_home": "返回项目总览",
+        "project_detail_eyebrow": "Project Detail",
+        "interaction_doc_kicker": "Document",
+        "interaction_doc_title": "交互文档",
+        "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+        "interaction_doc_empty": "当前项目还没有配置交互文档。",
+        "screens_kicker": "Screens",
+        "screens_title": "单独界面",
+        "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+        "screens_empty": "当前项目还没有配置界面列表。",
+        "prototype_kicker": "Prototype",
+        "prototype_title": "动态交互原型",
+        "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+        "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+        "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+        "hotspot_title": "热点说明",
+        "scene_list_title": "流程场景",
+        "steps_title": "步骤说明",
+        "doc_notes_title": "关键说明",
+        "doc_states_title": "流程节点",
+        "screen_states_title": "状态说明",
+        "screen_notes_title": "备注",
+        "screen_refs_title": "文档引用",
+        "stat_project_count": "项目数量",
+        "stat_screen_count": "界面数量",
+        "stat_prototype": "原型模块",
+        "stat_detail_screens": "界面数量",
+        "stat_detail_doc": "交互文档",
+        "stat_detail_scenes": "原型场景"
+      },
+      "contribution": {
+        "title": "个人职责",
+        "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。",
+        "items": [
+          {
+            "title": "UX 设计",
+            "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"
+          },
+          {
+            "title": "UI / GUI",
+            "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"
+          }
+        ]
+      },
+      "cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "CloudGacha cover",
+        "src": "assets/cloud-gacha/cover.jpg"
+      },
+      "card_cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "CloudGacha card cover",
+        "src": "assets/cloud-gacha/cover.jpg",
+        "thumb": "assets/cloud-gacha/cover-thumb.jpg"
+      },
+      "interaction_doc": {
+        "id": "交互文档",
+        "relative_path": "交互文档.jpg",
+        "title": "云间寻宝 · 交互总览",
+        "caption": "",
+        "section": "",
+        "tags": [],
+        "summary": "覆盖普通模式抽奖循环 (热气球随抽奖进度上升)、可变模式扩展玩法、战斗礼盒 / 兑换商店副线、以及关键 Tips 引导。",
+        "notes": [
+          "核心循环: 抽奖填格 → 热气球上升 → 接近顶端通关",
+          "通关后解锁可变模式 (棋盘布局会换),延长玩家热情",
+          "战斗礼盒 + 兑换商店两条副线消化累计抽奖资源",
+          "Tips 在关键节点引导玩家理解新机制"
+        ],
+        "states": [
+          "普通模式",
+          "可变模式",
+          "副线",
+          "Tips"
+        ],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/cloud-gacha/交互文档.jpg",
+        "preview": "assets/cloud-gacha/交互文档-thumb.jpg"
+      },
+      "screens": [
+        {
+          "id": "1",
+          "relative_path": "1.jpg",
+          "title": "普通模式 · 初始",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "中央 14×6 棋盘为核心交互区,粉/蓝/紫格表示不同奖励等级",
+            "左下角热气球停在最底层,跟随抽奖进度往上升",
+            "顶部双货币 214.5W + 充值入口, 左侧活动 1/2/3 + 选中页签",
+            "右侧奖励池排行榜 · 主城皮肤奖励"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/cloud-gacha/1.jpg"
+        },
+        {
+          "id": "2",
+          "relative_path": "2.jpg",
+          "title": "普通模式 · 抽奖中(早期)",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "底部几行格子已被翻开为奖励, 热气球离地一段",
+            "未翻开格子保留蓝色待状态, 进度感清晰",
+            "玩家持续点抽奖按钮填格,热气球随之上升"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "1",
+          "src": "assets/cloud-gacha/2.jpg"
+        },
+        {
+          "id": "3",
+          "relative_path": "3.jpg",
+          "title": "普通模式 · 抽奖中(中期)",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "热气球升到棋盘中部, 翻开格子占比约一半",
+            "翻开的格子按颜色显示奖励档位, 给玩家阶段成就感",
+            "右侧排行榜随累计推进同步刷新"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "1",
+          "src": "assets/cloud-gacha/3.jpg"
+        },
+        {
+          "id": "4",
+          "relative_path": "4.jpg",
+          "title": "普通模式 · 接近通关",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "热气球接近顶部, 棋盘几乎全开",
+            "剩余蓝色格子集中在顶层, 视觉牵引玩家继续抽",
+            "完成后解锁可变模式 + 战斗礼盒"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "1",
+          "src": "assets/cloud-gacha/4.jpg"
+        },
+        {
+          "id": "6",
+          "relative_path": "6.jpg",
+          "title": "可变模式 · 进阶棋盘",
+          "caption": "",
+          "section": "",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "完成普通模式后解锁的进阶玩法",
+            "棋盘换为黄/紫横条布局, 奖励池更高",
+            "继续填格机制不变, 但视觉差异提示玩家「上了一个台阶」",
+            "对长留存玩家提供额外目标"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/cloud-gacha/6.jpg"
+        }
+      ],
+      "videos": [
+        {
+          "id": "cloud-gacha-demo",
+          "relative_path": "videos/cloud-gacha-demo.mp4",
+          "title": "云间寻宝 · 完整功能演示",
+          "caption": "走一遍核心抽奖循环 — 热气球随抽奖进度上升, 棋盘格子逐步翻开, 直至通关进入可变模式。",
+          "section": "功能录屏",
+          "duration": "0:30",
+          "mime": "video/mp4",
+          "poster": {
+            "relative_path": "videos/cloud-gacha-demo-poster.jpg",
+            "src": "assets/cloud-gacha/videos/cloud-gacha-demo-poster.jpg"
+          },
+          "src": "assets/cloud-gacha/videos/cloud-gacha-demo.mp4"
+        }
+      ],
+      "pdfs": [],
+      "showcase": [],
+      "display": {},
+      "flow": null,
+      "prototype": {
+        "enabled": true,
+        "intro": "",
+        "scenes": []
+      }
+    },
+    {
+      "id": "gem-refinement",
+      "category": "system-gameplay",
+      "title": "宝石洗炼系统",
+      "subtitle": "KvK6 · 宝石工坊 + 共鸣副系统",
+      "summary": "工坊 4 大功能(洗炼 / 合成 / 分解 / 共鸣)的完整系统设计, 把单件装备的属性养成做成可持续投入的长线闭环。",
+      "tags": [],
+      "labels": {
+        "home_eyebrow": "Project Hub",
+        "home_section_kicker": "Projects",
+        "home_section_title": "项目总览",
+        "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+        "back_to_home": "返回项目总览",
+        "project_detail_eyebrow": "Project Detail",
+        "interaction_doc_kicker": "Document",
+        "interaction_doc_title": "交互文档",
+        "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+        "interaction_doc_empty": "当前项目还没有配置交互文档。",
+        "screens_kicker": "Screens",
+        "screens_title": "单独界面",
+        "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+        "screens_empty": "当前项目还没有配置界面列表。",
+        "prototype_kicker": "Prototype",
+        "prototype_title": "动态交互原型",
+        "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+        "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+        "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+        "hotspot_title": "热点说明",
+        "scene_list_title": "流程场景",
+        "steps_title": "步骤说明",
+        "doc_notes_title": "关键说明",
+        "doc_states_title": "流程节点",
+        "screen_states_title": "状态说明",
+        "screen_notes_title": "备注",
+        "screen_refs_title": "文档引用",
+        "stat_project_count": "项目数量",
+        "stat_screen_count": "界面数量",
+        "stat_prototype": "原型模块",
+        "stat_detail_screens": "界面数量",
+        "stat_detail_doc": "交互文档",
+        "stat_detail_scenes": "原型场景"
+      },
+      "contribution": {
+        "title": "个人职责",
+        "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。",
+        "items": [
+          {
+            "title": "UX 设计",
+            "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"
+          },
+          {
+            "title": "UI / GUI",
+            "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"
+          }
+        ]
+      },
+      "cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "GemRefinement cover",
+        "src": "assets/gem-refinement/cover.jpg"
+      },
+      "card_cover": {
+        "id": "cover",
+        "relative_path": "cover.jpg",
+        "title": "GemRefinement card cover",
+        "src": "assets/gem-refinement/cover.jpg",
+        "thumb": "assets/gem-refinement/cover-thumb.jpg"
+      },
+      "interaction_doc": {
+        "id": "交互文档",
+        "relative_path": "交互文档.jpg",
+        "title": "宝石工坊 · 交互总览",
+        "caption": "",
+        "section": "",
+        "tags": [],
+        "summary": "覆盖宝石工坊 4 大功能(洗炼 / 合成 / 分解 / 共鸣)的完整链路与状态枚举, 含特效示意。",
+        "notes": [
+          "工坊主入口承担洗炼、合成、分解三个动作的切换",
+          "璀璨宝石(共鸣)是独立的副系统, 把工坊产出的宝石组合放置, 获得额外属性",
+          "共鸣分基础(普通)与完美两档, 视觉反馈差异显著"
+        ],
+        "states": [
+          "洗炼",
+          "合成",
+          "分解",
+          "共鸣"
+        ],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/gem-refinement/交互文档.jpg",
+        "preview": "assets/gem-refinement/交互文档-thumb.jpg"
+      },
+      "screens": [
+        {
+          "id": "refine-entry",
+          "relative_path": "refine-entry.jpg",
+          "title": "宝石洗炼 · 工坊入口",
+          "caption": "",
+          "section": "核心 · 洗炼",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "工坊主界面: 中央水晶塔, 左侧 6×N 宝石仓库, 右侧属性总览",
+            "宝石按等级(11 级)+ 颜色档(橙 / 紫 / 红)排列, 已锁定的格右上角带 ✕",
+            "右侧顶部货币: 通用币 + 工坊代币 214.5W 两路"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/gem-refinement/refine-entry.jpg"
+        },
+        {
+          "id": "refine-detail",
+          "relative_path": "refine-detail.jpg",
+          "title": "宝石洗炼 · 属性重铸面板",
+          "caption": "",
+          "section": "核心 · 洗炼",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "顶部 4 个 Tab 切换: 宝石仓库 / 合成 / 洗炼(当前) / 分解",
+            "中部双栏对照: 左 = 当前属性, 中央 ≫ 箭头, 右 = 重铸后预览(?未揭示)",
+            "基础属性 + 附加属性双段, 附加属性每条可锁定固定数值",
+            "底部「重铸」消耗 2 类货币(各 10), 已洗涤 1 次 / 多次洗涤将提升消耗 — 经典递增成本"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "refine-entry",
+          "src": "assets/gem-refinement/refine-detail.jpg"
+        },
+        {
+          "id": "synthesize",
+          "relative_path": "synthesize.jpg",
+          "title": "宝石合成 · 入口",
+          "caption": "",
+          "section": "核心 · 合成",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "中央放置槽接收两颗同色宝石",
+            "合成会消耗输入宝石, 产出更高品级一颗",
+            "右侧属性栏实时显示合成产物的预期属性"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/gem-refinement/synthesize.jpg"
+        },
+        {
+          "id": "synthesize-vfx",
+          "relative_path": "synthesize-vfx.jpg",
+          "title": "宝石合成 · 动效中间态",
+          "caption": "",
+          "section": "核心 · 合成",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "点击合成后, 两颗宝石在中央被紫色光环包裹融合",
+            "光柱由低到高扫描, 时长约 1.5s, 给玩家\"投入感\"",
+            "结束后晶体定型为更大一颗, 弹出新宝石属性 toast"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "synthesize",
+          "src": "assets/gem-refinement/synthesize-vfx.jpg"
+        },
+        {
+          "id": "decompose",
+          "relative_path": "decompose.jpg",
+          "title": "宝石分解",
+          "caption": "",
+          "section": "核心 · 分解",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "把不要的宝石批量倒进料仓, 换回基础材料 / 货币",
+            "底部「批量选择」一键勾选,右侧大「分解」按钮二次确认",
+            "下方 4 格预留位展示本次分解会得到的产物预览"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/gem-refinement/decompose.jpg"
+        },
+        {
+          "id": "resonance-entry",
+          "relative_path": "resonance-entry.jpg",
+          "title": "璀璨宝石 · 共鸣入口",
+          "caption": "",
+          "section": "副系统 · 共鸣",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "进入「璀璨宝石」独立子界面, 与工坊主入口区分(右上挂回工坊入口图标)",
+            "中央 4 个空气泡槽位, 提示「3 块同品质同类型宝石组合可达成基础共鸣」",
+            "左侧仓库可选橙 / 紫 / 红三色, 选中态右下大「放置」按钮",
+            "底部「共鸣」总按钮在槽位满足时点亮"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/gem-refinement/resonance-entry.jpg"
+        },
+        {
+          "id": "resonance-place",
+          "relative_path": "resonance-place.jpg",
+          "title": "璀璨宝石 · 放置宝石",
+          "caption": "",
+          "section": "副系统 · 共鸣",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "已放入 2 颗紫色进攻宝石(Lv.10), 右侧显示该位置宝石的完整属性",
+            "已放入的宝石外圈出现橙色能量环, 提示\"已就位\"",
+            "右下「卸下」按钮支持反悔, 不消耗资源",
+            "槽位不足时 + 号仍亮, 引导继续放置"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "resonance-entry",
+          "src": "assets/gem-refinement/resonance-place.jpg"
+        },
+        {
+          "id": "resonance-normal-vfx",
+          "relative_path": "resonance-normal-vfx.jpg",
+          "title": "璀璨宝石 · 基础共鸣特效",
+          "caption": "",
+          "section": "副系统 · 共鸣 · VFX",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "3 颗同类宝石齐放后触发「基础攻击共鸣达成」, 飘条 + 中央橙色光圈扫过",
+            "中央 6 共鸣技能徽章亮起(待激活态)",
+            "右侧共鸣技能卡显示「待激活」, 提示「达成完美共鸣可激活」",
+            "宝石属性总览面板新增「基础共鸣 已激活」标注"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "resonance-entry",
+          "src": "assets/gem-refinement/resonance-normal-vfx.jpg"
+        },
+        {
+          "id": "resonance-perfect-vfx",
+          "relative_path": "resonance-perfect-vfx.jpg",
+          "title": "璀璨宝石 · 完美共鸣特效",
+          "caption": "",
+          "section": "副系统 · 共鸣 · VFX",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "4 颗高品质同类宝石齐放, 触发「完美攻击共鸣达成」, 紫金双色光环 + 闪电粒子",
+            "视觉冲击力比基础共鸣高一档, 给\"满配奖励\"的强反馈",
+            "右侧共鸣技能从「待激活」变为可点击「使用」",
+            "宝石共鸣属性区两档同时标记为「已激活」"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "resonance-entry",
+          "src": "assets/gem-refinement/resonance-perfect-vfx.jpg"
+        },
+        {
+          "id": "resonance-active",
+          "relative_path": "resonance-active.jpg",
+          "title": "璀璨宝石 · 共鸣技能激活态",
+          "caption": "",
+          "section": "副系统 · 共鸣",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "VFX 散场后停留的稳定态, 中央「共鸣技能激活」徽章常亮",
+            "右侧技能卡片展示「棍棒加重」的具体效果(地图选点形成寒潮 + 减速 + 持续伤害)",
+            "底部大「使用」按钮跳转到战场释放流程",
+            "玩家可以反复 卸下 / 替换 宝石组合, 切换不同共鸣技能"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "resonance-entry",
+          "src": "assets/gem-refinement/resonance-active.jpg"
+        }
+      ],
+      "videos": [],
+      "pdfs": [],
+      "showcase": [],
+      "display": {},
+      "flow": null,
+      "prototype": {
+        "enabled": true,
+        "intro": "",
+        "scenes": []
+      }
+    },
+    {
+      "id": "k6-secret",
+      "category": "system-gameplay",
+      "title": "K6 秘境玩法",
+      "subtitle": "KvK6 · 秘境副本 + 战斗 HUD + 战利品保险箱",
+      "summary": "战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内 HUD(悬赏榜 / 技能 / 背包 / 战利品对比 / 宝藏)的完整玩法链路, 保险箱锁定收益死亡不掉落。",
+      "tags": [],
+      "labels": {
+        "home_eyebrow": "Project Hub",
+        "home_section_kicker": "Projects",
+        "home_section_title": "项目总览",
+        "home_section_description": "点击任意项目卡片，进入具体项目内容查看交互文档、界面说明，以及按指令启用的动态交互原型。",
+        "back_to_home": "返回项目总览",
+        "project_detail_eyebrow": "Project Detail",
+        "interaction_doc_kicker": "Document",
+        "interaction_doc_title": "交互文档",
+        "interaction_doc_description": "先展示整张交互文档，用来承接整体流程和页面关系说明。",
+        "interaction_doc_empty": "当前项目还没有配置交互文档。",
+        "screens_kicker": "Screens",
+        "screens_title": "单独界面",
+        "screens_description": "鼠标移入界面图时，会显示该界面的状态描述、说明和交互文档整理出的备注。",
+        "screens_empty": "当前项目还没有配置界面列表。",
+        "prototype_kicker": "Prototype",
+        "prototype_title": "动态交互原型",
+        "prototype_disabled": "当前未启用原型模块。只有在明确要求生成可演示交互原型时，才会渲染这一段内容。",
+        "prototype_empty": "原型模块已启用，但当前项目尚未配置 prototype 场景数据。",
+        "prototype_description": "流程和热点说明来自交互文档整理后的原型配置。",
+        "hotspot_title": "热点说明",
+        "scene_list_title": "流程场景",
+        "steps_title": "步骤说明",
+        "doc_notes_title": "关键说明",
+        "doc_states_title": "流程节点",
+        "screen_states_title": "状态说明",
+        "screen_notes_title": "备注",
+        "screen_refs_title": "文档引用",
+        "stat_project_count": "项目数量",
+        "stat_screen_count": "界面数量",
+        "stat_prototype": "原型模块",
+        "stat_detail_screens": "界面数量",
+        "stat_detail_doc": "交互文档",
+        "stat_detail_scenes": "原型场景"
+      },
+      "contribution": {
+        "title": "个人职责",
+        "summary": "本项目的 UX、UI 与 GUI 界面拼接均由本人独立完成。",
+        "items": [
+          {
+            "title": "UX 设计",
+            "description": "独立完成玩法结构梳理、信息架构、交互流程、状态覆盖与规则说明。"
+          },
+          {
+            "title": "UI / GUI",
+            "description": "独立完成界面布局、信息层级、GUI 界面拼接以及最终展示效果。"
+          }
+        ]
+      },
+      "cover": {
+        "id": "prep-hub",
+        "relative_path": "prep-hub.jpg",
+        "title": "战前准备 · 主枢纽",
+        "caption": "",
+        "section": "战前 · 准备",
+        "tags": [],
+        "summary": "",
+        "notes": [
+          "中央展示主将 / 副将(巴泽尔 Lv.9, 四星), 左下角 I 级保险箱表示当前默认保护额度",
+          "右侧 4 格背包显示本次可携带资源(1×4 + 3×4×3), 装备槽分胸甲 / 头部 / 治疗包 / 探测仪",
+          "左上角入口「战斗增益」可获得持续 24h 增益, 右上 200 货币 + 「开始挑战」CTA",
+          "三条准备支线全部从这里展开"
+        ],
+        "states": [],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/k6-secret/prep-hub.jpg"
+      },
+      "card_cover": {
+        "id": "ingame-main",
+        "relative_path": "ingame-main.jpg",
+        "title": "K6Secret card cover",
+        "src": "assets/k6-secret/ingame-main.jpg",
+        "thumb": "assets/k6-secret/ingame-main-thumb.jpg"
+      },
+      "interaction_doc": {
+        "id": "交互文档",
+        "relative_path": "交互文档.jpg",
+        "title": "KVK6 秘境玩法 · 交互总览",
+        "caption": "",
+        "section": "",
+        "tags": [],
+        "summary": "覆盖战前准备(英雄选择 / 装备购买 / 保险箱升级)+ 局内战斗 HUD + 战利品 / 宝藏 / 保险箱锁定的完整链路。",
+        "notes": [
+          "战前准备是核心枢纽, 英雄 / 装备 / 保险箱三条支线都从这里展开",
+          "局内 HUD 集成悬赏榜 + 技能弹窗 + 背包面板, 战利品与宝藏可一键放进保险箱",
+          "保险箱内的物资不会因为死亡而掉落, 是核心收益锁定机制"
+        ],
+        "states": [
+          "准备",
+          "战斗",
+          "战利品",
+          "结算"
+        ],
+        "doc_refs": [],
+        "hover_title": "",
+        "hover_description": "",
+        "parent": null,
+        "src": "assets/k6-secret/交互文档.jpg",
+        "preview": "assets/k6-secret/交互文档-thumb.jpg"
+      },
+      "screens": [
+        {
+          "id": "prep-hub",
+          "relative_path": "prep-hub.jpg",
+          "title": "战前准备 · 主枢纽",
+          "caption": "",
+          "section": "战前 · 准备",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "中央展示主将 / 副将(巴泽尔 Lv.9, 四星), 左下角 I 级保险箱表示当前默认保护额度",
+            "右侧 4 格背包显示本次可携带资源(1×4 + 3×4×3), 装备槽分胸甲 / 头部 / 治疗包 / 探测仪",
+            "左上角入口「战斗增益」可获得持续 24h 增益, 右上 200 货币 + 「开始挑战」CTA",
+            "三条准备支线全部从这里展开"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/k6-secret/prep-hub.jpg"
+        },
+        {
+          "id": "hero-select",
+          "relative_path": "hero-select.jpg",
+          "title": "英雄选择",
+          "caption": "",
+          "section": "战前 · 准备",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "左侧推荐列表: 高战力英雄按等级 / 星级排序(Lv.51 ~ Lv.20+)",
+            "中央显示当前主将 / 副将 — 巴泽尔 Lv.9 四星, 高亮黄框为「主将」位",
+            "右下「确定」按钮提交选将并回到战前准备"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/k6-secret/hero-select.jpg"
+        },
+        {
+          "id": "equipment-buy",
+          "relative_path": "equipment-buy.jpg",
+          "title": "精密应急包 · 装备购买",
+          "caption": "",
+          "section": "战前 · 装备",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "左侧「全部」+ 4 个等级 1 卡片可横向切换装备型号",
+            "中央展示精密应急包: 3 条「射击防御 +19%」+ 消耗 ×10 货币",
+            "确认后装备进入战前准备的装备槽, 准备就绪后即可开始挑战"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/k6-secret/equipment-buy.jpg"
+        },
+        {
+          "id": "safe-upgrade",
+          "relative_path": "safe-upgrade.jpg",
+          "title": "III 级保险箱 · 容量升级",
+          "caption": "",
+          "section": "战前 · 保险箱",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "左侧 I/II/III/IV 级保险箱阶梯, 当前选中 III 级(2×3 格)",
+            "顶部强调「保险箱内的物资不会因为死亡而掉落」— 核心卖点",
+            "底部购买提示「购买后保险箱容量可享升级」, $9.9 IAP 入口",
+            "升级后回到战前准备, 局内背包容量随之扩大"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/k6-secret/safe-upgrade.jpg"
+        },
+        {
+          "id": "battle-overview",
+          "relative_path": "battle-overview.jpg",
+          "title": "秘境战斗 · 入场",
+          "caption": "",
+          "section": "战斗 · 入场",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "进入沙漠副本, 1 vs 15 兵力对比, 顶部 3 个技能 CD(16s ×3)",
+            "右上角小地图 + 撤退路径标记, 右侧 2/2 英雄存活栏",
+            "左侧悬赏榜入口(折叠态)+ 3 名小队头像, 底部 4 技能槽 + 16s 冷却 + 「打开背包」入口"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/k6-secret/battle-overview.jpg"
+        },
+        {
+          "id": "ingame-main",
+          "relative_path": "ingame-main.jpg",
+          "title": "局内 HUD · 战斗主视图",
+          "caption": "",
+          "section": "战斗 · 局内 HUD",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "战斗进行中: 玩家自身名牌「ApeW54W2AAL」显示血量条 + 玩家 ID",
+            "顶部技能槽 3 个紫色买断技能, 右上小地图标记敌人位置",
+            "右侧 2/2 主副将存活栏, 底部 4 技能槽 + 16s 倒计时 + 「打开背包」CTA",
+            "这是局内的稳定态 — 后续的弹窗 / 悬赏 / 背包都从这里展开"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": null,
+          "src": "assets/k6-secret/ingame-main.jpg"
+        },
+        {
+          "id": "ingame-popup",
+          "relative_path": "ingame-popup.jpg",
+          "title": "局内 HUD · 技能弹窗",
+          "caption": "",
+          "section": "战斗 · 局内 HUD",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "技能图标点开后, 中央弹出 3 张「xxx 技能」卡片(02:05:55 计时格式)",
+            "弹窗叠加在战斗场景之上, 背景被压暗以聚焦",
+            "左侧「悬赏榜」入口高亮, 提示玩家随时可切换查看悬赏"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "ingame-main",
+          "src": "assets/k6-secret/ingame-popup.jpg"
+        },
+        {
+          "id": "ingame-bounty",
+          "relative_path": "ingame-bounty.jpg",
+          "title": "局内 HUD · 悬赏榜展开",
+          "caption": "",
+          "section": "战斗 · 局内 HUD",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "悬赏榜从左侧滑出: 3 名 NPC(坤坤哥 30W / 坤坤弟 20W / 坤坤妹 10W)",
+            "顶部「撤离还剩 15s」红字倒计时, 强化撤离决策时机",
+            "悬赏目标决定本局结算时的额外收益分配"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "ingame-main",
+          "src": "assets/k6-secret/ingame-bounty.jpg"
+        },
+        {
+          "id": "ingame-bag",
+          "relative_path": "ingame-bag.jpg",
+          "title": "局内 HUD · 背包面板",
+          "caption": "",
+          "section": "战斗 · 战利品 · 背包",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "顶部装备栏 4 类(头部 / 胸甲 / 探测仪 / 医疗包), 当前选中探测仪",
+            "中部背包 4 格: 脉冲仪 ×3 + 宝藏箱; 选中脉冲仪后右侧弹出详情(¥30W)",
+            "右侧两个 CTA: 红色「丢弃」/ 蓝色「放入保险箱」— 保险箱内的不会因死亡掉落",
+            "底部「保险箱」槽位预览, 提示当前已锁定的物资"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "ingame-main",
+          "src": "assets/k6-secret/ingame-bag.jpg"
+        },
+        {
+          "id": "ingame-bag-loot",
+          "relative_path": "ingame-bag-loot.jpg",
+          "title": "局内 HUD · 敌人战利品对比",
+          "caption": "",
+          "section": "战斗 · 战利品 · 背包",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "击败敌人后弹出战利品对比: 普通探测仪(+19% ×3) vs 高级探测仪(+20% ×3)",
+            "中央「更换」按钮替换当前装备, 视觉上突出「绿色 +20%」对「黄色 +19%」",
+            "右侧展示坤坤哥的「装备 / 背包 / 保险箱」分区 — 提示这是从敌人身上抢来的",
+            "「快速领取」绿色按钮一键全收, 节省局内操作时间"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "ingame-main",
+          "src": "assets/k6-secret/ingame-bag-loot.jpg"
+        },
+        {
+          "id": "ingame-bag-treasure",
+          "relative_path": "ingame-bag-treasure.jpg",
+          "title": "局内 HUD · 宝藏领取",
+          "caption": "",
+          "section": "战斗 · 战利品 · 背包",
+          "tags": [],
+          "summary": "",
+          "notes": [
+            "拾到宝藏后右侧弹出宝藏面板: 中央脉冲仪(¥30W)+ 两个 CTA「放入保险箱」/「领取」",
+            "右侧「宝藏」分区独立展示拾到的箱子, 提示尚未拆封",
+            "底部「快速领取」一键收取, 链路与战利品对比对称"
+          ],
+          "states": [],
+          "doc_refs": [],
+          "hover_title": "",
+          "hover_description": "",
+          "parent": "ingame-main",
+          "src": "assets/k6-secret/ingame-bag-treasure.jpg"
+        }
+      ],
+      "videos": [],
+      "pdfs": [],
+      "showcase": [],
+      "display": {},
+      "flow": {
+        "title": "K6 秘境玩法 · 交互流程图",
+        "description": "主枢纽「战前准备」连接三条支线(英雄 / 装备 / 保险箱), 全部就绪后进入战斗。战斗中通过局内 HUD 触发悬赏榜 / 技能弹窗 / 背包面板, 击败敌人或拾到宝藏后选择放入保险箱(死亡不掉落)或丢弃 / 快速领取。",
+        "nodes": [
+          {
+            "id": "prep",
+            "label": "战前准备\n主枢纽",
+            "screen_id": "prep-hub",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "hero",
+            "label": "英雄选择",
+            "screen_id": "hero-select",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "equip",
+            "label": "装备购买",
+            "screen_id": "equipment-buy",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "safe",
+            "label": "保险箱升级",
+            "screen_id": "safe-upgrade",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "battle",
+            "label": "秘境战斗\n入场",
+            "screen_id": "battle-overview",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "ingame",
+            "label": "局内 HUD",
+            "screen_id": "ingame-main",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "skill",
+            "label": "技能弹窗",
+            "screen_id": "ingame-popup",
+            "col": 4,
+            "row": 0
+          },
+          {
+            "id": "bounty",
+            "label": "悬赏榜展开",
+            "screen_id": "ingame-bounty",
+            "col": 4,
+            "row": 2
+          },
+          {
+            "id": "bag",
+            "label": "局内背包",
+            "screen_id": "ingame-bag",
+            "col": 5,
+            "row": 1
+          },
+          {
+            "id": "loot",
+            "label": "敌人战利品对比",
+            "screen_id": "ingame-bag-loot",
+            "col": 6,
+            "row": 0
+          },
+          {
+            "id": "treasure",
+            "label": "宝藏领取",
+            "screen_id": "ingame-bag-treasure",
+            "col": 6,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "prep",
+            "to": "hero",
+            "label": "点击英雄位",
+            "type": "forward"
+          },
+          {
+            "from": "hero",
+            "to": "prep",
+            "label": "确定",
+            "type": "back"
+          },
+          {
+            "from": "prep",
+            "to": "equip",
+            "label": "点击装备位",
+            "type": "forward"
+          },
+          {
+            "from": "equip",
+            "to": "prep",
+            "label": "确认购买",
+            "type": "back"
+          },
+          {
+            "from": "prep",
+            "to": "safe",
+            "label": "点击保险箱",
+            "type": "forward"
+          },
+          {
+            "from": "safe",
+            "to": "prep",
+            "label": "升级完成",
+            "type": "back"
+          },
+          {
+            "from": "prep",
+            "to": "battle",
+            "label": "开始挑战",
+            "type": "forward"
+          },
+          {
+            "from": "battle",
+            "to": "ingame",
+            "label": "进入战斗",
+            "type": "forward"
+          },
+          {
+            "from": "ingame",
+            "to": "skill",
+            "label": "点击技能",
+            "type": "forward"
+          },
+          {
+            "from": "ingame",
+            "to": "bounty",
+            "label": "展开悬赏榜",
+            "type": "forward"
+          },
+          {
+            "from": "ingame",
+            "to": "bag",
+            "label": "打开背包",
+            "type": "forward"
+          },
+          {
+            "from": "bag",
+            "to": "loot",
+            "label": "击败敌人",
+            "type": "forward"
+          },
+          {
+            "from": "bag",
+            "to": "treasure",
+            "label": "拾到宝藏",
+            "type": "forward"
+          },
+          {
+            "from": "loot",
+            "to": "bag",
+            "label": "快速领取",
+            "type": "back"
+          },
+          {
+            "from": "treasure",
+            "to": "bag",
+            "label": "放入保险箱 / 领取",
+            "type": "back"
+          }
+        ]
+      },
+      "prototype": {
+        "enabled": true,
+        "intro": "点击画面中的热区按钮，可切换到对应交互场景。",
+        "scenes": [
+          {
+            "id": "prep",
+            "relative_path": "prep-hub.jpg",
+            "title": "战前准备 主枢纽",
+            "caption": "",
+            "section": "战前 · 准备",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "中央展示主将 / 副将(巴泽尔 Lv.9, 四星), 左下角 I 级保险箱表示当前默认保护额度",
+              "右侧 4 格背包显示本次可携带资源(1×4 + 3×4×3), 装备槽分胸甲 / 头部 / 治疗包 / 探测仪",
+              "左上角入口「战斗增益」可获得持续 24h 增益, 右上 200 货币 + 「开始挑战」CTA",
+              "三条准备支线全部从这里展开"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": null,
+            "src": "assets/k6-secret/prep-hub.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-prep-hero",
+                "x": 28.0,
+                "y": 84.0,
+                "title": "点击英雄位",
+                "label": "点击英雄位",
+                "content": "",
+                "goto_scene_index": 1
+              },
+              {
+                "id": "hs-prep-equip",
+                "x": 42.7,
+                "y": 84.0,
+                "title": "点击装备位",
+                "label": "点击装备位",
+                "content": "",
+                "goto_scene_index": 2
+              },
+              {
+                "id": "hs-prep-safe",
+                "x": 57.3,
+                "y": 84.0,
+                "title": "点击保险箱",
+                "label": "点击保险箱",
+                "content": "",
+                "goto_scene_index": 3
+              },
+              {
+                "id": "hs-prep-battle",
+                "x": 72.0,
+                "y": 84.0,
+                "title": "开始挑战",
+                "label": "开始挑战",
+                "content": "",
+                "goto_scene_index": 4
+              }
+            ]
+          },
+          {
+            "id": "hero",
+            "relative_path": "hero-select.jpg",
+            "title": "英雄选择",
+            "caption": "",
+            "section": "战前 · 准备",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "左侧推荐列表: 高战力英雄按等级 / 星级排序(Lv.51 ~ Lv.20+)",
+              "中央显示当前主将 / 副将 — 巴泽尔 Lv.9 四星, 高亮黄框为「主将」位",
+              "右下「确定」按钮提交选将并回到战前准备"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": null,
+            "src": "assets/k6-secret/hero-select.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-hero-prep",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "确定",
+                "label": "确定",
+                "content": "",
+                "goto_scene_index": 0
+              }
+            ]
+          },
+          {
+            "id": "equip",
+            "relative_path": "equipment-buy.jpg",
+            "title": "装备购买",
+            "caption": "",
+            "section": "战前 · 装备",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "左侧「全部」+ 4 个等级 1 卡片可横向切换装备型号",
+              "中央展示精密应急包: 3 条「射击防御 +19%」+ 消耗 ×10 货币",
+              "确认后装备进入战前准备的装备槽, 准备就绪后即可开始挑战"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": null,
+            "src": "assets/k6-secret/equipment-buy.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-equip-prep",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "确认购买",
+                "label": "确认购买",
+                "content": "",
+                "goto_scene_index": 0
+              }
+            ]
+          },
+          {
+            "id": "safe",
+            "relative_path": "safe-upgrade.jpg",
+            "title": "保险箱升级",
+            "caption": "",
+            "section": "战前 · 保险箱",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "左侧 I/II/III/IV 级保险箱阶梯, 当前选中 III 级(2×3 格)",
+              "顶部强调「保险箱内的物资不会因为死亡而掉落」— 核心卖点",
+              "底部购买提示「购买后保险箱容量可享升级」, $9.9 IAP 入口",
+              "升级后回到战前准备, 局内背包容量随之扩大"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": null,
+            "src": "assets/k6-secret/safe-upgrade.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-safe-prep",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "升级完成",
+                "label": "升级完成",
+                "content": "",
+                "goto_scene_index": 0
+              }
+            ]
+          },
+          {
+            "id": "battle",
+            "relative_path": "battle-overview.jpg",
+            "title": "秘境战斗 入场",
+            "caption": "",
+            "section": "战斗 · 入场",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "进入沙漠副本, 1 vs 15 兵力对比, 顶部 3 个技能 CD(16s ×3)",
+              "右上角小地图 + 撤退路径标记, 右侧 2/2 英雄存活栏",
+              "左侧悬赏榜入口(折叠态)+ 3 名小队头像, 底部 4 技能槽 + 16s 冷却 + 「打开背包」入口"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": null,
+            "src": "assets/k6-secret/battle-overview.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-battle-ingame",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "进入战斗",
+                "label": "进入战斗",
+                "content": "",
+                "goto_scene_index": 5
+              }
+            ]
+          },
+          {
+            "id": "ingame",
+            "relative_path": "ingame-main.jpg",
+            "title": "局内 HUD",
+            "caption": "",
+            "section": "战斗 · 局内 HUD",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "战斗进行中: 玩家自身名牌「ApeW54W2AAL」显示血量条 + 玩家 ID",
+              "顶部技能槽 3 个紫色买断技能, 右上小地图标记敌人位置",
+              "右侧 2/2 主副将存活栏, 底部 4 技能槽 + 16s 倒计时 + 「打开背包」CTA",
+              "这是局内的稳定态 — 后续的弹窗 / 悬赏 / 背包都从这里展开"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": null,
+            "src": "assets/k6-secret/ingame-main.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-ingame-skill",
+                "x": 31.0,
+                "y": 84.0,
+                "title": "点击技能",
+                "label": "点击技能",
+                "content": "",
+                "goto_scene_index": 6
+              },
+              {
+                "id": "hs-ingame-bounty",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "展开悬赏榜",
+                "label": "展开悬赏榜",
+                "content": "",
+                "goto_scene_index": 7
+              },
+              {
+                "id": "hs-ingame-bag",
+                "x": 69.0,
+                "y": 84.0,
+                "title": "打开背包",
+                "label": "打开背包",
+                "content": "",
+                "goto_scene_index": 8
+              }
+            ]
+          },
+          {
+            "id": "skill",
+            "relative_path": "ingame-popup.jpg",
+            "title": "技能弹窗",
+            "caption": "",
+            "section": "战斗 · 局内 HUD",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "技能图标点开后, 中央弹出 3 张「xxx 技能」卡片(02:05:55 计时格式)",
+              "弹窗叠加在战斗场景之上, 背景被压暗以聚焦",
+              "左侧「悬赏榜」入口高亮, 提示玩家随时可切换查看悬赏"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": "ingame-main",
+            "src": "assets/k6-secret/ingame-popup.jpg",
+            "steps": [],
+            "hotspots": []
+          },
+          {
+            "id": "bounty",
+            "relative_path": "ingame-bounty.jpg",
+            "title": "悬赏榜展开",
+            "caption": "",
+            "section": "战斗 · 局内 HUD",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "悬赏榜从左侧滑出: 3 名 NPC(坤坤哥 30W / 坤坤弟 20W / 坤坤妹 10W)",
+              "顶部「撤离还剩 15s」红字倒计时, 强化撤离决策时机",
+              "悬赏目标决定本局结算时的额外收益分配"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": "ingame-main",
+            "src": "assets/k6-secret/ingame-bounty.jpg",
+            "steps": [],
+            "hotspots": []
+          },
+          {
+            "id": "bag",
+            "relative_path": "ingame-bag.jpg",
+            "title": "局内背包",
+            "caption": "",
+            "section": "战斗 · 战利品 · 背包",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "顶部装备栏 4 类(头部 / 胸甲 / 探测仪 / 医疗包), 当前选中探测仪",
+              "中部背包 4 格: 脉冲仪 ×3 + 宝藏箱; 选中脉冲仪后右侧弹出详情(¥30W)",
+              "右侧两个 CTA: 红色「丢弃」/ 蓝色「放入保险箱」— 保险箱内的不会因死亡掉落",
+              "底部「保险箱」槽位预览, 提示当前已锁定的物资"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": "ingame-main",
+            "src": "assets/k6-secret/ingame-bag.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-bag-loot",
+                "x": 34.0,
+                "y": 84.0,
+                "title": "击败敌人",
+                "label": "击败敌人",
+                "content": "",
+                "goto_scene_index": 9
+              },
+              {
+                "id": "hs-bag-treasure",
+                "x": 66.0,
+                "y": 84.0,
+                "title": "拾到宝藏",
+                "label": "拾到宝藏",
+                "content": "",
+                "goto_scene_index": 10
+              }
+            ]
+          },
+          {
+            "id": "loot",
+            "relative_path": "ingame-bag-loot.jpg",
+            "title": "敌人战利品对比",
+            "caption": "",
+            "section": "战斗 · 战利品 · 背包",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "击败敌人后弹出战利品对比: 普通探测仪(+19% ×3) vs 高级探测仪(+20% ×3)",
+              "中央「更换」按钮替换当前装备, 视觉上突出「绿色 +20%」对「黄色 +19%」",
+              "右侧展示坤坤哥的「装备 / 背包 / 保险箱」分区 — 提示这是从敌人身上抢来的",
+              "「快速领取」绿色按钮一键全收, 节省局内操作时间"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": "ingame-main",
+            "src": "assets/k6-secret/ingame-bag-loot.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-loot-bag",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "快速领取",
+                "label": "快速领取",
+                "content": "",
+                "goto_scene_index": 8
+              }
+            ]
+          },
+          {
+            "id": "treasure",
+            "relative_path": "ingame-bag-treasure.jpg",
+            "title": "宝藏领取",
+            "caption": "",
+            "section": "战斗 · 战利品 · 背包",
+            "tags": [],
+            "summary": "",
+            "notes": [
+              "拾到宝藏后右侧弹出宝藏面板: 中央脉冲仪(¥30W)+ 两个 CTA「放入保险箱」/「领取」",
+              "右侧「宝藏」分区独立展示拾到的箱子, 提示尚未拆封",
+              "底部「快速领取」一键收取, 链路与战利品对比对称"
+            ],
+            "states": [],
+            "doc_refs": [],
+            "hover_title": "",
+            "hover_description": "",
+            "parent": "ingame-main",
+            "src": "assets/k6-secret/ingame-bag-treasure.jpg",
+            "steps": [],
+            "hotspots": [
+              {
+                "id": "hs-treasure-bag",
+                "x": 50.0,
+                "y": 84.0,
+                "title": "放入保险箱 / 领取",
+                "label": "放入保险箱 / 领取",
+                "content": "",
+                "goto_scene_index": 8
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
