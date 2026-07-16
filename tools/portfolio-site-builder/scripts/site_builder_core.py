@@ -3321,27 +3321,20 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr);
   gap: clamp(34px, 7vw, 110px);
-  align-items: end;
-  min-height: 560px;
-  padding: clamp(64px, 9vw, 130px) 4px 80px;
+  align-items: center;
+  min-height: 500px;
+  padding: clamp(58px, 7vw, 104px) 4px 68px;
   border-bottom: 1px solid rgba(255,255,255,.14);
 }
 .about-hero-copy { max-width: 900px; }
 .about-hero h1 {
   max-width: 850px;
-  margin: 18px 0 24px;
+  margin: 18px 0 30px;
   font-size: clamp(38px, 4.5vw, 58px);
   line-height: 1.04;
   letter-spacing: -.05em;
 }
-.about-hero-copy > p {
-  max-width: 720px;
-  margin: 0;
-  color: #c5cede;
-  font-size: clamp(15px, 1.35vw, 18px);
-  line-height: 1.8;
-}
-.about-hero-actions { margin-top: 26px; }
+.about-hero-actions { margin-top: 0; }
 .about-project-cta {
   display: inline-flex;
   align-items: center;
@@ -3359,7 +3352,7 @@ body {
   transition: 180ms ease;
 }
 .about-project-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(45,212,191,.24); }
-.about-focus { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+.about-focus { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
 .about-focus span,
 .about-tool-cloud span {
   padding: 8px 11px;
@@ -3371,14 +3364,14 @@ body {
 .about-identity-card {
   position: relative;
   overflow: hidden;
-  min-height: 360px;
+  min-height: 330px;
   padding: 28px;
   border: 1px solid rgba(255,255,255,.14);
   border-radius: 24px;
   background: linear-gradient(155deg, rgba(124,92,255,.15), rgba(45,212,191,.04));
 }
 .about-monogram {
-  margin-bottom: 62px;
+  margin-bottom: 52px;
   color: transparent;
   font-size: clamp(54px, 6vw, 86px);
   font-weight: 800;
@@ -3460,7 +3453,7 @@ body {
   .portfolio-nav-meta { display: none; }
   .about-page .portfolio-nav-link.is-active { display: none; }
   .portfolio-project-button { padding: 8px 11px; }
-  .about-hero { grid-template-columns: 1fr; min-height: 0; padding: 58px 2px; }
+  .about-hero { grid-template-columns: 1fr; min-height: 0; padding: 46px 2px 54px; }
   .about-hero h1 { font-size: clamp(38px, 11vw, 50px); }
   .about-identity-card { min-height: 300px; }
   .about-capability-grid { grid-template-columns: 1fr; }
@@ -3957,8 +3950,7 @@ function renderAbout(data) {
       <header class="about-hero">
         <div class="about-hero-copy">
           <div class="section-kicker">About / ${escapeHtml(about.name_en || "Fangling Jia")}</div>
-          <h1>${escapeHtml(about.headline || "把设计思考推进到可运行的游戏界面。")}</h1>
-          <p>${escapeHtml(about.intro || "")}</p>
+          <h1>${escapeHtml(about.headline || "从玩法逻辑，到可运行界面。")}</h1>
           <div class="about-hero-actions">
             <button type="button" class="about-project-cta" data-back-home>查看项目作品 <span aria-hidden="true">→</span></button>
           </div>
