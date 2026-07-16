@@ -5,6 +5,7 @@
   "owner": "Fangling Jia",
   "role": "Game UX / UI / GUI Designer",
   "bio": "专注游戏核心系统玩法、商业化运营活动与内置小游戏，连接体验设计、GUI 输出与 Unity 落地。",
+  "asset_note": "案例中的部分视觉素材使用 AI 辅助获取；所有 UX 方案、信息架构、交互流程、GUI 界面拼接与 Unity UGUI 落地均由本人独立完成。",
   "about": {
     "name": "方菱葭",
     "name_en": "JiaJia",
@@ -100,12 +101,36 @@
   ],
   "projects": [
     {
+      "id": "fishing-game",
+      "path": "Fishing",
+      "category": "casual-events",
+      "title": "欢乐钓鱼",
+      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
+      "summary": "钓鱼主玩法 + 三档渔市订单 (普通 / 高级 / 超级) + 图鉴 / 海螺道具 / 每日目标的完整经营循环。"
+    },
+    {
+      "id": "color-guess-game",
+      "path": "Color_Guess_Game",
+      "category": "casual-events",
+      "title": "备餐大挑战",
+      "subtitle": "运营活动 · 颜色猜测小游戏",
+      "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。"
+    },
+    {
       "id": "rpg-chest-gift",
       "path": "RPGChestGift",
       "category": "casual-events",
       "title": "RPG 宝箱礼包",
       "subtitle": "7 月节日活动 · 点击战斗式礼包玩法",
       "summary": "把礼包购买包装成一场轻量 RPG 宝箱战斗：选择奖励档位，通过普通攻击、暴击与 Miss 逐步削减宝箱血量，击败后开箱揭晓奖励。"
+    },
+    {
+      "id": "cloud-gacha",
+      "path": "CloudGacha",
+      "category": "casual-events",
+      "title": "云间寻宝",
+      "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
+      "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
     },
     {
       "id": "gem-refinement",
@@ -122,30 +147,6 @@
       "title": "K6 秘境玩法",
       "subtitle": "KvK6 · 秘境副本 + 战斗 HUD + 战利品保险箱",
       "summary": "战前准备(英雄 / 装备 / 保险箱) → 入场战斗 → 局内 HUD(悬赏榜 / 技能 / 背包 / 战利品对比 / 宝藏)的完整玩法链路, 保险箱锁定收益死亡不掉落。"
-    },
-    {
-      "id": "cloud-gacha",
-      "path": "CloudGacha",
-      "category": "casual-events",
-      "title": "云间寻宝",
-      "subtitle": "2 月节日活动 · 新 Gacha 累计活动",
-      "summary": "累计抽卡视觉化成「乘热气球登天」的棋盘进度, 普通模式通关解锁可变模式, 配合战斗礼盒和兑换商店的完整闭环。"
-    },
-    {
-      "id": "fishing-game",
-      "path": "Fishing",
-      "category": "casual-events",
-      "title": "欢乐钓鱼",
-      "subtitle": "钓鱼小游戏 · 主玩法 + 鱼市交易",
-      "summary": "钓鱼主玩法 + 三档渔市订单 (普通 / 高级 / 超级) + 图鉴 / 海螺道具 / 每日目标的完整经营循环。"
-    },
-    {
-      "id": "color-guess-game",
-      "path": "Color_Guess_Game",
-      "category": "casual-events",
-      "title": "备餐大挑战",
-      "subtitle": "运营活动 · 颜色猜测小游戏",
-      "summary": "拖拽酱料到对应颜色的汤 — 答错的酱料会留在桌面成为「错误猜测历史」, 用复盘机制驱动玩家二次挑战, 含完整玩法录屏。"
     }
   ]
 }

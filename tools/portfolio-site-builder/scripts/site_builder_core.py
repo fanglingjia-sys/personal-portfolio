@@ -2962,6 +2962,22 @@ body {
 .editorial-section .section-head { margin-bottom: 42px; }
 .editorial-section .section-title { font-size: clamp(34px, 5vw, 68px); letter-spacing: -.045em; }
 .editorial-section .section-kicker { color: var(--accent-2); }
+.portfolio-disclosure {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  margin: -12px 0 38px;
+  padding: 16px 18px;
+  border-left: 2px solid rgba(45,212,191,.65);
+  border-radius: 0 14px 14px 0;
+  background: rgba(45,212,191,.045);
+  color: #b8c4d6;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.portfolio-disclosure strong { color: #e9fff9; white-space: nowrap; }
+.portfolio-disclosure p { margin: 0; }
 
 .project-category { margin-top: 70px; }
 .project-category:first-child { margin-top: 0; }
@@ -3018,6 +3034,7 @@ body {
   .hero-primary-actions { align-items: flex-start; flex-direction: column; }
   .hub-tags { display: none; }
   .editorial-section { padding: 30px 18px; border-radius: 26px; }
+  .portfolio-disclosure { grid-template-columns: 1fr; gap: 5px; margin-top: -8px; }
   .project-category-head { display: block; }
   .project-category-desc { margin: 10px 0 0 12px; text-align: left; }
   .project-grid { grid-template-columns: 1fr; }
@@ -4107,6 +4124,7 @@ function renderHome(data) {
           </div>
           ${state.manageMode ? `<button type="button" class="btn-outline" id="open-add-panel">+ 添加项目</button>` : ""}
         </div>
+        ${data.site.asset_note ? `<div class="portfolio-disclosure"><strong>作品说明</strong><p>${escapeHtml(data.site.asset_note)}</p></div>` : ""}
         ${renderEqualProjectList(data)}
       </section>
     </div>
@@ -7512,6 +7530,7 @@ def build_site_data(args: argparse.Namespace, input_dir: Path, output_dir: Path)
                 "owner": index_manifest.get("owner", ""),
                 "role": index_manifest.get("role", ""),
                 "bio": index_manifest.get("bio", ""),
+                "asset_note": index_manifest.get("asset_note", ""),
                 "about": index_manifest.get("about") if isinstance(index_manifest.get("about"), dict) else None,
                 "all_tags": index_manifest.get("all_tags") or all_tags,
                 "prototype_enabled": args.enable_prototype,
